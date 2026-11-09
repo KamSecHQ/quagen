@@ -16,7 +16,7 @@
 
   function yok(mesaj) {
     document.title = "Portföy bulunamadı — QUAGEN";
-    root.innerHTML = `<section class="empty reveal in"><p class="big-404">404</p><h1>${esc(mesaj)}</h1><p>Kullanıcı adını kontrol et. Portföy sahibi onu gizlemiş de olabilir.</p><a class="btn" href="/index.html">QUAGEN'e git</a></section>`;
+    root.innerHTML = `<section class="empty reveal in"><p class="big-404">404</p><h1>${esc(mesaj)}</h1><p>Kullanıcı adını kontrol et. Portföy sahibi onu gizlemiş de olabilir.</p><a class="btn" href="${KD.statik ? "index.html" : "/index.html"}">QUAGEN'e git</a></section>`;
   }
 
   async function yukle() {

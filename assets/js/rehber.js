@@ -19,7 +19,7 @@
   try { secili = localStorage.getItem("kd-rehber-dil") || "tum"; } catch (_) {}
   if (secili !== "tum" && !R.DILLER[secili]) secili = "tum";
   let aiVar = null, cVar = null;
-  if (KD.statik) { aiVar = false; cVar = false; } else fetch("/api/health").then((r) => r.json()).then((h) => { aiVar = !!h.ai; cVar = !!h.c; }).catch(() => { aiVar = false; cVar = false; });
+  if (KD.hesapYok) { aiVar = false; cVar = false; } else fetch("/api/health").then((r) => r.json()).then((h) => { aiVar = !!h.ai; cVar = !!h.c; }).catch(() => { aiVar = false; cVar = false; });
 
   /* ---------- Dil seçici ---------- */
   function dilSec() {
@@ -240,7 +240,7 @@
             <div class="dene-btn"><button class="btn ghost" id="sifirla">Sıfırla</button><button class="btn primary" id="calistir">Çalıştır <kbd>Ctrl ↵</kbd></button></div></div>
           <div class="ed" id="ed"></div>
           ${girdiVar ? `<details class="stdin" ${g.stdin ? "open" : ""}><summary>Girdi (stdin)</summary><textarea id="stdin" rows="3" spellcheck="false" placeholder="Programın input() / scanf ile okuyacağı satırlar">${esc(g.stdin || "")}</textarea></details>` : ""}
-          <div class="cikti" id="cikti"><p class="muted small">Çıktı burada görünecek. ${t === "c" ? "C örnekleri yerel QUAGEN sunucusunda derlenir." : t === "py" ? "Python ilk çalıştırmada birkaç saniyede yüklenir." : ""}</p></div>
+          <div class="cikti" id="cikti"><p class="muted small">Çıktı burada görünecek. ${t === "c" ? "C, tarayıcında gerçek clang ile derlenir; ilk seferde derleyici indirilir (~22 MB)." : t === "py" ? "Python ilk çalıştırmada birkaç saniyede yüklenir." : ""}</p></div>
           ${t === "html" ? `<div class="onizleme" id="onizleme"></div>` : ""}
         </section>
 
@@ -266,11 +266,11 @@
   async function kodCalistir(t, kod, stdin) {
     const c = $("#cikti");
     c.classList.remove("in");
-    c.innerHTML = `<p class="muted small calisiyor">${t === "py" ? "Python çalışıyor…" : t === "c" ? "Derleniyor (clang + AddressSanitizer)…" : "Çalışıyor…"}</p>`;
+    c.innerHTML = `<p class="muted small calisiyor">${t === "py" ? "Python çalışıyor…" : t === "c" ? "Derleniyor (clang)…" : "Çalışıyor…"}</p>`;
     let res;
     try {
       if (t === "py") res = await KD.runPy(kod, { stdin, timeout: 6000 });
-      else if (t === "c") res = cVar === false ? { error: "C derleyicisine ulaşılamadı. QUAGEN'i kendi bilgisayarında node server.js ile çalıştırınca C örnekleri derlenir." } : await KD.runC(kod, { stdin });
+      else if (t === "c") res = await KD.runC(kod, { stdin });
       else if (t === "sql") res = await KD.run(kod, { mode: "sql", setup: R.SQL_DB, timeout: 15000 });
       else if (t === "html" || t === "css") res = await KD.runWeb({ lang: "html", code: kod, host: $("#onizleme") });
       else res = await KD.run(kod, { timeout: 5000, wait: /setTimeout|await/.test(kod) ? 1200 : 300 });

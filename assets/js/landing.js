@@ -7,7 +7,7 @@
 
   const nav = $("#nav");
   /* Hesap: giriş yapılmışsa menüde avatar */
-  if (window.KD && KD.statik && $("#nav-login")) $("#nav-login").hidden = true;
+  if (window.KD && KD.hesapYok && $("#nav-login")) $("#nav-login").hidden = true;
   if (window.KD && KD.hesap) KD.hesap.ben().then((u) => {
     const l = $("#nav-login"); if (!l || !u) return;
     const bas = String(u.ad || u.kullaniciAdi).trim().split(/\s+/).map((x) => x[0]).slice(0, 2).join("").toLocaleUpperCase("tr");

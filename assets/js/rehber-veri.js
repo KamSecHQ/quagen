@@ -1665,14 +1665,16 @@ import time
 bas = time.perf_counter()
 time.sleep(0.2)
 print(f"{time.perf_counter() - bas:.1f} sn geçti")` },
-      c: { ad: "sleep() / nanosleep()", sozdizimi: "#include <unistd.h>\nsleep(saniye);", aciklama: "POSIX sistemlerde çalışır; programın akışını durdurur.", ornek: k`
+      c: { ad: "timespec_get() / sleep()", sozdizimi: "timespec_get(&t, TIME_UTC);  /* C11, taşınabilir */\nsleep(saniye);              /* POSIX: <unistd.h> */", aciklama: "Standart C'de bekleme fonksiyonu yoktur; C11'in timespec_get'i ile geçen süre ölçülür. POSIX sistemlerde sleep ve nanosleep programı uyutur.", ornek: k`
 #include <stdio.h>
 #include <time.h>
 
+static double simdi(void) { struct timespec t; timespec_get(&t, TIME_UTC); return t.tv_sec + t.tv_nsec / 1e9; }
+
 int main(void) {
-    struct timespec t = { 0, 200000000 };  /* 0.2 sn */
-    nanosleep(&t, NULL);
-    printf("bitti\n");
+    double bas = simdi();
+    while (simdi() - bas < 0.2) { }   /* 0.2 sn bekle */
+    printf("%.1f sn geçti\n", simdi() - bas);
     return 0;
 }` }
     }

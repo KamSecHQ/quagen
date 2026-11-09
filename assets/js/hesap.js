@@ -147,7 +147,7 @@
   });
 
   /* ---------- Statik demo: hesaplar kapalı ---------- */
-  if (KD.statik) {
+  if (KD.hesapYok) {
     $$(".form").forEach((f) => (f.hidden = true));
     $(".tabs").hidden = true;
     $("#signed").hidden = false;

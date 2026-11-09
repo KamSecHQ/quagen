@@ -8,6 +8,11 @@ window.KD = window.KD || {};
 (function (KD) {
   /* Statik demo (GitHub Pages gibi sunucusuz yayın): hesaplar, C derleyicisi ve AI mentor kapalı; ilerleme tarayıcıda */
   KD.statik = !!window.QUAGEN_STATIK;
+  /* Bulut: statik yayında hesaplar, eşitleme, portföy ve AI Supabase üzerinden çalışır (assets/js/bulut.js) */
+  KD.bulut = !!window.QUAGEN_BULUT_HAZIR;
+  KD.hesapYok = KD.statik && !KD.bulut;
+  /* Herkese açık portföy adresi: sunucuda /p/ad, statik yayında portfolyo.html?u=ad */
+  KD.portfoyUrl = (ad) => (KD.statik ? new URL("portfolyo.html?u=" + encodeURIComponent(ad), location.href).href : location.origin + "/p/" + encodeURIComponent(ad));
   KD.LANGS = [
     { id: "js", ad: "JavaScript", kisa: "JS", aciklama: "Web'in dili. Tarayıcıdan sunucuya, React'ten algoritmalara beş parkur.", key: "kd-nextgen-v1" },
     { id: "c", ad: "C", kisa: "C", aciklama: "Bilgisayarın nasıl çalıştığını öğreten dil: bellek, işaretçiler, derleyici.", key: "kd-nextgen-c" },
@@ -97,7 +102,7 @@ window.KD = window.KD || {};
     dinle(f) { dinleyiciler.add(f); return () => dinleyiciler.delete(f); },
     yay() { dinleyiciler.forEach((f) => { try { f(H); } catch (_) {} }); },
     async ben() {
-      if (KD.statik) { H.kullanici = null; H.yay(); return null; }
+      if (KD.hesapYok) { H.kullanici = null; H.yay(); return null; }
       try {
         const r = await istek("/api/auth/ben");
         if (r.ok) { const j = await json(r); H.kullanici = j.kullanici; H.portfoy = j.portfoy || null; }
@@ -107,7 +112,7 @@ window.KD = window.KD || {};
       return H.kullanici;
     },
     async kayit(veri) {
-      if (KD.statik) throw Object.assign(new Error("Bu demo sürümünde hesaplar kapalı. İlerlemen bu tarayıcıda saklanıyor."), { alanlar: {} });
+      if (KD.hesapYok) throw Object.assign(new Error("Bu demo sürümünde hesaplar kapalı. İlerlemen bu tarayıcıda saklanıyor."), { alanlar: {} });
       const r = await istek("/api/auth/kayit", "POST", veri);
       const j = await json(r);
       if (!r.ok) throw Object.assign(new Error(j.error || "Kayıt başarısız."), { alanlar: j.alanlar || {}, status: r.status });
@@ -115,7 +120,7 @@ window.KD = window.KD || {};
       return j.kullanici;
     },
     async giris(veri) {
-      if (KD.statik) throw Object.assign(new Error("Bu demo sürümünde hesaplar kapalı. İlerlemen bu tarayıcıda saklanıyor."), { alanlar: {} });
+      if (KD.hesapYok) throw Object.assign(new Error("Bu demo sürümünde hesaplar kapalı. İlerlemen bu tarayıcıda saklanıyor."), { alanlar: {} });
       const r = await istek("/api/auth/giris", "POST", veri);
       const j = await json(r);
       if (!r.ok) throw Object.assign(new Error(j.error || "Giriş başarısız."), { status: r.status });
@@ -644,14 +649,34 @@ send({type:"done",results:results});
  */
 (function (KD) {
   const PRELUDE = [
-    '#line 1 "kodera_on.h"',
+    '#line 1 "quagen_on.h"',
     "#include <stdio.h>", "#include <stdlib.h>", "#include <string.h>", "#include <stdbool.h>",
     "#include <stdint.h>", "#include <math.h>", "#include <ctype.h>",
     "static long kd_ayrilan = 0;",
+    "#ifdef KD_TARAYICI",
+    /* Tarayıcı derleyicisinde AddressSanitizer yok: blok başına başlık + sonda bekçi baytları, serbest bırakılan blok
+       karantinada tutulur ve zehirlenir. Taşma, çift free, geçersiz free yakalanır; use-after-free çöp değer okur. */
+    "#define KD_BAS 16",
+    "#define KD_CANLI 0x51A6E7u",
+    "#define KD_OLU 0xDEADF0u",
+    "static void kd_dur(const char *tur, void *p) { fprintf(stderr, \"QUAGEN bellek denetimi: %s (%p)\\n\", tur, p); abort(); }",
+    "static void kd_kontrol(void *p) { unsigned char *b = (unsigned char *)p - KD_BAS; unsigned m = *(unsigned *)(b + 8);",
+    "  if (m == KD_OLU) kd_dur(\"double-free: ayni bellek iki kez free edildi\", p);",
+    "  if (m != KD_CANLI) kd_dur(\"bad-free: malloc ile alinmamis bir adres\", p);",
+    "  size_t n = *(size_t *)b; for (int i = 0; i < 8; i++) if (b[KD_BAS + n + i] != 0xFD) kd_dur(\"heap-buffer-overflow: ayrilan blogun sonundan tasildi\", p); }",
+    "static void *kd_malloc(size_t n) { unsigned char *b = malloc(KD_BAS + n + 8); if (!b) return NULL;",
+    "  *(size_t *)b = n; *(unsigned *)(b + 8) = KD_CANLI; memset(b + KD_BAS, 0xBE, n); memset(b + KD_BAS + n, 0xFD, 8); kd_ayrilan++; return b + KD_BAS; }",
+    "static void *kd_calloc(size_t a, size_t c) { if (c && a > (size_t)-1 / c) return NULL; void *p = kd_malloc(a * c); if (p) memset(p, 0, a * c); return p; }",
+    "static void kd_free(void *p) { if (!p) return; kd_kontrol(p); unsigned char *b = (unsigned char *)p - KD_BAS;",
+    "  *(unsigned *)(b + 8) = KD_OLU; memset(p, 0xDD, *(size_t *)b); kd_ayrilan--; }",
+    "static void *kd_realloc(void *p, size_t n) { if (!p) return kd_malloc(n); kd_kontrol(p); size_t eski = *(size_t *)((unsigned char *)p - KD_BAS);",
+    "  void *q = kd_malloc(n); if (!q) return NULL; memcpy(q, p, eski < n ? eski : n); kd_free(p); return q; }",
+    "#else",
     "static inline void *kd_malloc(size_t n) { void *p = malloc(n); if (p) kd_ayrilan++; return p; }",
     "static inline void *kd_calloc(size_t a, size_t b) { void *p = calloc(a, b); if (p) kd_ayrilan++; return p; }",
     "static inline void *kd_realloc(void *p, size_t n) { void *q = realloc(p, n); if (!p && q) kd_ayrilan++; return q; }",
     "static inline void kd_free(void *p) { if (p) kd_ayrilan--; free(p); }",
+    "#endif",
     "#define malloc kd_malloc", "#define calloc kd_calloc", "#define realloc kd_realloc", "#define free kd_free",
     '#line 1 "main.c"'
   ].join("\n") + "\n";
@@ -666,7 +691,7 @@ send({type:"done",results:results});
   };
   function harness(tests) {
     const body = tests.map((t, i) => (t.expr ? `  { int __i = ${i}; ${t.setup || ""}\n    ${(FMT[t.type || "int"])(t.expr)} }` : "")).join("\n");
-    return `\n#line 1 "kodera_test.c"\nint main(void) {\n  setvbuf(stdout, NULL, _IONBF, 0);\n${body}\n  return 0;\n}\n`;
+    return `\n#line 1 "quagen_test.c"\nint main(void) {\n  setvbuf(stdout, NULL, _IONBF, 0);\n${body}\n  return 0;\n}\n`;
   }
   const show = (v, type) => (type === "str" ? JSON.stringify(v) : type === "char" ? "'" + v + "'" : type === "bool" ? String(v) : String(v));
   const norm = (s) => String(s).replace(/\r/g, "").split("\n").map((l) => l.replace(/\s+$/, "")).join("\n").replace(/\n+$/, "");
@@ -685,7 +710,12 @@ send({type:"done",results:results});
     [/division by zero/, "Sıfıra bölme yapıldı."],
     [/index .* out of bounds/, "Dizi indeksi sınırların dışında."],
     [/shift exponent/, "Geçersiz bit kaydırma miktarı."],
-    [/load of null pointer|member access within null pointer/, "NULL işaretçi üzerinden okuma yapıldı."]
+    [/load of null pointer|member access within null pointer/, "NULL işaretçi üzerinden okuma yapıldı."],
+    [/memory access out of bounds/, "Belleğin geçersiz bir yerine erişildi: dizi sınırı dışı, NULL ya da başlatılmamış bir işaretçi olabilir."],
+    [/call stack|Maximum call stack|stack exhausted/i, "Yığın taştı: özyinelemenin temel durumu eksik ya da hiç ulaşılmıyor."],
+    [/integer divide by zero|divide by zero/, "Sıfıra bölme yapıldı."],
+    [/integer overflow/, "Tam sayı taşması (ya da INT_MIN / -1) oluştu."],
+    [/\[wasm\] unreachable/, "Program tanımsız bir duruma ulaştı ve durduruldu: işaretli tam sayı taşması, dizi sınırı dışına erişim ya da abort() olabilir. Hata satırını bulmak için değişkenlerin değerlerini printf ile yazdır."]
   ];
   function explainCrash(run) {
     if (!run) return null;
@@ -715,10 +745,11 @@ send({type:"done",results:results});
 
   let tokenP = null;
   const token = () => tokenP || (tokenP = fetch("/api/c/token", { cache: "no-store" }).then((r) => { if (!r.ok) throw new Error(); return r.json(); }).then((j) => j.token).catch((e) => { tokenP = null; throw e; }));
+  const tarayicida = (code, runs) => KD.cTarayici ? KD.cTarayici.calistirHepsi(code, runs) : Promise.resolve({ netError: "C derleyicisi yüklenemedi." });
   async function post(code, runs) {
-    if (KD.statik) return { netError: "Bu çevrimiçi demoda C derleyicisi yok. C görevlerini çalıştırmak için QUAGEN'i bilgisayarına kurup node server.js ile başlat; içeriği okuyabilir, tahmin sorularını ve kartları kullanabilirsin." };
+    if (KD.statik) return tarayicida(code, runs);
     let tok;
-    try { tok = await token(); } catch (e) { return { netError: "C çalıştırıcıya ulaşılamadı. Sunucuyu node server.js ile başlattığından emin ol." }; }
+    try { tok = await token(); } catch (e) { return tarayicida(code, runs); }
     try {
       let r = await fetch("/api/c/run", { method: "POST", headers: { "Content-Type": "application/json", "X-Kodera-Token": tok }, body: JSON.stringify({ code, runs }) });
       if (r.status === 403) { tokenP = null; tok = await token(); r = await fetch("/api/c/run", { method: "POST", headers: { "Content-Type": "application/json", "X-Kodera-Token": tok }, body: JSON.stringify({ code, runs }) }); }
@@ -808,7 +839,7 @@ send({type:"done",results:results});
   KD.tutor = {
     async available() {
       if (aiState !== null) return aiState;
-      if (KD.statik) return (aiState = false);
+      if (KD.hesapYok) return (aiState = false);
       try {
         const r = await fetch("/api/health", { cache: "no-store" });
         aiState = r.ok ? !!(await r.json()).ai : false;

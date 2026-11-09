@@ -217,7 +217,7 @@
       prevEl.hidden = false;
       conEl.innerHTML = consoleHTML(await KD.runWeb({ lang: snip.lang, code: snip.code, host: prevEl }));
     } else if (snip.lang === "c") {
-      conEl.innerHTML = '<div class="log muted">Derleniyor (clang, AddressSanitizer)…</div>';
+      conEl.innerHTML = '<div class="log muted">Derleniyor (clang)…</div>';
       conEl.innerHTML = consoleHTML(await KD.runC(snip.code, {}));
     } else if (snip.lang === "py") {
       conEl.innerHTML = '<div class="log muted">Python hazırlanıyor…</div>';
@@ -605,7 +605,7 @@
             <h3 class="sub">Testler</h3>
             <ul class="tests" id="tests">${ch.tests.map((t) => `<li><span class="t-ico" aria-hidden="true"></span><code>${esc(testLabel(t))}</code><span class="t-exp">${esc(testExpect(t))}</span></li>`).join("")}</ul>
             ${ch.schema ? `<details class="scaffold" open><summary>Veritabanı şeması</summary><pre class="schema">${esc(ch.schema)}</pre></details>` : ""}
-            ${isC ? `<p class="muted small db-note">${ch.mode === "stdout" ? "Bu görevde <code>main</code> yazıyorsun; testler programı farklı girdilerle çalıştırıp çıktısını karşılaştırır." : "Bu görevde <code>main</code> yazma; testler fonksiyonlarını kendi <code>main</code>'leriyle çağırır."} Kod clang ile AddressSanitizer ve UBSan açık derlenir.</p>` : ""}
+            ${isC ? `<p class="muted small db-note">${ch.mode === "stdout" ? "Bu görevde <code>main</code> yazıyorsun; testler programı farklı girdilerle çalıştırıp çıktısını karşılaştırır." : "Bu görevde <code>main</code> yazma; testler fonksiyonlarını kendi <code>main</code>'leriyle çağırır."} Kod gerçek clang ile, bellek ve tanımsız davranış denetimi açık derlenir.</p>` : ""}
             ${isPy ? `<p class="muted small db-note">${ch.mode === "stdout" ? "Bu görevde bütün bir program yazıyorsun; testler onu farklı girdilerle (<code>input()</code>) çalıştırıp çıktısını karşılaştırır. Çalıştır, ilk testin girdisini kullanır." : "Testler fonksiyonlarını kendileri çağırır; <code>input()</code> kullanma, değeri <code>return</code> et."} Python tarayıcında WebAssembly üzerinde çalışır.</p>` : ""}
             ${ch.db ? `<p class="muted small db-note">Bu görevde <code>sorgu(sql, params)</code> ve <code>calistir(sql, params)</code> gerçek bir SQLite veritabanına bağlı.</p>` : ""}
             ${ch.scaffold ? `<details class="scaffold"><summary>Sayfanın HTML'i (değiştirilemez, kodun buna uygulanır)</summary>${codeBlock(ch.scaffold, "mini", "html")}</details>` : ""}
@@ -1097,7 +1097,7 @@
         <div>
           <h1>${name ? esc(name) : "Profil"}</h1>
           <p class="lead">${u ? `@${esc(u.kullaniciAdi)} · Öğrendiğin her dilin ilerlemesi ayrı tutulur ve hesabına eşitlenir.` : "Öğrendiğin her dilin ilerlemesi ayrı tutulur. Hesap açarsan ilerlemen tüm cihazlarında seninle olur."}</p>
-          <div class="row">${u ? `<a class="btn" href="/p/${esc(u.kullaniciAdi)}" target="_blank" rel="noopener">Portföyümü aç</a>` : `<a class="btn primary" href="hesap.html?sonra=${encodeURIComponent("nextgen.html?dil=" + LANG + "#profil")}#kayit">Ücretsiz hesap aç</a>`}<button class="btn" data-act="settings">Ayarlar</button></div>
+          <div class="row">${u ? `<a class="btn" href="${esc(KD.portfoyUrl(u.kullaniciAdi))}" target="_blank" rel="noopener">Portföyümü aç</a>` : `<a class="btn primary" href="hesap.html?sonra=${encodeURIComponent("nextgen.html?dil=" + LANG + "#profil")}#kayit">Ücretsiz hesap aç</a>`}<button class="btn" data-act="settings">Ayarlar</button></div>
         </div>
       </header>
       <div class="profile-langs">${KD.LANGS.map((l, i) => {
@@ -1128,9 +1128,9 @@
   }
   function renderPortfolioEditor(box) {
     const u = KD.hesap.kullanici;
-    if (KD.statik) { box.innerHTML = `<div class="pf-cta"><div><h2>Kişisel portföyün</h2><p class="muted">Herkese açık portföy ve hesaplar bu çevrimiçi demoda kapalı. İlerlemen bu tarayıcıda saklanıyor; Ayarlar'daki dışa aktarma ile yedekleyebilirsin.</p></div></div>`; return; }
+    if (KD.hesapYok) { box.innerHTML = `<div class="pf-cta"><div><h2>Kişisel portföyün</h2><p class="muted">Herkese açık portföy ve hesaplar bu çevrimiçi demoda kapalı. İlerlemen bu tarayıcıda saklanıyor; Ayarlar'daki dışa aktarma ile yedekleyebilirsin.</p></div></div>`; return; }
     if (!u) {
-      box.innerHTML = `<div class="pf-cta"><div><h2>Kişisel portföyün</h2><p class="muted">Geçtiğin görevlerden en iyilerini seç, sertifikaların ve beceri haritanla birlikte <b>quagen/p/kullanıcı-adın</b> adresinde yayınla. İşverenlere ve topluluğa ne yapabildiğini kodla göster.</p></div><a class="btn primary" href="hesap.html?sonra=${encodeURIComponent("nextgen.html?dil=" + LANG + "#profil")}#kayit">Hesap aç ve portföyünü oluştur</a></div>`;
+      box.innerHTML = `<div class="pf-cta"><div><h2>Kişisel portföyün</h2><p class="muted">Geçtiğin görevlerden en iyilerini seç, sertifikaların ve beceri haritanla birlikte <b>kendi portföy sayfanda</b> adresinde yayınla. İşverenlere ve topluluğa ne yapabildiğini kodla göster.</p></div><a class="btn primary" href="hesap.html?sonra=${encodeURIComponent("nextgen.html?dil=" + LANG + "#profil")}#kayit">Hesap aç ve portföyünü oluştur</a></div>`;
       return;
     }
     const pf = KD.hesap.portfoy || { acik: false, baglantilar: {}, projeler: [] };
@@ -1138,7 +1138,7 @@
     const notlar = Object.fromEntries((pf.projeler || []).map((x) => [x.gorevId, x.not || ""]));
     const adaylar = portfoyAdaylari();
     box.innerHTML = `
-      <div class="pf-head"><div><h2>Portföyün</h2><p class="muted">Herkese açık adresin: <a href="/p/${esc(u.kullaniciAdi)}" target="_blank" rel="noopener">${location.host}/p/${esc(u.kullaniciAdi)}</a></p></div>
+      <div class="pf-head"><div><h2>Portföyün</h2><p class="muted">Herkese açık adresin: <a href="${esc(KD.portfoyUrl(u.kullaniciAdi))}" target="_blank" rel="noopener">${esc(KD.portfoyUrl(u.kullaniciAdi).replace(/^https?:\/\//, ""))}</a></p></div>
         <label class="switch-row"><input type="checkbox" id="pf-acik" ${pf.acik ? "checked" : ""}/><span class="switch-ui" aria-hidden="true"></span><span>Herkese açık</span></label></div>
       <form class="pf-form" id="pf-form">
         <div class="pf-grid">
@@ -1176,7 +1176,7 @@
       const btn = $("button[type=submit]", form); btn.disabled = true; btn.textContent = "Kaydediliyor…";
       try {
         await KD.hesap.portfoyKaydet({ acik: $("#pf-acik", box).checked, baslik: fd.get("baslik"), konum: fd.get("konum"), bio: fd.get("bio"), baglantilar: { github: fd.get("github"), linkedin: fd.get("linkedin"), web: fd.get("web") }, projeler, ozet: { diller: portfoyOzeti(), rozetler: Object.keys(S.state.badges || {}).length, guncelleme: new Date().toISOString() } });
-        toast($("#pf-acik", box).checked ? `<b>Portföyün yayında.</b> <a href="/p/${esc(u.kullaniciAdi)}" target="_blank" rel="noopener">Aç</a>` : "Portföy kaydedildi (gizli).", "badge");
+        toast($("#pf-acik", box).checked ? `<b>Portföyün yayında.</b> <a href="${esc(KD.portfoyUrl(u.kullaniciAdi))}" target="_blank" rel="noopener">Aç</a>` : "Portföy kaydedildi (gizli).", "badge");
         $("#pf-status", box).textContent = "Kaydedildi.";
       } catch (err) { toast(esc(err.message), "warn"); }
       btn.disabled = false; btn.textContent = "Portföyü kaydet";
@@ -1348,7 +1348,7 @@
   function renderAccount() {
     const box = $("#acct"); if (!box) return;
     const u = KD.hesap.kullanici;
-    if (KD.statik) { box.innerHTML = `<span class="demo-pill" title="Çevrimiçi demo: ilerlemen bu tarayıcıda saklanır. Hesaplar ve C derleyicisi kurulu sürümde.">Demo</span>`; return; }
+    if (KD.hesapYok) { box.innerHTML = `<span class="demo-pill" title="Çevrimiçi demo: ilerlemen bu tarayıcıda saklanır. Hesaplar ve C derleyicisi kurulu sürümde.">Demo</span>`; return; }
     if (!u) {
       box.innerHTML = `<a class="pill-login" href="hesap.html?sonra=${encodeURIComponent("nextgen.html?dil=" + LANG + location.hash)}">Giriş yap</a>`;
       return;
@@ -1359,7 +1359,7 @@
         <div class="am-head"><span class="avatar lg">${esc(initials(u.ad || u.kullaniciAdi))}</span><div><b>${esc(u.ad || u.kullaniciAdi)}</b><small>@${esc(u.kullaniciAdi)}</small></div></div>
         <p class="am-sync"><span class="sync-dot ${d}"></span>${d === "esitlendi" ? "İlerleme hesabına eşitlendi" : d === "esitleniyor" ? "Eşitleniyor…" : d === "hata" ? "Eşitlenemedi, tekrar denenecek" : "Yerel"}</p>
         <a role="menuitem" href="#profil">Profil ve portföy</a>
-        <a role="menuitem" href="/p/${esc(u.kullaniciAdi)}" target="_blank" rel="noopener">Herkese açık portföyüm</a>
+        <a role="menuitem" href="${esc(KD.portfoyUrl(u.kullaniciAdi))}" target="_blank" rel="noopener">Herkese açık portföyüm</a>
         <button role="menuitem" data-am="settings">Ayarlar</button>
         <button role="menuitem" data-am="out" class="danger">Çıkış yap</button>
       </div>`;
