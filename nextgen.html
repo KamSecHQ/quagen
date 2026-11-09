@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <script>window.QUAGEN_STATIK = true;</script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QUAGEN NextGen</title>
+  <meta name="description" content="QUAGEN NextGen öğrenme ortamı: tarayıcıda çalışan editör, otomatik testler, yapay zekâ mentor ve aralıklı tekrar." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+  <link rel="stylesheet" href="assets/css/tokens.css" />
+  <link rel="stylesheet" href="assets/css/nextgen.css" />
+  <script>
+    /* Tema ve giriş animasyonu ilk boyamadan önce uygulanır (yanıp sönme olmasın) */
+    (function () {
+      var t = "system";
+      try { t = JSON.parse(localStorage.getItem("kd-profile") || "{}").theme || (JSON.parse(localStorage.getItem("kd-nextgen-v1") || "{}").prefs || {}).theme || "system"; } catch (e) {}
+      if (t === "system") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = t;
+      try { if (sessionStorage.getItem("kd-warp")) document.documentElement.classList.add("entering"); } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip" href="#view">İçeriğe geç</a>
+  <div class="enter-veil" aria-hidden="true"></div>
+
+  <header class="bar">
+    <button class="icon-btn only-narrow" id="btn-menu" aria-label="Menüyü aç" aria-controls="side"></button>
+    <a class="brand" href="index.html" aria-label="QUAGEN ana sayfa"><span class="brand-word">QUAGEN</span></a>
+    <button class="lang-switch" id="lang-switch" aria-label="Öğrendiğin dili değiştir"></button>
+    <nav class="crumbs" id="crumbs" aria-label="Konum"></nav>
+    <button class="search" id="btn-search" aria-label="Ara (Ctrl+K)">
+      <span class="search-ico" aria-hidden="true"></span>
+      <span class="search-txt">Faz, görev veya komut ara</span>
+      <kbd id="kbd-k">Ctrl K</kbd>
+    </button>
+    <div class="bar-stats">
+      <span class="pill-stat" id="st-streak" title="Günlük seri"></span>
+      <span class="pill-stat" id="st-xp" title="Toplam XP"></span>
+    </div>
+    <button class="icon-btn" id="btn-theme" aria-label="Temayı değiştir"></button>
+    <div class="acct" id="acct"></div>
+    <button class="icon-btn" id="btn-settings" aria-label="Ayarlar"></button>
+  </header>
+
+  <div class="shell">
+    <aside class="side" id="side" aria-label="Gezinme">
+      <nav class="side-main" id="side-main"></nav>
+      <div class="side-tracks" id="tracks"></div>
+      <div class="side-foot"><span id="ai-status" class="ai-status">Mentor yerel modda</span></div>
+    </aside>
+    <div class="scrim" id="scrim" hidden></div>
+    <main class="main" id="view" tabindex="-1"></main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="palette" id="palette" hidden>
+    <div class="palette-box" role="dialog" aria-modal="true" aria-label="Komut paleti">
+      <input id="pal-in" type="text" placeholder="Ne yapmak istiyorsun? Örn: closure, sepet, tekrar" autocomplete="off" spellcheck="false" />
+      <ul id="pal-list" role="listbox"></ul>
+      <div class="palette-foot"><span><kbd>↑</kbd><kbd>↓</kbd> seç</span><span><kbd>Enter</kbd> aç</span><span><kbd>Esc</kbd> kapat</span></div>
+    </div>
+  </div>
+
+  <dialog class="dlg" id="dlg"></dialog>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/jsx/jsx.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+  <script src="assets/js/curriculum.js"></script>
+  <script src="assets/js/curriculum-web.js"></script>
+  <script src="assets/js/curriculum-react.js"></script>
+  <script src="assets/js/curriculum-algo.js"></script>
+  <script src="assets/js/curriculum-backend.js"></script>
+  <script src="assets/js/curriculum-c.js"></script>
+  <script src="assets/js/curriculum-c2.js"></script>
+  <script src="assets/js/curriculum-py.js"></script>
+  <script src="assets/js/curriculum-py2.js"></script>
+  <script src="assets/js/engine.js"></script>
+  <script src="assets/js/python.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

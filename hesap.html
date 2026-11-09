@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <script>window.QUAGEN_STATIK = true;</script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QUAGEN — Giriş yap ya da kayıt ol</title>
+  <meta name="description" content="QUAGEN hesabına giriş yap ya da ücretsiz hesap oluştur. İlerlemen tüm cihazlarında seninle." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/tokens.css" />
+  <link rel="stylesheet" href="assets/css/hesap.css" />
+  <script>(function () { var t = "system"; try { t = JSON.parse(localStorage.getItem("kd-profile") || "{}").theme || "system"; } catch (e) {} if (t === "system") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; document.documentElement.dataset.theme = t; })();</script>
+</head>
+<body>
+  <main class="auth">
+    <aside class="auth-art" aria-hidden="true">
+      <a class="logo" href="index.html">QUAGEN</a>
+      <div class="art-stage">
+        <p class="art-kicker">Bugün yazacağın kod</p>
+        <pre class="art-code" id="art-code"></pre>
+        <div class="art-tests" id="art-tests">
+          <span><i></i>toplam([1, 2, 3])</span>
+          <span><i></i>toplam([])</span>
+          <span><i></i>toplam([-4, 4])</span>
+        </div>
+      </div>
+      <p class="art-quote" id="art-quote">Hafızadan çağırmak, tekrar okumaktan kalıcıdır.</p>
+    </aside>
+
+    <section class="auth-panel">
+      <a class="back" href="index.html">Ana sayfaya dön</a>
+      <div class="card" id="card">
+        <div class="tabs" role="tablist" aria-label="Hesap">
+          <button role="tab" id="tab-giris" aria-controls="form-giris" aria-selected="true" data-tab="giris">Giriş yap</button>
+          <button role="tab" id="tab-kayit" aria-controls="form-kayit" aria-selected="false" data-tab="kayit" tabindex="-1">Kayıt ol</button>
+          <span class="tab-ink" aria-hidden="true"></span>
+        </div>
+
+        <div class="forms" id="forms">
+          <form id="form-giris" class="form" role="tabpanel" aria-labelledby="tab-giris" novalidate>
+            <h1>Tekrar hoş geldin.</h1>
+            <p class="sub">Kaldığın yerden, tüm dillerdeki ilerlemenle devam et.</p>
+            <div class="field">
+              <label for="g-giris">Kullanıcı adı ya da e-posta</label>
+              <input id="g-giris" name="giris" autocomplete="username" required />
+              <p class="err" data-for="giris"></p>
+            </div>
+            <div class="field">
+              <label for="g-parola">Parola</label>
+              <div class="pw"><input id="g-parola" name="parola" type="password" autocomplete="current-password" required /><button type="button" class="pw-eye" aria-label="Parolayı göster" data-eye="g-parola">Göster</button></div>
+              <p class="err" data-for="parola"></p>
+            </div>
+            <p class="form-err" role="alert"></p>
+            <button class="submit" type="submit"><span class="s-label">Giriş yap</span><span class="s-spin" aria-hidden="true"></span><span class="s-check" aria-hidden="true"></span></button>
+            <p class="switch">Hesabın yok mu? <button type="button" class="link" data-go="kayit">Ücretsiz kayıt ol</button></p>
+          </form>
+
+          <form id="form-kayit" class="form" role="tabpanel" aria-labelledby="tab-kayit" novalidate hidden>
+            <h1>Yazarak öğrenmeye başla.</h1>
+            <p class="sub">Hesap açınca ilerlemen, serilerin ve portföyün tüm cihazlarında seninle olur.</p>
+            <div class="field">
+              <label for="k-ad">Adın <span class="opt">isteğe bağlı</span></label>
+              <input id="k-ad" name="ad" autocomplete="name" maxlength="60" />
+              <p class="err" data-for="ad"></p>
+            </div>
+            <div class="field">
+              <label for="k-kullanici">Kullanıcı adı</label>
+              <div class="prefix"><span>quagen/p/</span><input id="k-kullanici" name="kullaniciAdi" autocomplete="username" required maxlength="24" spellcheck="false" /></div>
+              <p class="hint">Portföy adresin olur. Küçük harf, rakam, - ve _.</p>
+              <p class="err" data-for="kullaniciAdi"></p>
+            </div>
+            <div class="field">
+              <label for="k-eposta">E-posta</label>
+              <input id="k-eposta" name="eposta" type="email" autocomplete="email" required />
+              <p class="err" data-for="eposta"></p>
+            </div>
+            <div class="field">
+              <label for="k-parola">Parola</label>
+              <div class="pw"><input id="k-parola" name="parola" type="password" autocomplete="new-password" required minlength="8" /><button type="button" class="pw-eye" aria-label="Parolayı göster" data-eye="k-parola">Göster</button></div>
+              <div class="meter" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+              <p class="hint" id="pw-hint">En az 8 karakter, bir harf ve bir rakam.</p>
+              <p class="err" data-for="parola"></p>
+            </div>
+            <p class="form-err" role="alert"></p>
+            <button class="submit" type="submit"><span class="s-label">Hesabımı oluştur</span><span class="s-spin" aria-hidden="true"></span><span class="s-check" aria-hidden="true"></span></button>
+            <p class="fine">Hesabın bu bilgisayardaki QUAGEN sunucusunda saklanır. Parolan geri çevrilemeyen bir özet olarak tutulur.</p>
+            <p class="switch">Zaten hesabın var mı? <button type="button" class="link" data-go="giris">Giriş yap</button></p>
+          </form>
+
+          <div class="signed" id="signed" hidden>
+            <h1>Zaten giriş yaptın.</h1>
+            <p class="sub" id="signed-who"></p>
+            <div class="signed-actions">
+              <a class="submit as-link" href="nextgen.html" id="signed-go">NextGen'e devam et</a>
+              <button type="button" class="link" id="signed-out">Çıkış yap</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="welcome" id="welcome" aria-hidden="true"><div class="w-in"><span class="w-mark"></span><p id="welcome-text">Hoş geldin</p></div></div>
+
+  <script>window.KD_FORCE_LANG = "js";</script>
+  <script src="assets/js/engine.js"></script>
+  <script src="assets/js/hesap.js"></script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+/* QUAGEN tasarım sistemi — ortak tokenlar (ana sayfa + NextGen)
+ * Kimlik: çalışma defteri. Soğuk kâğıt, lacivert mürekkep, tek vurgu: fosforlu kalem.
+ * Fosforlu kalem yalnızca "şu an önemli olan" şeyi işaretler: aktif satır, doğru cevap, odak.
+ */
+:root {
+  --paper: #f5f6f8;
+  --surface: #ffffff;
+  --sunken: #eceff3;
+  --ink: #13213a;
+  --ink-2: #2e3b52;
+  --graphite: #5b6678;
+  --faint: #8792a4;
+  --rule: #dfe3ea;
+  --rule-2: #c7cfdb;
+
+  --marker: #ffd84d;
+  --marker-ink: #13213a;
+  --marker-wash: rgba(255, 216, 77, 0.45);
+
+  --pass: #11805b;
+  --pass-wash: #e2f3eb;
+  --fail: #c63434;
+  --fail-wash: #fbe8e8;
+  --warn: #9a5800;
+  --warn-wash: #fff2d9;
+  --link: #2858d0;
+
+  --code-bg: #fbfbfc;
+  --sx-k: #8a2bb8;
+  --sx-s: #0d7a49;
+  --sx-n: #b14605;
+  --sx-l: #1d5fd1;
+  --sx-c: #8892a4;
+  --sx-tag: #b42357;
+  --sx-attr: #1d5fd1;
+  --sx-def: #13213a;
+
+  --sans: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --r-s: 6px;
+  --r-m: 10px;
+  --r-l: 16px;
+  --float: 0 1px 0 rgba(19, 33, 58, 0.04), 0 16px 40px -12px rgba(19, 33, 58, 0.22);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --paper: #0c1424;
+  --surface: #121c30;
+  --sunken: #0a111e;
+  --ink: #e7ecf4;
+  --ink-2: #c3ccda;
+  --graphite: #95a2b7;
+  --faint: #6b788e;
+  --rule: #223049;
+  --rule-2: #31425f;
+  --marker-wash: rgba(255, 216, 77, 0.16);
+  --pass: #3cd08b;
+  --pass-wash: rgba(60, 208, 139, 0.12);
+  --fail: #ff7070;
+  --fail-wash: rgba(255, 112, 112, 0.12);
+  --warn: #f5b84a;
+  --warn-wash: rgba(245, 184, 74, 0.12);
+  --link: #93b4ff;
+  --code-bg: #0e172a;
+  --sx-k: #d19bf2;
+  --sx-s: #8ee2a8;
+  --sx-n: #f6b26b;
+  --sx-l: #8cb8ff;
+  --sx-c: #6b7a92;
+  --sx-tag: #ff8fb7;
+  --sx-attr: #8cb8ff;
+  --sx-def: #e7ecf4;
+  --float: 0 1px 0 rgba(0, 0, 0, 0.2), 0 18px 48px -12px rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+
+/* Sözdizimi renkleri (statik kod blokları) */
+.t-k { color: var(--sx-k); font-style: normal; }
+.t-s { color: var(--sx-s); font-style: normal; }
+.t-n { color: var(--sx-n); font-style: normal; }
+.t-l { color: var(--sx-l); font-style: normal; }
+.t-c { color: var(--sx-c); font-style: italic; }
+.t-tag { color: var(--sx-tag); font-style: normal; }
+
+/* Fosforlu kalem: metnin arkasına hafif eğik bir vurgu */
+.mark {
+  background: linear-gradient(100deg, transparent 0.2em, var(--marker) 0.3em, var(--marker) calc(100% - 0.3em), transparent calc(100% - 0.2em));
+  background-size: 100% 70%;
+  background-position: 0 70%;
+  background-repeat: no-repeat;
+  color: var(--marker-ink);
+  padding: 0 0.15em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
