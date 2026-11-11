@@ -6,7 +6,9 @@
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const view = $("#view");
   const UNLOCK = 0.66;
-  const STEPS = [["tahmin", "Tahmin et"], ["incele", "İncele"], ["kodla", "Kodla"], ["hatirla", "Hatırla"]];
+  const KAMLI = LANG === "c" && !!window.KAM;   // C'de konuları ve ipuçlarını KAM anlatır
+  const STEPS = [["tahmin", "Tahmin et"], ["incele", KAMLI ? "KAM anlatıyor" : "İncele"], ["kodla", "Kodla"], ["hatirla", "Hatırla"]];
+  const MENTOR_AD = KAMLI ? "KAM" : "Mentor";
   const ALL_CARDS = C.flatMap((p) => p.cards.map((c) => Object.assign({ phase: p }, c)));
   const ALL_CH = C.flatMap((p) => p.challenges.map((c) => Object.assign({ phase: p }, c)));
   const isMac = /Mac|iPhone|iPad/.test(navigator.platform);
@@ -440,7 +442,7 @@
     const done = { tahmin: ph.predict !== null, incele: ph.viewed, kodla: m === 1, hatirla: p.cards.every((c) => S.state.cards[c.id]?.reps > 0) };
     const list = phasesOf(t.id), nextP = list[list.indexOf(p) + 1];
     view.innerHTML = `
-      <header class="ph-head ${step === "kodla" ? "compact" : ""}">
+      <header class="ph-head ${step === "kodla" || (KAMLI && step === "incele") ? "compact" : ""}">
         <div class="ph-title">
           <p class="ph-label">Faz ${p.no} <span>${esc(t.title)}</span></p>
           <h1>${esc(p.title)}</h1>
@@ -501,6 +503,7 @@
 
   /* 2 — İncele */
   function stepExample(p, stage) {
+    if (KAMLI) return window.KAM.ders(p, stage);
     const ex = p.example; let i = 0;
     stage.innerHTML = `
       <div class="panel">
@@ -601,7 +604,7 @@
           <div class="ws-tabs" role="tablist" aria-label="Çalışma adımları">
             ${ornek ? `<button role="tab" data-p="ornek"><span class="ws-n">1</span><span><b>Örnek</b><small>Benzeri çözülmüş</small></span></button>` : ""}
             <button role="tab" data-p="gorev"><span class="ws-n">${ornek ? 2 : 1}</span><span><b>Görev</b><small>${ch.tests.length} test</small></span></button>
-            <button role="tab" data-p="mentor"><span class="ws-n">${ornek ? 3 : 2}</span><span><b>Mentor</b><small>İpucu al</small></span><i class="ws-dot" hidden></i></button>
+            <button role="tab" data-p="mentor"><span class="ws-n">${ornek ? 3 : 2}</span><span><b>${MENTOR_AD}</b><small>İpucu al</small></span><i class="ws-dot" hidden></i></button>
           </div>
           ${ornek ? `<div class="ws-pane" id="pane-ornek" role="tabpanel" hidden>
             <section class="brief ornek">
@@ -634,7 +637,7 @@
           </section>
           </div>
           <div class="ws-pane" id="pane-mentor" role="tabpanel" hidden><div class="mentor">
-          <div class="m-head"><span class="m-av" aria-hidden="true">M</span><div><b>Mentor</b><small id="m-mode">${aiOn ? "Yapay zekâ, Sokratik mod" : "Yerel ipucu motoru"}</small></div></div>
+          <div class="m-head"><span class="m-av" aria-hidden="true">${MENTOR_AD[0]}</span><div><b>${MENTOR_AD}</b><small id="m-mode">${aiOn ? "Yapay zekâ, Sokratik mod" : "Yerel ipucu motoru"}</small></div></div>
           <div class="m-feed" id="feed" aria-live="polite"></div>
           <div class="m-actions">
             <button class="btn sm" id="b-hint" ${mode === "placement" ? "hidden" : ""}>İpucu al (${Math.min(hintLv + 1, ch.hints.length)}/${ch.hints.length})</button>
@@ -1442,9 +1445,10 @@
     const el = $("#ai-status"); el.textContent = on ? "Yapay zekâ mentor çevrimiçi" : "Mentor yerel modda"; el.classList.toggle("on", on);
     const mm = $("#m-mode"); if (mm) mm.textContent = on ? "Yapay zekâ, Sokratik mod" : "Yerel ipucu motoru";
   });
+  window.KD_APP = { nextTarget, mastery, renderBar, due: () => KD.srs.due(ALL_CARDS).length };
   route();
   checkBadges();
-  if (!prefs().onboarded) setTimeout(openOnboarding, document.documentElement.classList.contains("entering") ? 1800 : 300);
+  if (!prefs().onboarded) setTimeout(KAMLI ? window.KAM.tanis : openOnboarding, document.documentElement.classList.contains("entering") ? 1800 : 300);
 
   /* Ana sayfadan gelince giriş animasyonu */
   if (document.documentElement.classList.contains("entering")) {

@@ -93,6 +93,7 @@
     }
     if (yol === "/api/tutor" && yontem === "POST") return ai(Object.assign({}, g, { islem: "mentor", belirtec: belirtec() }));
     if (yol === "/api/rehber/sor" && yontem === "POST") return ai(Object.assign({}, g, { islem: "rehber", belirtec: belirtec() }));
+    if (yol === "/api/kam" && yontem === "POST") return ai(Object.assign({}, g, { islem: "kam", belirtec: belirtec() }));
     return yanit({ error: "Bulunamadı." }, 404);
   }
 
