@@ -1,7 +1,7 @@
-/* QUAGEN NextGen — Müfredat: Algoritmalar & Veri Yapıları, Faz 31–40
+/* QUAGEN NextGen — Müfredat: Algoritmalar & Veri Yapıları, Ders 31–40
  * Worker'da çalışır. Performans testleri: { setup, expr, expected, maxMs }
  *   setup ölçülmez (büyük girdiyi hazırlar), expr süresi maxMs'i aşarsa test başarısız olur.
- * Ön koşul: JavaScript temelleri (Faz 1–10).
+ * Ön koşul: JavaScript temelleri (Ders 1–10).
  */
 (function () {
   const T = 10000; // algoritma görevleri için çalışma süresi sınırı (ms)
@@ -10,7 +10,7 @@
   const AGAC = "N(1, N(2, N(4), N(5)), N(3))";
 
   const ALGO = [
-  /* ============================ FAZ 31 ============================ */
+  /* ============================ DERS 31 ============================ */
   {
     id: "p31", no: 31, track: "algo", title: "Karmaşıklık: Big-O", short: "Big-O",
     goal: "Bir çözümün girdi büyüdükçe nasıl yavaşladığını tahmin et; aynı problemi daha az işle çöz.",
@@ -28,7 +28,7 @@
         { lines: [1, 2, 3, 4], text: "Her eleman diğer her elemanla karşılaştırılıyor: yaklaşık n²/2 karşılaştırma. 20.000 eleman için 200 milyon işlem." },
         { lines: [8, 9], text: "Set, bir değerin içinde olup olmadığını ortalama sabit sürede, O(1), söyler." },
         { lines: [10, 11, 12, 13], text: "Diziyi bir kez dolaşıyoruz: O(n). Karşılığında n kadar ek bellek harcıyoruz. Hız için bellek vermek en sık yapılan takastır." },
-        { lines: [17, 18, 19, 20, 21, 22, 23], text: "Çalıştır ve iki süreyi karşılaştır. Bu fazdaki bazı testler süre de ölçer." }
+        { lines: [17, 18, 19, 20, 21, 22, 23], text: "Çalıştır ve iki süreyi karşılaştır. Bu dersteki bazı testler süre de ölçer." }
       ]
     },
     challenges: [
@@ -79,7 +79,7 @@
     ]
   },
 
-  /* ============================ FAZ 32 ============================ */
+  /* ============================ DERS 32 ============================ */
   {
     id: "p32", no: 32, track: "algo", title: "Hash map ile sayma", short: "Hash map",
     goal: "Map ve Set ile saymayı, gruplamayı ve hızlı aramayı öğren; mülakat sorularının büyük kısmı buna dayanır.",
@@ -147,7 +147,7 @@
     ]
   },
 
-  /* ============================ FAZ 33 ============================ */
+  /* ============================ DERS 33 ============================ */
   {
     id: "p33", no: 33, track: "algo", title: "İki işaretçi", short: "İki işaretçi",
     goal: "Sıralı veride iki uçtan ilerleyerek iç içe döngüyü tek geçişe indir.",
@@ -216,7 +216,7 @@
     ]
   },
 
-  /* ============================ FAZ 34 ============================ */
+  /* ============================ DERS 34 ============================ */
   {
     id: "p34", no: 34, track: "algo", title: "Kayan pencere", short: "Kayan pencere",
     goal: "Ardışık alt dizileri her seferinde baştan toplamak yerine pencereyi kaydırarak güncelle.",
@@ -286,7 +286,7 @@
     ]
   },
 
-  /* ============================ FAZ 35 ============================ */
+  /* ============================ DERS 35 ============================ */
   {
     id: "p35", no: 35, track: "algo", title: "Yığın ve kuyruk", short: "Yığın & kuyruk",
     goal: "Son giren ilk çıkar (yığın) ve ilk giren ilk çıkar (kuyruk) yapılarını problem çözmede kullan.",
@@ -357,7 +357,7 @@
     ]
   },
 
-  /* ============================ FAZ 36 ============================ */
+  /* ============================ DERS 36 ============================ */
   {
     id: "p36", no: 36, track: "algo", title: "Özyineleme ve memoization", short: "Özyineleme",
     goal: "Problemi kendisinin küçük bir kopyasına indir; aynı alt problemi tekrar çözmemek için sonucu sakla.",
@@ -425,7 +425,7 @@
     ]
   },
 
-  /* ============================ FAZ 37 ============================ */
+  /* ============================ DERS 37 ============================ */
   {
     id: "p37", no: 37, track: "algo", title: "İkili arama", short: "İkili arama",
     goal: "Sıralı veride her adımda arama alanını yarıya indirerek O(log n) sürede bul.",
@@ -498,7 +498,7 @@
     ]
   },
 
-  /* ============================ FAZ 38 ============================ */
+  /* ============================ DERS 38 ============================ */
   {
     id: "p38", no: 38, track: "algo", title: "Sıralama", short: "Sıralama",
     goal: "Böl ve yönet fikriyle O(n log n) sıralama yaz; sıralamayı diğer problemlerin ilk adımı olarak kullan.",
@@ -514,7 +514,7 @@
       steps: [
         { lines: [2], text: "Tek elemanlı dizi zaten sıralıdır: temel durum." },
         { lines: [3, 4, 5], text: "Böl: iki yarıyı ayrı ayrı sırala. Bölünme log n seviye sürer." },
-        { lines: [6, 7, 8, 9], text: "Yönet: iki sıralı yarıyı birleştir (Faz 33). Her seviyede toplam O(n) iş." },
+        { lines: [6, 7, 8, 9], text: "Yönet: iki sıralı yarıyı birleştir (Ders 33). Her seviyede toplam O(n) iş." },
         { lines: [12], text: "Toplam O(n log n). Kabarcık sıralaması O(n²)'dir." }
       ]
     },
@@ -543,7 +543,7 @@
           { args: [[4, 4, 2, 2, 3], 2], expected: [2, 4] },
           { args: [[7], 1], expected: [7] }
         ],
-        hints: ["İki adım: say (Faz 32), sonra sırala.", "[...sayim.entries()] ile [değer, adet] çiftleri al.", "sort((a, b) => b[1] - a[1] || a[0] - b[0]) ve ilk k tanesinin değerini al."],
+        hints: ["İki adım: say (Ders 32), sonra sırala.", "[...sayim.entries()] ile [değer, adet] çiftleri al.", "sort((a, b) => b[1] - a[1] || a[0] - b[0]) ve ilk k tanesinin değerini al."],
         solution: "function enSikK(dizi, k) {\n  const sayim = new Map();\n  for (const x of dizi) sayim.set(x, (sayim.get(x) || 0) + 1);\n  return [...sayim.entries()]\n    .sort((a, b) => b[1] - a[1] || a[0] - b[0])\n    .slice(0, k)\n    .map(([deger]) => deger);\n}"
       },
       {
@@ -568,7 +568,7 @@
     ]
   },
 
-  /* ============================ FAZ 39 ============================ */
+  /* ============================ DERS 39 ============================ */
   {
     id: "p39", no: 39, track: "algo", title: "Bağlı listeler", short: "Bağlı liste",
     goal: "Düğümlerin birbirini işaret ettiği yapıları işaretçileri dikkatle güncelleyerek yönet.",
@@ -635,7 +635,7 @@
     ]
   },
 
-  /* ============================ FAZ 40 ============================ */
+  /* ============================ DERS 40 ============================ */
   {
     id: "p40", no: 40, track: "algo", title: "Ağaçlar ve graflar", short: "Ağaç & graf",
     goal: "Hiyerarşik ve ağ şeklindeki veriyi derinlik öncelikli (DFS) ve genişlik öncelikli (BFS) arama ile dolaş.",

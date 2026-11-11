@@ -6,7 +6,7 @@
 (function () {
   const k = (s, ...v) => String.raw(s, ...v).replace(/^\n/, "").replace(/\s+$/, "").replace(/#\{/g, "${").replace(/‵/g, "`");
   window.KD_ORNEKLER = Object.assign(window.KD_ORNEKLER || {}, {
-  /* ---------- Faz 1–10: JavaScript temelleri ---------- */
+  /* ---------- Ders 1–10: JavaScript temelleri ---------- */
   p1c1: { t: "Vedalaşma metni", c: k`
 function vedalas(isim) {
   return ‵Hoşça kal, #{isim}!‵;
@@ -225,7 +225,7 @@ async function enBuyuk(promiseler) {
 }
 enBuyuk([Promise.resolve(3), Promise.resolve(9), Promise.resolve(4)]).then(console.log);`, n: "Promise.all hepsini aynı anda bekler ve sonuçları aynı sırada bir dizi olarak verir. Sonrası normal dizi işlemidir." },
 
-  /* ---------- Faz 31–40: Algoritmalar ---------- */
+  /* ---------- Ders 31–40: Algoritmalar ---------- */
   p31c1: { t: "Tek geçişte en büyük iki sayı", c: k`
 function enBuyukIki(dizi) {
   let bir = -Infinity, iki = -Infinity;
@@ -473,7 +473,7 @@ function azalanSirala(dizi) {
   }
   return d;
 }
-console.log(azalanSirala([3, 9, 1, 7]));`, n: "Bu O(n²)'dir ve 20.000 elemanda yavaş kalır. Görev için birleştirmeli sıralama gerekir: ikiye böl, yarıları sırala, sıralı yarıları birleştir (Faz 33)." },
+console.log(azalanSirala([3, 9, 1, 7]));`, n: "Bu O(n²)'dir ve 20.000 elemanda yavaş kalır. Görev için birleştirmeli sıralama gerekir: ikiye böl, yarıları sırala, sıralı yarıları birleştir (Ders 33)." },
   p38c2: { t: "En uzun k kelime", c: k`
 function enUzunK(kelimeler, k) {
   return [...kelimeler]
@@ -565,7 +565,7 @@ function ulasilirMi(graf, bas, son) {
 }
 console.log(ulasilirMi({ a: ["b"], b: ["c", "a"], c: [], d: ["a"] }, "a", "c"), ulasilirMi({ a: ["b"], b: [] }, "b", "a"));`, n: "BFS: kuyruk + görülenler kümesi (döngüde takılmamak için). En kısa yol için kuyruğa düğümle birlikte uzaklığını da koy." },
 
-  /* ---------- Faz 41–50: Backend ---------- */
+  /* ---------- Ders 41–50: Backend ---------- */
   p41c1: { t: "Dosya adı kalıbı", c: k`
 // "rapor-:yil.pdf" kalıbı "rapor-2026.pdf" ile eşleşir ve { yil: "2026" } verir.
 function adEslestir(kalip, ad) {

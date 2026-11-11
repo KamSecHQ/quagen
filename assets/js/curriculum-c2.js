@@ -1,4 +1,4 @@
-/* QUAGEN NextGen — Müfredat: İleri C, Faz 11–20 (dil: C, parkur: c2)
+/* QUAGEN NextGen — Müfredat: İleri C, Ders 11–20 (dil: C, parkur: c2)
  * Aynı C çalıştırıcı (clang + AddressSanitizer/UBSan). Testler curriculum-c.js'deki biçimi kullanır.
  */
 (function () {
@@ -11,7 +11,7 @@
   const AGAC = "Dal *k = NULL; int s[] = {5, 3, 8, 1, 4}; for (int i = 0; i < 5; i++) k = ekle(k, s[i]);";
 
   const C2 = [
-  /* ============================ C · FAZ 11 ============================ */
+  /* ============================ C · DERS 11 ============================ */
   {
     id: "c11", no: 11, language: "c", track: "c2", title: "Bit işlemleri", short: "Bitler",
     goal: "Sayıların ikili gösterimiyle doğrudan çalış: maskeler, bayraklar ve bit sayma.",
@@ -85,7 +85,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 12 ============================ */
+  /* ============================ C · DERS 12 ============================ */
   {
     id: "c12", no: 12, language: "c", track: "c2", title: "Enum, switch ve durum makineleri", short: "Enum & switch",
     goal: "Sınırlı seçenekleri enum ile adlandır, switch ile dallan ve durum makinesi kur.",
@@ -157,7 +157,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 13 ============================ */
+  /* ============================ C · DERS 13 ============================ */
   {
     id: "c13", no: 13, language: "c", track: "c2", title: "Fonksiyon işaretçileri ve qsort", short: "Fonksiyon işaretçileri",
     goal: "Fonksiyonları değer gibi aktar; standart qsort ile her türlü veriyi sırala.",
@@ -222,7 +222,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 14 ============================ */
+  /* ============================ C · DERS 14 ============================ */
   {
     id: "c14", no: 14, language: "c", track: "c2", title: "Önişlemci ve makrolar", short: "Makrolar",
     goal: "Derlemeden önce çalışan metin değiştiriciyi tanı; makroların tuzaklarını ve güvenli alternatiflerini öğren.",
@@ -240,7 +240,7 @@
       steps: [
         { lines: [3], text: "Parametre (d) ve tüm ifade parantezli. sizeof, makroyla birlikte kullanıldığında derleme anında hesaplanır." },
         { lines: [5], text: "static inline fonksiyon, makronun hızına yakın ama tür denetimi var ve argümanlar bir kez değerlendirilir." },
-        { lines: [10], text: "DIZI_UZUNLUK yalnızca gerçek dizilerde doğru çalışır; işaretçiye dönüşmüş dizide (Faz 5) yanlış sonuç verir." }
+        { lines: [10], text: "DIZI_UZUNLUK yalnızca gerçek dizilerde doğru çalışır; işaretçiye dönüşmüş dizide (Ders 5) yanlış sonuç verir." }
       ]
     },
     challenges: [
@@ -289,7 +289,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 15 ============================ */
+  /* ============================ C · DERS 15 ============================ */
   {
     id: "c15", no: 15, language: "c", track: "c2", title: "Metin ayrıştırma", short: "Ayrıştırma",
     goal: "Ham metni adım adım okuyarak sayılara ve parçalara dönüştür: her ayrıştırıcının temeli.",
@@ -362,7 +362,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 16 ============================ */
+  /* ============================ C · DERS 16 ============================ */
   {
     id: "c16", no: 16, language: "c", track: "c2", title: "Hash tablosu", short: "Hash tablosu",
     goal: "JavaScript'teki Map'in altında yatan yapıyı kendin kur: hash fonksiyonu, kovalar ve zincirleme.",
@@ -420,7 +420,7 @@
           { label: "tablo boşalır", setup: "Tablo t = {0}; tablo_koy(&t, \"a\", 1); tablo_sil(&t);", expr: "t.boyut == 0 && tablo_al(&t, \"a\") == NULL", type: "bool", expected: true },
           { label: "tekrar kullanılabilir", setup: "Tablo t = {0}; tablo_koy(&t, \"a\", 1); tablo_sil(&t); tablo_koy(&t, \"b\", 2);", expr: "*tablo_al(&t, \"b\")", type: "int", expected: 2 }
         ],
-        hints: ["Her girdi için iki free gerekiyor: anahtar kopyası ve girdinin kendisi.", "Bağlı listeyi silerken sonraki düğümü önce sakla (C Faz 10).", "for (int k = 0; k < KOVA; k++) { Girdi *g = t->kovalar[k]; while (g) { Girdi *s = g->sonraki; free(g->anahtar); free(g); g = s; } t->kovalar[k] = NULL; } t->boyut = 0;"],
+        hints: ["Her girdi için iki free gerekiyor: anahtar kopyası ve girdinin kendisi.", "Bağlı listeyi silerken sonraki düğümü önce sakla (C Ders 10).", "for (int k = 0; k < KOVA; k++) { Girdi *g = t->kovalar[k]; while (g) { Girdi *s = g->sonraki; free(g->anahtar); free(g); g = s; } t->kovalar[k] = NULL; } t->boyut = 0;"],
         solution: TABLO + DJB2 + KOY_AL + "\nvoid tablo_sil(Tablo *t) {\n  for (int k = 0; k < KOVA; k++) {\n    Girdi *g = t->kovalar[k];\n    while (g) {\n      Girdi *s = g->sonraki;\n      free(g->anahtar);\n      free(g);\n      g = s;\n    }\n    t->kovalar[k] = NULL;\n  }\n  t->boyut = 0;\n}"
       })
     ],
@@ -431,7 +431,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 17 ============================ */
+  /* ============================ C · DERS 17 ============================ */
   {
     id: "c17", no: 17, language: "c", track: "c2", title: "İkili arama ağacı", short: "Arama ağacı",
     goal: "Sıralı veriyi O(log n) ortalamayla eklenip aranabilen bir ağaçta tut; özyinelemeli yapıları sızıntısız yönet.",
@@ -499,7 +499,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 18 ============================ */
+  /* ============================ C · DERS 18 ============================ */
   {
     id: "c18", no: 18, language: "c", track: "c2", title: "Kuyruk, yığın ve RPN", short: "Kuyruk & yığın",
     goal: "Sabit boyutlu dairesel kuyruk ve yığın yaz; bir ifade değerlendiricide birleştir.",
@@ -556,7 +556,7 @@
           { label: "\"12 3 - 4 -\"", expr: "rpn_hesapla(\"12 3 - 4 -\")", type: "int", expected: 5 },
           { label: "\"7\"", expr: "rpn_hesapla(\"7\")", type: "int", expected: 7 }
         ],
-        hints: ["Sayı görünce yığına it; operatör görünce iki eleman çek, işlemi yap, sonucu it.", "Çok basamaklı sayıyı Faz 15'teki gibi biriktir: while (isdigit) n = n * 10 + (*s - '0').", "Çekme sırasına dikkat: b = yigin[--ust]; a = yigin[--ust]; sonuç a op b. Sonunda yigin[0] döner."],
+        hints: ["Sayı görünce yığına it; operatör görünce iki eleman çek, işlemi yap, sonucu it.", "Çok basamaklı sayıyı Ders 15'teki gibi biriktir: while (isdigit) n = n * 10 + (*s - '0').", "Çekme sırasına dikkat: b = yigin[--ust]; a = yigin[--ust]; sonuç a op b. Sonunda yigin[0] döner."],
         solution: "#include <ctype.h>\n\nint rpn_hesapla(const char *ifade) {\n  int yigin[64];\n  int ust = 0;\n  for (const char *s = ifade; *s;) {\n    if (isdigit((unsigned char)*s)) {\n      int n = 0;\n      while (isdigit((unsigned char)*s)) n = n * 10 + (*s++ - '0');\n      yigin[ust++] = n;\n    } else if (*s == '+' || *s == '-' || *s == '*' || *s == '/') {\n      int b = yigin[--ust], a = yigin[--ust];\n      yigin[ust++] = *s == '+' ? a + b : *s == '-' ? a - b : *s == '*' ? a * b : a / b;\n      s++;\n    } else s++;\n  }\n  return yigin[0];\n}"
       })
     ],
@@ -567,7 +567,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 19 ============================ */
+  /* ============================ C · DERS 19 ============================ */
   {
     id: "c19", no: 19, language: "c", track: "c2", title: "Matrisler ve bellek düzeni", short: "Matrisler",
     goal: "İki boyutlu veriyi bellekte yerleştir: satır öncelikli diziler, dinamik matrisler ve yapı hizalaması.",
@@ -633,7 +633,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 20 ============================ */
+  /* ============================ C · DERS 20 ============================ */
   {
     id: "c20", no: 20, language: "c", track: "c2", title: "Mini proje: metin istatistiği", short: "Metin aracı",
     goal: "Standart girdiden metin okuyan, sayan ve sıralayan küçük bir komut satırı aracı yaz: wc ve sort'un kardeşi.",
@@ -664,7 +664,7 @@
           { label: "fazla boşluk", stdin: "  a   b\n\nc\n", stdout: "satir: 3\nkelime: 3\nkarakter: 11" },
           { label: "boş girdi", stdin: "", stdout: "satir: 0\nkelime: 0\nkarakter: 0" }
         ],
-        hints: ["Tek bir while ((c = getchar()) != EOF) döngüsünde üç sayacı birlikte güncelle.", "Her karakter: karakter++; '\\n' ise satir++. Kelimeler için Faz 15'teki 'içinde mi' durumu.", "Döngüden sonra printf(\"satir: %d\\nkelime: %d\\nkarakter: %d\\n\", …);"],
+        hints: ["Tek bir while ((c = getchar()) != EOF) döngüsünde üç sayacı birlikte güncelle.", "Her karakter: karakter++; '\\n' ise satir++. Kelimeler için Ders 15'teki 'içinde mi' durumu.", "Döngüden sonra printf(\"satir: %d\\nkelime: %d\\nkarakter: %d\\n\", …);"],
         solution: "#include <stdio.h>\n#include <ctype.h>\n#include <stdbool.h>\n\nint main(void) {\n  int c, satir = 0, kelime = 0, karakter = 0;\n  bool icinde = false;\n  while ((c = getchar()) != EOF) {\n    karakter++;\n    if (c == '\\n') satir++;\n    if (isspace(c)) icinde = false;\n    else if (!icinde) { icinde = true; kelime++; }\n  }\n  printf(\"satir: %d\\nkelime: %d\\nkarakter: %d\\n\", satir, kelime, karakter);\n  return 0;\n}"
       }),
       c({

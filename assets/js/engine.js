@@ -266,7 +266,7 @@ window.KD = window.KD || {};
 })(window.KD);
 
 /* ---------------- Beceri modeli: Bayesçi bilgi takibi (BKT) ----------------
- * Corbett & Anderson (1994). Her faz bir beceri. P(L): beceriye hâkim olma olasılığı.
+ * Corbett & Anderson (1994). Her ders bir beceri. P(L): beceriye hâkim olma olasılığı.
  * Gözlemler: test çalıştırmaları, tahmin soruları, tekrar kartları. Hâkimiyet eşiği 0.95.
  */
 (function (KD) {

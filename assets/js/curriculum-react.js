@@ -1,4 +1,4 @@
-/* QUAGEN NextGen — Müfredat: React, Faz 21–30
+/* QUAGEN NextGen — Müfredat: React, Ders 21–30
  * lang: "jsx" → kod tarayıcıda Babel ile derlenir, React 18 ile izole iframe'de çalışır.
  * `import ... from "react"` ve `export` satırları gerçek projedeki gibi yazılabilir (otomatik ayıklanır).
  * App bileşeni tanımlıysa #root'a otomatik bağlanır.
@@ -10,7 +10,7 @@
   const ADLAR = `kd.$$("li.kurs .ad").map((e) => e.textContent)`;
 
   const REACT = [
-  /* ============================ FAZ 21 ============================ */
+  /* ============================ DERS 21 ============================ */
   {
     id: "p21", no: 21, track: "react", title: "JSX & İlk Bileşen", short: "JSX & Bileşen",
     goal: "Arayüzü küçük, yeniden kullanılabilir fonksiyonlara böl ve JSX ile tarif et.",
@@ -153,7 +153,7 @@ function App() {
     ]
   },
 
-  /* ============================ FAZ 22 ============================ */
+  /* ============================ DERS 22 ============================ */
   {
     id: "p22", no: 22, track: "react", title: "Props & Kompozisyon", short: "Props",
     goal: "Bileşenlere dışarıdan veri ver; küçük parçalardan büyük arayüzler kur.",
@@ -323,7 +323,7 @@ function App() {
     ]
   },
 
-  /* ============================ FAZ 23 ============================ */
+  /* ============================ DERS 23 ============================ */
   {
     id: "p23", no: 23, track: "react", title: "State & Olaylar", short: "useState",
     goal: "Zamanla değişen veriyi state ile yönet; React'in yeniden render döngüsünü kavra.",
@@ -515,7 +515,7 @@ function App() {
     ]
   },
 
-  /* ============================ FAZ 24 ============================ */
+  /* ============================ DERS 24 ============================ */
   {
     id: "p24", no: 24, track: "react", title: "Listeler, key & Koşullu Render", short: "Listeler",
     goal: "Dizileri arayüze dönüştür; boş, yükleniyor ve dolu durumlarını doğru göster.",
@@ -559,7 +559,7 @@ function App() {
 }`,
       steps: [
         { lines: [7], text: "Erken dönüş (early return) ile boş durum: önce kenar durumu ele al." },
-        { lines: [10], text: "map her öğeyi bir JSX öğesine dönüştürür (Faz 7'deki map ile aynı!)." },
+        { lines: [10], text: "map her öğeyi bir JSX öğesine dönüştürür (Ders 7'deki map ile aynı!)." },
         { lines: [11], text: "key: React'in hangi öğenin hangisi olduğunu takip etmesi için benzersiz ve SABİT bir kimlik. Veritabanı id'si ideal; index son çare." },
         { lines: [12], text: "Üçlü operatörle koşullu içerik." }
       ]
@@ -701,7 +701,7 @@ function App() {
     ]
   },
 
-  /* ============================ FAZ 25 ============================ */
+  /* ============================ DERS 25 ============================ */
   {
     id: "p25", no: 25, track: "react", title: "Kontrollü Formlar", short: "Formlar",
     goal: "Form alanlarını state'e bağla; doğrulama ve gönderimi React yoluyla yönet.",
@@ -742,7 +742,7 @@ function App() {
         { lines: [2], text: "Formun her alanı için bir state: tek doğruluk kaynağı yine state." },
         { lines: [8, 9], text: "value state'ten gelir, onChange her tuşta state'i günceller → ekran yeniden render. Bu döngüye 'kontrollü bileşen' denir." },
         { lines: [3, 12], text: "Doğrulama ayrı bir state DEĞİL: state'ten her render'da TÜRETİLİR. Gereksiz state = senkron dışı kalma riski." },
-        { lines: [6], text: "onSubmit + preventDefault: Faz 18'deki ile aynı fikir, React sözdizimiyle." }
+        { lines: [6], text: "onSubmit + preventDefault: Ders 18'deki ile aynı fikir, React sözdizimiyle." }
       ]
     },
     challenges: [
@@ -892,7 +892,7 @@ function App() {
     ]
   },
 
-  /* ============================ FAZ 26 ============================ */
+  /* ============================ DERS 26 ============================ */
   {
     id: "p26", no: 26, track: "react", title: "useEffect & Veri Çekme", short: "useEffect",
     goal: "Render dışındaki yan etkileri (API, başlık, zamanlayıcı) doğru zamanda çalıştır.",
@@ -937,7 +937,7 @@ function App() {
       steps: [
         { lines: [2, 3], text: "Veri, hata (ve gerekirse yükleniyor) için state." },
         { lines: [5, 13], text: "useEffect(fonksiyon, bağımlılıklar). Render içinde fetch YAPMA — sonsuz döngüye girer. Yan etkiler effect'e." },
-        { lines: [8], text: "Faz 19'u hatırla: fetch 404'te hata fırlatmaz, res.ok'u kontrol et." },
+        { lines: [8], text: "Ders 19'u hatırla: fetch 404'te hata fırlatmaz, res.ok'u kontrol et." },
         { lines: [13], text: "[] → sadece ilk render'dan sonra. [id] → id değiştikçe. Hiç yazmazsan → her render'dan sonra (genelde hata)." },
         { lines: [15, 16, 17], text: "Üç durumu da render et: hata, yükleniyor, veri." }
       ]
@@ -1079,7 +1079,7 @@ function App() {
     ]
   },
 
-  /* ============================ FAZ 27 ============================ */
+  /* ============================ DERS 27 ============================ */
   {
     id: "p27", no: 27, track: "react", title: "State'i Yukarı Taşımak", short: "Veri Akışı",
     goal: "Birden fazla bileşenin paylaştığı veriyi ortak ebeveyne taşı; veriyi aşağı, olayları yukarı akıt.",
@@ -1322,7 +1322,7 @@ function App() {
     ]
   },
 
-  /* ============================ FAZ 28 ============================ */
+  /* ============================ DERS 28 ============================ */
   {
     id: "p28", no: 28, track: "react", title: "useReducer", short: "useReducer",
     goal: "Karmaşık state mantığını saf bir fonksiyonda topla: test edilebilir, öngörülebilir güncellemeler.",
@@ -1572,7 +1572,7 @@ function App() {
     ]
   },
 
-  /* ============================ FAZ 29 ============================ */
+  /* ============================ DERS 29 ============================ */
   {
     id: "p29", no: 29, track: "react", title: "Context & Custom Hooks", short: "Context & Hooks",
     goal: "Prop delmeden (prop drilling) veri paylaş; tekrar eden mantığı kendi hook'larına çıkar.",
@@ -1736,7 +1736,7 @@ function App() {
           { label: "başarılı", check: `(async () => { const h = kd.hook(() => useFetch("/api/kurslar")); await kd.tick(200); return [h.current.yukleniyor, h.current.veri && h.current.veri.length, h.current.hata]; })()`, expected: [false, 3, null] },
           { label: "404", check: `(async () => { const h = kd.hook(() => useFetch("/api/yok")); await kd.tick(200); return [h.current.yukleniyor, h.current.veri, h.current.hata]; })()`, expected: [false, null, "HTTP 404"] }
         ],
-        hints: ["Üç state + bir useEffect. Faz 26'daki veri çekme kodunu bir hook'a taşıyorsun.", "useEffect(() => { fetch(url).then(res => { if (!res.ok) throw new Error(\"HTTP \" + res.status); return res.json(); })… }, [url]);", ".then(setVeri).catch(e => setHata(e.message)).finally(() => setYukleniyor(false))"],
+        hints: ["Üç state + bir useEffect. Ders 26'daki veri çekme kodunu bir hook'a taşıyorsun.", "useEffect(() => { fetch(url).then(res => { if (!res.ok) throw new Error(\"HTTP \" + res.status); return res.json(); })… }, [url]);", ".then(setVeri).catch(e => setHata(e.message)).finally(() => setYukleniyor(false))"],
         solution: `function useFetch(url) {
   const [veri, setVeri] = useState(null);
   const [yukleniyor, setYukleniyor] = useState(true);
@@ -1773,7 +1773,7 @@ function App() {
     ]
   },
 
-  /* ============================ FAZ 30 ============================ */
+  /* ============================ DERS 30 ============================ */
   {
     id: "p30", no: 30, track: "react", title: "Mini Proje: Kurs Kataloğu", short: "React Projesi",
     goal: "Veri çekme, arama, favoriler, sıralama ve filtrelemeyi tek bir gerçekçi uygulamada birleştir.",
@@ -1854,7 +1854,7 @@ function App() {
           { label: '"S" (büyük harf)', check: `(async () => { await kd.type("#ara", "S"); return ${ADLAR}; })()`, expected: ["CSS", "Node.js", "TypeScript"] },
           { label: "boş → hepsi", check: `(async () => { await kd.type("#ara", ""); return kd.$$("li.kurs").length; })()`, expected: 5 }
         ],
-        hints: ["İki bağımsız iş: effect ile veri çekme (Faz 26) + kontrollü input (Faz 25).", "useEffect(() => { fetch(\"/api/katalog\").then((r) => r.json()).then(setKurslar); }, []);", "const gorunen = kurslar.filter((k) => k.ad.toLowerCase().includes(arama.toLowerCase())); — map'i gorunen üzerinde yap."],
+        hints: ["İki bağımsız iş: effect ile veri çekme (Ders 26) + kontrollü input (Ders 25).", "useEffect(() => { fetch(\"/api/katalog\").then((r) => r.json()).then(setKurslar); }, []);", "const gorunen = kurslar.filter((k) => k.ad.toLowerCase().includes(arama.toLowerCase())); — map'i gorunen üzerinde yap."],
         solution: `function KursKatalogu() {
   const [kurslar, setKurslar] = useState([]);
   const [arama, setArama] = useState("");

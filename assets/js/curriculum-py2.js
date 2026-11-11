@@ -1,10 +1,10 @@
-/* QUAGEN NextGen — Müfredat: Python ile veri ve otomasyon, Faz 11–20 (dil: Python, parkur: py2) */
+/* QUAGEN NextGen — Müfredat: Python ile veri ve otomasyon, Ders 11–20 (dil: Python, parkur: py2) */
 (function () {
   const k = (s, ...v) => String.raw(s, ...v).replace(/^\n/, "").replace(/\s+$/, "") + "\n";
   const g = (o) => Object.assign({ lang: "py" }, o);
 
   const PY2 = [
-  /* ============================ Python · FAZ 11 ============================ */
+  /* ============================ Python · DERS 11 ============================ */
   {
     id: "py11", no: 11, language: "py", track: "py2", title: "Sınıflar ve nesneler", short: "Sınıflar",
     goal: "Veriyi ve onu değiştiren davranışı bir arada tut: class, __init__, self, nesne ve sınıf özellikleri.",
@@ -139,7 +139,7 @@ class Sepet:
           { label: "sepetler ayrı", setup: "a = Sepet()\nb = Sepet()\na.ekle(\"elma\")", expr: "b.urunler", expected: [] },
           { label: "ekle sayıyı döndürür", setup: "a = Sepet()\na.ekle(\"x\")", expr: "a.ekle(\"y\")", expected: 2 }
         ],
-        hints: ["urunler sınıf gövdesinde tanımlanmış: sınıf özelliği mi, nesne özelliği mi?", "Tek bir liste tüm nesneler arasında paylaşılıyor (Faz 4'teki varsayılan liste tuzağının kuzeni).", "__init__ içinde self.urunler = [] oluştur."],
+        hints: ["urunler sınıf gövdesinde tanımlanmış: sınıf özelliği mi, nesne özelliği mi?", "Tek bir liste tüm nesneler arasında paylaşılıyor (Ders 4'teki varsayılan liste tuzağının kuzeni).", "__init__ içinde self.urunler = [] oluştur."],
         solution: k`
 class Sepet:
     def __init__(self):
@@ -158,7 +158,7 @@ class Sepet:
     ]
   },
 
-  /* ============================ Python · FAZ 12 ============================ */
+  /* ============================ Python · DERS 12 ============================ */
   {
     id: "py12", no: 12, language: "py", track: "py2", title: "Özel metotlar ve veri modeli", short: "Özel metotlar",
     goal: "Kendi türlerini Python'un yerleşik türleri gibi davranır hâle getir: yazdırma, karşılaştırma, toplama, kümede kullanma.",
@@ -313,7 +313,7 @@ class Oyuncu:
     ]
   },
 
-  /* ============================ Python · FAZ 13 ============================ */
+  /* ============================ Python · DERS 13 ============================ */
   {
     id: "py13", no: 13, language: "py", track: "py2", title: "collections: Counter, defaultdict, deque", short: "collections",
     goal: "Standart kütüphanenin hazır veri yapılarıyla sayma, gruplama ve kuyruk işlerini kısa ve hızlı yap.",
@@ -348,7 +348,7 @@ for olay in ["giriş", "ara", "sepet", "ödeme"]:
 print(list(son_uc))
 `,
       steps: [
-        { lines: [4], text: "Counter, Faz 7'deki get(..., 0) + 1 kalıbının hazır hâli. most_common sıralı sonuç verir." },
+        { lines: [4], text: "Counter, Ders 7'deki get(..., 0) + 1 kalıbının hazır hâli. most_common sıralı sonuç verir." },
         { lines: [6, 8], text: "defaultdict(list) olmayan anahtara ilk erişimde otomatik boş liste koyar; setdefault'a gerek kalmaz." },
         { lines: [11, 13], text: "deque iki uçtan O(1) ekleme/çıkarma yapar; maxlen dolunca en eski eleman düşer. Çıktı: ['ara', 'sepet', 'ödeme']." }
       ]
@@ -442,7 +442,7 @@ def kayan_ortalama(sayilar, k):
     ]
   },
 
-  /* ============================ Python · FAZ 14 ============================ */
+  /* ============================ Python · DERS 14 ============================ */
   {
     id: "py14", no: 14, language: "py", track: "py2", title: "Yineleyiciler ve üreteçler", short: "Üreteçler",
     goal: "Değerleri ihtiyaç anında üret: yield, tembel değerlendirme, sonsuz diziler ve itertools.",
@@ -561,7 +561,7 @@ def duzlestir(veri):
     ]
   },
 
-  /* ============================ Python · FAZ 15 ============================ */
+  /* ============================ Python · DERS 15 ============================ */
   {
     id: "py15", no: 15, language: "py", track: "py2", title: "Kapanışlar ve dekoratörler", short: "Dekoratörler",
     goal: "Fonksiyonları değer gibi kullan: fonksiyon döndüren fonksiyonlar, nonlocal ve davranış ekleyen dekoratörler.",
@@ -696,7 +696,7 @@ def onbellek(f):
     ]
   },
 
-  /* ============================ Python · FAZ 16 ============================ */
+  /* ============================ Python · DERS 16 ============================ */
   {
     id: "py16", no: 16, language: "py", track: "py2", title: "CSV ve JSON ile veri", short: "CSV & JSON",
     goal: "Gerçek dünyanın iki veri biçimini oku ve yaz: csv modülüyle tablolar, json modülüyle iç içe yapılar.",
@@ -821,7 +821,7 @@ def csv_yaz(kayitlar, sutunlar):
     ]
   },
 
-  /* ============================ Python · FAZ 17 ============================ */
+  /* ============================ Python · DERS 17 ============================ */
   {
     id: "py17", no: 17, language: "py", track: "py2", title: "Düzenli ifadeler (re)", short: "Düzenli ifadeler",
     goal: "Metinde kalıp ara, ayıkla, doğrula ve dönüştür: karakter sınıfları, nicelikler, gruplar ve re.sub.",
@@ -935,7 +935,7 @@ def telefon_gecerli(s):
     ]
   },
 
-  /* ============================ Python · FAZ 18 ============================ */
+  /* ============================ Python · DERS 18 ============================ */
   {
     id: "py18", no: 18, language: "py", track: "py2", title: "Tarihler ve dataclass", short: "Tarih & dataclass",
     goal: "Zamanla doğru hesap yap (date, timedelta) ve veri taşıyan sınıfları @dataclass ile kısaca tanımla.",
@@ -1065,7 +1065,7 @@ class Urun:
     ]
   },
 
-  /* ============================ Python · FAZ 19 ============================ */
+  /* ============================ Python · DERS 19 ============================ */
   {
     id: "py19", no: 19, language: "py", track: "py2", title: "Algoritmalar Python'da: heapq, bisect, BFS", short: "Algoritmalar",
     goal: "Standart kütüphanenin algoritmik araçlarıyla verimli çözümler: öncelik kuyruğu, ikili arama ve graf üzerinde genişlik öncelikli arama.",
@@ -1201,7 +1201,7 @@ def en_kisa_yol(graf, bas, son):
     ]
   },
 
-  /* ============================ Python · FAZ 20 ============================ */
+  /* ============================ Python · DERS 20 ============================ */
   {
     id: "py20", no: 20, language: "py", track: "py2", title: "Mini proje: veri raporu aracı", short: "Veri raporu",
     goal: "Standart girdiden CSV okuyan, gruplayan, sıralayan ve biçimli rapor yazan bir komut satırı aracı yaz.",

@@ -1,4 +1,4 @@
-/* QUAGEN Rehber — arayüz
+/* QUAGEN Kütüphane — arayüz
  * Yollar: #/  ·  #/ara/<sorgu>  ·  #/k/<kavram>/<dil>  ·  #/kategori/<n>  ·  #/terimler
  */
 (function () {
@@ -57,7 +57,7 @@
       <section class="hero">
         <p class="kicker"><span class="pulse"></span>Türkçe programlama başvurusu</p>
         <h1>Ne yapmak istediğini <mark>kendi cümlenle</mark> yaz.</h1>
-        <p class="lead">Fonksiyonun adını bilmene gerek yok. Rehber niyetini anlar, doğru yapıyı, kullanım şeklini ve diğer dillerdeki karşılığını gösterir. Her örneği burada çalıştırırsın.</p>
+        <p class="lead">Fonksiyonun adını bilmene gerek yok. Kütüphane niyetini anlar, doğru yapıyı, kullanım şeklini ve diğer dillerdeki karşılığını gösterir. Her örneği burada çalıştırırsın.</p>
         <form class="big-search" id="ara-form" role="search">
           <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           <input id="ara-girdi" type="search" autocomplete="off" spellcheck="false" aria-label="Ne yapmak istiyorsun?" value="${esc(sorgu)}" />
@@ -190,7 +190,7 @@
         const res = await fetch("/api/rehber/sor", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ soru: q, dil: r.dil || (secili !== "tum" ? secili : null), adaylar }) });
         const j = await res.json();
         if (!res.ok) throw new Error(j.error || "Asistan yanıt veremedi.");
-        kutu.innerHTML = aiMetin(j.cevap) + (j.kavramlar && j.kavramlar.length ? `<p class="muted small">Rehber'de: ${j.kavramlar.filter(kavramBul).map((id) => `<a href="#/k/${id}">${esc(kavramBul(id).baslik)}</a>`).join(", ")}</p>` : "");
+        kutu.innerHTML = aiMetin(j.cevap) + (j.kavramlar && j.kavramlar.length ? `<p class="muted small">Kütüphane'de: ${j.kavramlar.filter(kavramBul).map((id) => `<a href="#/k/${id}">${esc(kavramBul(id).baslik)}</a>`).join(", ")}</p>` : "");
       } catch (e) {
         kutu.innerHTML = `<p class="hata">${esc(e.message)}</p>`;
         if (/kapalı/.test(e.message)) aiVar = false;
@@ -220,10 +220,10 @@
     const sira = kardes.indexOf(k);
     const onceki = kardes[sira - 1], sonraki = kardes[sira + 1];
     const girdiVar = t === "py" || t === "c";
-    document.title = `${g.ad} · ${k.baslik} — QUAGEN Rehber`;
+    document.title = `${g.ad} · ${k.baslik} — QUAGEN Kütüphane`;
     ana.innerHTML = `
       <article class="kv">
-        <nav class="iz" aria-label="Konum"><a href="#/">Rehber</a><span>/</span><a href="#/kategori/${katIdx}">${esc(k.kategori)}</a></nav>
+        <nav class="iz" aria-label="Konum"><a href="#/">Kütüphane</a><span>/</span><a href="#/kategori/${katIdx}">${esc(k.kategori)}</a></nav>
         <h1>${esc(k.baslik)}</h1>
         <div class="kv-tabs" role="tablist">${diller.map((x) => `<a role="tab" aria-selected="${x === d}" href="#/k/${k.id}/${x}" style="--c:${R.DILLER[x].renk}"><i class="dot"></i>${R.DILLER[x].ad}</a>`).join("")}</div>
 
@@ -291,8 +291,8 @@
     if (!kat) return bulunamadi();
     $("#mini-ara").hidden = false;
     const ks = R.KAVRAMLAR.filter((k) => k.kategori === kat && (secili === "tum" || k.diller[secili]));
-    document.title = `${kat} — QUAGEN Rehber`;
-    ana.innerHTML = `<section class="kat-s"><nav class="iz"><a href="#/">Rehber</a><span>/</span></nav><h1>${esc(kat)}</h1><p class="muted">${ks.length} kavram${secili !== "tum" ? " · " + R.DILLER[secili].ad : ""}</p>
+    document.title = `${kat} — QUAGEN Kütüphane`;
+    ana.innerHTML = `<section class="kat-s"><nav class="iz"><a href="#/">Kütüphane</a><span>/</span></nav><h1>${esc(kat)}</h1><p class="muted">${ks.length} kavram${secili !== "tum" ? " · " + R.DILLER[secili].ad : ""}</p>
       <div class="kart-liste">${ks.map((k, j) => {
         const d = secili !== "tum" && k.diller[secili] ? secili : DIL_SIRA.find((x) => k.diller[x]);
         return `<a class="kk" style="--i:${j}" href="#/k/${k.id}${secili !== "tum" ? "/" + secili : ""}"><b>${esc(k.baslik)}</b><code>${esc(k.diller[d].ad)}</code><p>${md(k.diller[d].aciklama.split(/(?<=\.)\s/)[0])}</p><span class="kk-d">${DIL_SIRA.filter((x) => k.diller[x]).map((x) => `<i style="--c:${R.DILLER[x].renk}">${R.DILLER[x].kisa}</i>`).join("")}</span></a>`;
@@ -302,10 +302,10 @@
   /* ---------- Terimler ---------- */
   function terimlerSayfa() {
     $("#mini-ara").hidden = false;
-    document.title = "Terimler sözlüğü — QUAGEN Rehber";
+    document.title = "Terimler sözlüğü — QUAGEN Kütüphane";
     const sirali = [...R.TERIMLER].sort((a, b) => a.terim.localeCompare(b.terim, "tr"));
     const harfler = [...new Set(sirali.map((t) => t.terim[0].toLocaleUpperCase("tr")))];
-    ana.innerHTML = `<section class="terimler"><nav class="iz"><a href="#/">Rehber</a><span>/</span></nav><h1>Terimler sözlüğü</h1>
+    ana.innerHTML = `<section class="terimler"><nav class="iz"><a href="#/">Kütüphane</a><span>/</span></nav><h1>Terimler sözlüğü</h1>
       <p class="muted">Yazılım dünyasında sık geçen ${sirali.length} terimin Türkçe açıklaması ve İngilizce karşılığı.</p>
       <div class="harf-dizin">${harfler.map((h) => `<a href="#h-${h}" data-h="${h}">${h}</a>`).join("")}</div>
       ${harfler.map((h) => `<h2 class="harf" id="h-${h}">${h}</h2><dl class="tl">${sirali.filter((t) => t.terim[0].toLocaleUpperCase("tr") === h).map((t) => `<div class="te" id="t-${t.id}"><dt>${esc(t.terim)} <small>${esc(t.ing)}</small></dt><dd>${esc(t.tanim)}${t.kavram ? ` <a href="#/k/${t.kavram}">Kavram sayfası →</a>` : ""}</dd></div>`).join("")}</dl>`).join("")}</section>`;
@@ -314,7 +314,7 @@
     if (hedef) { sessionStorage.removeItem("kd-terim"); const el = $("#t-" + hedef); if (el) { el.classList.add("vurgu"); setTimeout(() => el.scrollIntoView({ block: "center", behavior: reduced ? "auto" : "smooth" }), 60); } }
   }
 
-  function bulunamadi() { ana.innerHTML = `<section class="bos"><h1>Bu sayfa yok</h1><p><a href="#/">Rehber ana sayfasına dön</a></p></section>`; }
+  function bulunamadi() { ana.innerHTML = `<section class="bos"><h1>Bu sayfa yok</h1><p><a href="#/">Kütüphane ana sayfasına dön</a></p></section>`; }
 
   /* ---------- Yönlendirme ---------- */
   function git(h) { if (location.hash === h) yol(); else location.hash = h; }
@@ -325,8 +325,8 @@
       if (p[0] === "k") { yanCiz(p[1]); kavramSayfa(p[1], p[2]); }
       else if (p[0] === "kategori") { yanCiz(); kategoriSayfa(Number(p[1])); }
       else if (p[0] === "terimler") { yanCiz(); terimlerSayfa(); }
-      else if (p[0] === "ara") { yanCiz(); document.title = "QUAGEN Rehber — Türkçe programlama başvurusu"; anaSayfa(p.slice(1).join("/")); }
-      else { yanCiz(); document.title = "QUAGEN Rehber — Türkçe programlama başvurusu"; anaSayfa(); }
+      else if (p[0] === "ara") { yanCiz(); document.title = "QUAGEN Kütüphane — Türkçe programlama başvurusu"; anaSayfa(p.slice(1).join("/")); }
+      else { yanCiz(); document.title = "QUAGEN Kütüphane — Türkçe programlama başvurusu"; anaSayfa(); }
     };
     if (document.startViewTransition && !reduced && yol.ilk) document.startViewTransition(ciz); else ciz();
     yol.ilk = true;

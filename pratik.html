@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="assets/css/tokens.css" />
   <link rel="stylesheet" href="assets/css/pratik.css" />
   <link rel="stylesheet" href="assets/css/cam.css" />
-  <script>(function () { var t = "system"; try { t = JSON.parse(localStorage.getItem("kd-profile") || "{}").theme || "system"; } catch (e) {} if (t === "system") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; document.documentElement.dataset.theme = t; })();</script>
+  <script>(function () { var t = "system"; try { t = JSON.parse(localStorage.getItem("kd-profile") || "{}").theme || "system"; } catch (e) {} if (t !== "light") t = "dark"; document.documentElement.dataset.theme = t; })();</script>
 </head>
 <body>
   <header class="pt-top">
@@ -21,8 +21,8 @@
     <div class="pt-dil" id="dil" role="tablist" aria-label="Dil"></div>
     <div class="pt-stat" id="ust-stat"></div>
     <nav class="pt-nav">
-      <a href="rehber.html">Rehber</a>
-      <a href="nextgen.html" class="pt-cta">NextGen</a>
+      <a href="rehber.html">Kütüphane</a>
+      <nav class="dunya" aria-label="Dünyalar"><a href="index.html" aria-current="true">QUAGEN</a><a href="nextgen.html">NextGen</a></nav>
       <button class="icon-btn" id="ses" aria-label="Sesi aç/kapat"></button>
       <button class="icon-btn" id="tema" aria-label="Temayı değiştir"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
     </nav>

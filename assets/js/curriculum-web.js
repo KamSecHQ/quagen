@@ -1,4 +1,4 @@
-/* QUAGEN NextGen — Müfredat: Web Temelleri, Faz 11–20
+/* QUAGEN NextGen — Müfredat: Web Temelleri, Ders 11–20
  * Web görevleri tarayıcıda izole bir iframe içinde çalışır ve canlı önizleme verir.
  * lang: "html" → öğrenci HTML yazar · "css" → sabit HTML'e (scaffold) CSS yazar · "js" → sabit HTML'e JS yazar
  * Test biçimi: { label, check: "sayfada çalışan JS ifadesi", expected }
@@ -9,7 +9,7 @@
   const MQ_RULES = `[...document.styleSheets].flatMap(s => [...s.cssRules]).filter(r => r instanceof CSSMediaRule && /max-width:\\s*600px/.test(r.conditionText))`;
 
   const WEB = [
-  /* ============================ FAZ 11 ============================ */
+  /* ============================ DERS 11 ============================ */
   {
     id: "p11", no: 11, track: "web", title: "HTML Anatomisi & Semantik", short: "HTML & Semantik",
     goal: "Sayfanın iskeletini anlamlı etiketlerle kur: tarayıcı, arama motoru ve ekran okuyucu seni anlasın.",
@@ -83,7 +83,7 @@
     ]
   },
 
-  /* ============================ FAZ 12 ============================ */
+  /* ============================ DERS 12 ============================ */
   {
     id: "p12", no: 12, track: "web", title: "Listeler, Tablolar & Formlar", short: "Liste & Form",
     goal: "Veriyi doğru yapıda sun; kullanıcıdan veri alan erişilebilir formlar kur.",
@@ -152,7 +152,7 @@
     ]
   },
 
-  /* ============================ FAZ 13 ============================ */
+  /* ============================ DERS 13 ============================ */
   {
     id: "p13", no: 13, track: "web", title: "CSS: Seçiciler & Kutu Modeli", short: "CSS Temelleri",
     goal: "Sayfayı biçimlendir; hangi kuralın neden kazandığını ve her öğenin bir kutu olduğunu kavra.",
@@ -224,7 +224,7 @@
     ]
   },
 
-  /* ============================ FAZ 14 ============================ */
+  /* ============================ DERS 14 ============================ */
   {
     id: "p14", no: 14, track: "web", title: "Flexbox", short: "Flexbox",
     goal: "Öğeleri tek eksende hizala, dağıt ve sar: modern yerleşimin temel aracı.",
@@ -299,7 +299,7 @@
     ]
   },
 
-  /* ============================ FAZ 15 ============================ */
+  /* ============================ DERS 15 ============================ */
   {
     id: "p15", no: 15, track: "web", title: "CSS Grid & Responsive", short: "Grid & Responsive",
     goal: "İki boyutlu sayfa düzenleri kur ve her ekran boyutuna uyarla.",
@@ -370,7 +370,7 @@
     ]
   },
 
-  /* ============================ FAZ 16 ============================ */
+  /* ============================ DERS 16 ============================ */
   {
     id: "p16", no: 16, track: "web", title: "DOM: Seçme & Değiştirme", short: "DOM",
     goal: "JavaScript ile sayfadaki öğeleri bul, içeriklerini ve sınıflarını değiştir, yenilerini üret.",
@@ -414,7 +414,7 @@
           { label: "3 li oluştu", check: `document.querySelectorAll("#liste li").length`, expected: 3 },
           { label: "metinler doğru sırada", check: `[...document.querySelectorAll("#liste li")].map(li => li.textContent)`, expected: ["elma", "armut", "muz"] }
         ],
-        hints: ["Faz 5'teki for...of + örnekteki createElement → ikisini birleştir.", "for (const m of meyveler) { const li = document.createElement(\"li\"); … }", "li.textContent = m; liste.append(li);"],
+        hints: ["Ders 5'teki for...of + örnekteki createElement → ikisini birleştir.", "for (const m of meyveler) { const li = document.createElement(\"li\"); … }", "li.textContent = m; liste.append(li);"],
         solution: 'const meyveler = ["elma", "armut", "muz"];\nconst liste = document.querySelector("#liste");\n\nfor (const m of meyveler) {\n  const li = document.createElement("li");\n  li.textContent = m;\n  liste.append(li);\n}'
       },
       {
@@ -438,7 +438,7 @@
     ]
   },
 
-  /* ============================ FAZ 17 ============================ */
+  /* ============================ DERS 17 ============================ */
   {
     id: "p17", no: 17, track: "web", title: "Olaylar (Events)", short: "Olaylar",
     goal: "Sayfayı kullanıcı etkileşimine tepki verir hale getir: tıklama, yazma, olay kabarcıklanması.",
@@ -506,7 +506,7 @@
     ]
   },
 
-  /* ============================ FAZ 18 ============================ */
+  /* ============================ DERS 18 ============================ */
   {
     id: "p18", no: 18, track: "web", title: "Formlar & Doğrulama", short: "Form Doğrulama",
     goal: "Form gönderimini JavaScript ile yönet, girdiyi doğrula ve kullanıcıya anlaşılır hata göster.",
@@ -579,7 +579,7 @@
     ]
   },
 
-  /* ============================ FAZ 19 ============================ */
+  /* ============================ DERS 19 ============================ */
   {
     id: "p19", no: 19, track: "web", title: "Fetch & API", short: "Fetch & API",
     goal: "Sunucudan veri çek, hataları yönet ve gelen veriyi sayfada göster.",
@@ -588,7 +588,7 @@
       lang: "js",
       code: 'const sonuc = fetch("/api/kurslar");\nconsole.log(sonuc);',
       options: ["Kurs dizisi", "Bir Promise", "JSON metni", "undefined"], answer: 1,
-      why: "fetch hemen bir Promise döndürür; ağ cevabı (Response) ileride gelir. Değeri almak için await (veya then) gerekir — Faz 10'u hatırla.",
+      why: "fetch hemen bir Promise döndürür; ağ cevabı (Response) ileride gelir. Değeri almak için await (veya then) gerekir — Ders 10'u hatırla.",
       run: false
     },
     example: {
@@ -636,7 +636,7 @@
           { label: "liste doğru", check: `(async () => { await kurslariGoster(); return [...document.querySelectorAll("#kurslar li")].map(l => l.textContent); })()`, expected: ["JavaScript (10 saat)", "CSS (6 saat)", "React (12 saat)"] },
           { label: "iki kez çağrılınca tekrar etmez", check: `(async () => { await kurslariGoster(); await kurslariGoster(); return document.querySelectorAll("#kurslar li").length; })()`, expected: 3 }
         ],
-        hints: ["Üç adım: veriyi çek → listeyi temizle → her kurs için li üret. Faz 16'daki diziden liste görevini hatırla.", "liste.innerHTML = \"\"; ile temizle (burada kullanıcı girdisi yok, güvenli).", "li.textContent = `${k.ad} (${k.sure} saat)`;"],
+        hints: ["Üç adım: veriyi çek → listeyi temizle → her kurs için li üret. Ders 16'daki diziden liste görevini hatırla.", "liste.innerHTML = \"\"; ile temizle (burada kullanıcı girdisi yok, güvenli).", "li.textContent = `${k.ad} (${k.sure} saat)`;"],
         solution: 'async function kurslariGoster() {\n  const res = await fetch("/api/kurslar");\n  const kurslar = await res.json();\n  const liste = document.querySelector("#kurslar");\n  liste.innerHTML = "";\n  for (const k of kurslar) {\n    const li = document.createElement("li");\n    li.textContent = `${k.ad} (${k.sure} saat)`;\n    liste.append(li);\n  }\n}\n\nkurslariGoster();'
       }
     ],
@@ -647,7 +647,7 @@
     ]
   },
 
-  /* ============================ FAZ 20 ============================ */
+  /* ============================ DERS 20 ============================ */
   {
     id: "p20", no: 20, track: "web", title: "Mini Proje: Yapılacaklar", short: "Mini Proje",
     goal: "Öğrendiğin her şeyi birleştir: durum (state) → render deseniyle gerçek bir uygulama kur.",
@@ -666,7 +666,7 @@
         { lines: [3], text: "Tek doğruluk kaynağı: uygulamanın tüm verisi tek bir yerde (durum). DOM'dan veri OKUMA, durumdan oku." },
         { lines: [5, 6, 7], text: "render: durumu ekrana çeviren fonksiyon. Ekran = f(durum)." },
         { lines: [9, 10, 11, 12], text: "Olay → durumu değiştir → render. Her etkileşim aynı döngüyü izler; hata ayıklamak kolaylaşır." },
-        { lines: [13], text: "İlk görünüm için bir kez render. Bu desen, Faz 21'de React'e geçişini çok kolaylaştıracak." }
+        { lines: [13], text: "İlk görünüm için bir kez render. Bu desen, Ders 21'de React'e geçişini çok kolaylaştıracak." }
       ]
     },
     challenges: [
@@ -681,7 +681,7 @@
           { label: "ekranda görünür", check: `(ekle("Test et"), [...document.querySelectorAll("#liste li")].map(l => l.textContent))`, expected: ["Kod yaz", "Test et"] },
           { label: "doğru biçimde saklanır", check: `gorevler[0]`, expected: { metin: "Kod yaz", bitti: false } }
         ],
-        hints: ["Boşluk kontrolü için Faz 8'de hangi string metodunu kullandın?", "if (metin.trim() === \"\") return;", "gorevler.push({ metin, bitti: false }); render();"],
+        hints: ["Boşluk kontrolü için Ders 8'de hangi string metodunu kullandın?", "if (metin.trim() === \"\") return;", "gorevler.push({ metin, bitti: false }); render();"],
         solution: 'const gorevler = [];\nconst liste = document.querySelector("#liste");\n\nfunction render() {\n  liste.innerHTML = "";\n  for (const g of gorevler) {\n    const li = document.createElement("li");\n    li.textContent = g.metin;\n    liste.append(li);\n  }\n}\n\nfunction ekle(metin) {\n  if (metin.trim() === "") return;\n  gorevler.push({ metin, bitti: false });\n  render();\n}'
       },
       {
@@ -710,7 +710,7 @@
           { label: "ekran da güncellenir", check: `document.querySelectorAll("#liste li").length`, expected: 2 },
           { label: "form ile ekleme + input temizlenir", check: `(() => { ${$q("#metin")}.value = "D"; ${$q("#yeni")}.requestSubmit(); return [gorevler.length, ${$q("#metin")}.value, window.__kdNoPrevent !== true]; })()`, expected: [3, "", true] }
         ],
-        hints: ["Her parça daha önce yaptığın bir şey: filter (Faz 7), submit + preventDefault (Faz 18).", "kalanSayisi: return gorevler.filter(g => !g.bitti).length; — temizle: gorevler = gorevler.filter(…); render();", "Form: e.preventDefault(); ekle(input.value); input.value = \"\";"],
+        hints: ["Her parça daha önce yaptığın bir şey: filter (Ders 7), submit + preventDefault (Ders 18).", "kalanSayisi: return gorevler.filter(g => !g.bitti).length; — temizle: gorevler = gorevler.filter(…); render();", "Form: e.preventDefault(); ekle(input.value); input.value = \"\";"],
         solution: 'let gorevler = [];\nconst liste = document.querySelector("#liste");\n\nfunction render() {\n  liste.innerHTML = "";\n  gorevler.forEach((g, i) => {\n    const li = document.createElement("li");\n    li.textContent = g.metin;\n    if (g.bitti) li.classList.add("bitti");\n    li.addEventListener("click", () => degistir(i));\n    liste.append(li);\n  });\n  document.querySelector("#sayac").textContent = `${kalanSayisi()} görev kaldı`;\n}\n\nfunction ekle(metin) {\n  if (metin.trim() === "") return;\n  gorevler.push({ metin, bitti: false });\n  render();\n}\n\nfunction degistir(index) {\n  gorevler[index].bitti = !gorevler[index].bitti;\n  render();\n}\n\nfunction kalanSayisi() {\n  return gorevler.filter(g => !g.bitti).length;\n}\n\nfunction temizle() {\n  gorevler = gorevler.filter(g => !g.bitti);\n  render();\n}\n\ndocument.querySelector("#yeni").addEventListener("submit", (e) => {\n  e.preventDefault();\n  const input = document.querySelector("#metin");\n  ekle(input.value);\n  input.value = "";\n});'
       }
     ],

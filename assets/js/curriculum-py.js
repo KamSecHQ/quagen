@@ -1,4 +1,4 @@
-/* QUAGEN NextGen — Müfredat: Python temelleri, Faz 1–10 (dil: Python, parkur: py)
+/* QUAGEN NextGen — Müfredat: Python temelleri, Ders 1–10 (dil: Python, parkur: py)
  * Kod tarayıcıda Pyodide (CPython 3.12, WebAssembly) ile çalışır. Test biçimi: assets/js/python.js
  */
 (function () {
@@ -7,7 +7,7 @@
   const g = (o) => Object.assign({ lang: "py" }, o);
 
   const PY = [
-  /* ============================ Python · FAZ 1 ============================ */
+  /* ============================ Python · DERS 1 ============================ */
   {
     id: "py1", no: 1, language: "py", track: "py", title: "print, değişkenler ve f-string", short: "print & değişkenler",
     goal: "Ekrana yaz, değerleri isimlerle sakla, kullanıcıdan girdi al ve metinleri f-string ile biçimlendir.",
@@ -97,7 +97,7 @@ def ortalama(a, b, c):
     ]
   },
 
-  /* ============================ Python · FAZ 2 ============================ */
+  /* ============================ Python · DERS 2 ============================ */
   {
     id: "py2", no: 2, language: "py", track: "py", title: "Koşullar ve doğruluk değerleri", short: "Koşullar",
     goal: "Programın karar vermesini sağla: if / elif / else, mantıksal işleçler ve Python'un doğruluk kuralları.",
@@ -224,7 +224,7 @@ def fizzbuzz(n):
     ]
   },
 
-  /* ============================ Python · FAZ 3 ============================ */
+  /* ============================ Python · DERS 3 ============================ */
   {
     id: "py3", no: 3, language: "py", track: "py", title: "Döngüler: for, range ve while", short: "Döngüler",
     goal: "Bir işi tekrar ettir: range ile sayarak, while ile koşul bitene kadar; break ve tam sayı bölmesiyle birlikte.",
@@ -344,7 +344,7 @@ def asal_mi(n):
     ]
   },
 
-  /* ============================ Python · FAZ 4 ============================ */
+  /* ============================ Python · DERS 4 ============================ */
   {
     id: "py4", no: 4, language: "py", track: "py", title: "Fonksiyonlar ve parametreler", short: "Fonksiyonlar",
     goal: "Tekrar eden işi isimlendir: varsayılan ve isimli parametreler, birden fazla değer döndürmek ve değiştirilebilir varsayılan tuzağı.",
@@ -458,7 +458,7 @@ def ekle(oge, liste=None):
     ]
   },
 
-  /* ============================ Python · FAZ 5 ============================ */
+  /* ============================ Python · DERS 5 ============================ */
   {
     id: "py5", no: 5, language: "py", track: "py", title: "Listeler ve dilimleme", short: "Listeler",
     goal: "Sıralı veri koleksiyonlarıyla çalış: indeks, negatif indeks, dilim, ekleme/çıkarma ve sort ile sorted farkı.",
@@ -570,7 +570,7 @@ def parcala(liste, n):
     ]
   },
 
-  /* ============================ Python · FAZ 6 ============================ */
+  /* ============================ Python · DERS 6 ============================ */
   {
     id: "py6", no: 6, language: "py", track: "py", title: "Metinler ve metin metotları", short: "Metinler",
     goal: "Metinleri parçala, birleştir, temizle ve dönüştür; metinlerin değiştirilemez olduğunu kavra.",
@@ -677,7 +677,7 @@ def sezar(metin, kaydir):
     ]
   },
 
-  /* ============================ Python · FAZ 7 ============================ */
+  /* ============================ Python · DERS 7 ============================ */
   {
     id: "py7", no: 7, language: "py", track: "py", title: "Sözlükler ve kümeler", short: "Sözlük & küme",
     goal: "Anahtarla erişilen veriyi sözlükte, benzersiz elemanları kümede tut; sayma ve gruplama kalıplarını öğren.",
@@ -791,7 +791,7 @@ def grupla(kelimeler):
     ]
   },
 
-  /* ============================ Python · FAZ 8 ============================ */
+  /* ============================ Python · DERS 8 ============================ */
   {
     id: "py8", no: 8, language: "py", track: "py", title: "Kavramalar, lambda ve sıralama anahtarı", short: "Kavramalar",
     goal: "Dönüştürme ve süzmeyi tek ifadede yaz: liste/sözlük kavramaları, lambda ve sorted'ın key parametresi.",
@@ -897,7 +897,7 @@ def siralama(ogrenciler):
     ]
   },
 
-  /* ============================ Python · FAZ 9 ============================ */
+  /* ============================ Python · DERS 9 ============================ */
   {
     id: "py9", no: 9, language: "py", track: "py", title: "Hatalar ve istisnalar", short: "İstisnalar",
     goal: "Hatalarla programı çökertmeden başa çık: try/except/else/finally, istisna fırlatmak ve doğru istisnayı yakalamak.",
@@ -1023,7 +1023,7 @@ def temiz_toplam(degerler):
     ]
   },
 
-  /* ============================ Python · FAZ 10 ============================ */
+  /* ============================ Python · DERS 10 ============================ */
   {
     id: "py10", no: 10, language: "py", track: "py", title: "Mini proje: komut satırı programları", short: "Mini proje",
     goal: "Öğrendiklerini birleştir: girdiyi satır satır oku, komutları ayrıştır, durumu tut ve biçimli çıktı üret.",

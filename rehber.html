@@ -5,7 +5,7 @@
   <script src="assets/js/bulut.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>QUAGEN Rehber — Türkçe programlama başvurusu</title>
+  <title>QUAGEN Kütüphane — Türkçe programlama başvurusu</title>
   <meta name="description" content="JavaScript, Python, C, SQL, HTML ve CSS için Türkçe başvuru: ne yapmak istediğini yaz, doğru fonksiyonu, kullanımını ve diğer dillerdeki karşılığını gör. Örnekleri tarayıcıda çalıştır." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,22 +14,22 @@
   <link rel="stylesheet" href="assets/css/tokens.css" />
   <link rel="stylesheet" href="assets/css/rehber.css" />
   <link rel="stylesheet" href="assets/css/cam.css" />
-  <script>(function () { var t = "system"; try { t = JSON.parse(localStorage.getItem("kd-profile") || "{}").theme || "system"; } catch (e) {} if (t === "system") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; document.documentElement.dataset.theme = t; })();</script>
+  <script>(function () { var t = "system"; try { t = JSON.parse(localStorage.getItem("kd-profile") || "{}").theme || "system"; } catch (e) {} if (t !== "light") t = "dark"; document.documentElement.dataset.theme = t; })();</script>
 </head>
 <body>
   <a class="skip" href="#ana">İçeriğe geç</a>
   <header class="rb-top">
     <div class="rb-top-in">
-      <a class="logo" href="index.html" aria-label="QUAGEN ana sayfa">QUAGEN<span class="logo-tag">Rehber</span></a>
+      <a class="logo" href="index.html" aria-label="QUAGEN ana sayfa">QUAGEN<span class="logo-tag">Kütüphane</span></a>
       <form class="rb-mini" id="mini-ara" role="search" hidden>
         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        <input id="mini-girdi" type="search" placeholder="Ne yapmak istiyorsun?" aria-label="Rehberde ara" autocomplete="off" />
+        <input id="mini-girdi" type="search" placeholder="Ne yapmak istiyorsun?" aria-label="Kütüphanede ara" autocomplete="off" />
         <kbd>/</kbd>
       </form>
       <nav class="rb-nav" aria-label="Bağlantılar">
         <a href="#/terimler">Terimler</a>
         <a href="pratik.html">Pratik</a>
-        <a href="nextgen.html" class="rb-cta">NextGen</a>
+        <nav class="dunya" aria-label="Dünyalar"><a href="index.html" aria-current="true">QUAGEN</a><a href="nextgen.html">NextGen</a></nav>
         <button class="icon-btn" id="tema" aria-label="Temayı değiştir"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
       </nav>
     </div>
@@ -42,7 +42,7 @@
   </div>
 
   <footer class="rb-foot">
-    <p>QUAGEN Rehber · Örnekler tarayıcında çalışır (JavaScript, Python, SQL, HTML/CSS); C örnekleri yerel QUAGEN sunucusuyla derlenir.</p>
+    <p>QUAGEN Kütüphane · Örnekler tarayıcında çalışır (JavaScript, Python, SQL, HTML/CSS); C örnekleri yerel QUAGEN sunucusuyla derlenir.</p>
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>

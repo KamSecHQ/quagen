@@ -1,4 +1,4 @@
-/* QUAGEN NextGen — Müfredat: JavaScript Temelleri, Faz 1–10
+/* QUAGEN NextGen — Müfredat: JavaScript Temelleri, Ders 1–10
  * Her faz: predict (ön test), example (çözümlü örnek, adım adım),
  * challenges (Değiştir → Yaz → Hata ayıkla), cards (aralıklı tekrar).
  * Test biçimi: {args:[...], expected} | {expr:"ifade", expected} | {args, throws:"mesaj"}
@@ -272,7 +272,7 @@ window.KD_CURRICULUM = [
         prompt: "`diziToplam(dizi)` dizideki sayıların toplamını döndürsün. Boş dizi → 0.",
         starter: "function diziToplam(dizi) {\n  \n}\n",
         tests: [{ args: [[1, 2, 3]], expected: 6 }, { args: [[]], expected: 0 }, { args: [[-5, 5, 10]], expected: 10 }],
-        hints: ["Faz 3'teki biriktirici deseni burada da işe yarar mı?", "let toplam = 0; for (const s of dizi) ...", "toplam += s; ve sonunda return toplam;"],
+        hints: ["Ders 3'teki biriktirici deseni burada da işe yarar mı?", "let toplam = 0; for (const s of dizi) ...", "toplam += s; ve sonunda return toplam;"],
         solution: "function diziToplam(dizi) {\n  let toplam = 0;\n  for (const s of dizi) toplam += s;\n  return toplam;\n}"
       },
       {
@@ -368,7 +368,7 @@ window.KD_CURRICULUM = [
         { lines: [7], text: "filter: true dönen elemanları TUTAR. Sonuç: kalem ve çanta." },
         { lines: [8], text: "map: her elemanı başka bir şeye dönüştürür. Sonuç: [20, 300]." },
         { lines: [9], text: "reduce: diziyi tek değere indirger. acc biriktirici, 0 başlangıç değeri." },
-        { lines: [10], text: "Çıktı: 320. Faz 3'teki biriktirici deseni = reduce!" }
+        { lines: [10], text: "Çıktı: 320. Ders 3'teki biriktirici deseni = reduce!" }
       ]
     },
     challenges: [
@@ -426,7 +426,7 @@ window.KD_CURRICULUM = [
       steps: [
         { lines: [1], text: "1) Girdi/çıktıyı netleştir: cümle girer, tek kelime çıkar." },
         { lines: [2], text: "2) Parçala: trim baştaki/sondaki boşlukları siler; /\\s+/ bir veya daha fazla boşluktan böler." },
-        { lines: [3, 4, 5, 6], text: "3) Bildiğin deseni uygula: 'şimdiye kadarki en iyi' (Faz 4'teki enBuyuk ile aynı fikir)." },
+        { lines: [3, 4, 5, 6], text: "3) Bildiğin deseni uygula: 'şimdiye kadarki en iyi' (Ders 4'teki enBuyuk ile aynı fikir)." },
         { lines: [9], text: "4) Uç durumla test et: fazla boşluklar. Çıktı: \"kodladım\"." }
       ]
     },
@@ -567,7 +567,7 @@ window.KD_CURRICULUM = [
           { expr: "hepsiniTopla([Promise.resolve(1), Promise.resolve(2), Promise.resolve(3)])", label: "[1, 2, 3] → 6", expected: 6 },
           { expr: "hepsiniTopla([])", label: "[] → 0", expected: 0 }
         ],
-        hints: ["Bir dizi Promise'i tek seferde beklemek için hangi yardımcı var?", "const degerler = await Promise.all(promiseler);", "Sonra Faz 7'deki reduce: degerler.reduce((a, b) => a + b, 0)"],
+        hints: ["Bir dizi Promise'i tek seferde beklemek için hangi yardımcı var?", "const degerler = await Promise.all(promiseler);", "Sonra Ders 7'deki reduce: degerler.reduce((a, b) => a + b, 0)"],
         solution: "async function hepsiniTopla(promiseler) {\n  const degerler = await Promise.all(promiseler);\n  return degerler.reduce((a, b) => a + b, 0);\n}"
       }
     ],

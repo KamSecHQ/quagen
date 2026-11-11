@@ -144,7 +144,7 @@
     const d = fazDurum(p);
     const pop = document.createElement("div");
     pop.className = "pop";
-    pop.innerHTML = `<p class="muted small">Faz ${p.no}</p><h3>${esc(p.title)}</h3><p>${esc(p.goal)}</p>
+    pop.innerHTML = `<p class="muted small">Ders ${p.no}</p><h3>${esc(p.title)}</h3><p>${esc(p.goal)}</p>
       ${d ? `<p class="muted small">${d.tamam} kez tamamlandı · en iyi %${d.enIyi}</p>` : ""}
       <button class="btn primary blok-btn" id="pop-basla">${d ? "Tekrar et" : "Başla"} <span class="muted">≈ ${d ? 20 : 30} XP</span></button>`;
     li.append(pop);
@@ -189,7 +189,7 @@
           <dt>Hatırlamaya çalışmak</dt><dd>Cevabı kendin üretmeye çalışmak, tekrar okumaktan çok daha kalıcıdır (geri getirme pratiği).</dd>
           <dt>Satırları sıralamak</dt><dd>Parsons problemleri, kod yazmak kadar öğretir ama yarı sürede biter.</dd>
           <dt>Unutmadan önce tekrar</dt><dd>Hata defteri Leitner kutularıyla çalışır: bildiğin soru seyrekleşir, bilmediğin sık gelir.</dd>
-          <dt>Karışık pratik</dt><dd>Her derste önceki fazlardan bir soru da gelir; benzer konuları ayırt etmeyi öğretir.</dd>
+          <dt>Karışık pratik</dt><dd>Her derste önceki derslerden bir soru da gelir; benzer konuları ayırt etmeyi öğretir.</dd>
         </dl>
       </section>`;
     $("#tekrar-et").onclick = () => {

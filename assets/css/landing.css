@@ -325,3 +325,24 @@ body { overflow-x: clip; }
 .kam-satir.k:has(+ .kam-satir.k) .kam-av { visibility: hidden; }
 .s-sohbet .kam-akis { scrollbar-width: none; }
 .s-sohbet .kam-akis::-webkit-scrollbar { display: none; }
+
+/* v9 — iki dünya, kayıt düğmesi, NextGen kapısı */
+.nav-in { gap: 16px; }
+.nav-links { gap: 22px; }
+.nav-tema { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; color: var(--graphite); transition: background 0.2s, color 0.2s, transform 0.3s var(--ease); }
+.nav-tema:hover { background: var(--glass); color: var(--ink); transform: rotate(-18deg); }
+.nav-kayit { gap: 7px; height: 40px; padding: 0 14px; }
+:root[data-theme="dark"] .nav-kayit { background: var(--marker); color: var(--marker-ink); }
+.nav-user { margin-left: 0; }
+.kapi { position: relative; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 32px; align-items: center; padding: clamp(28px, 4vw, 52px); border-radius: 32px; overflow: hidden; color: #e7ecf4;
+  background: radial-gradient(90% 120% at 100% 0%, rgba(84, 132, 255, 0.5), transparent 60%), radial-gradient(70% 100% at 0% 100%, rgba(255, 216, 77, 0.22), transparent 60%), #0b1230;
+  border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 30px 70px -36px rgba(11, 18, 48, 0.9); }
+.kapi h2 { font-size: clamp(36px, 5vw, 68px); color: #fff; }
+.kapi p { margin: 16px 0 26px; max-width: 46ch; font-size: 17px; line-height: 1.5; color: rgba(231, 236, 244, 0.8); }
+.kapi-diller { list-style: none; display: grid; gap: 10px; }
+.kapi-diller li { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 16px 20px; border-radius: 18px; background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: transform 0.3s var(--ease), background 0.3s; }
+.kapi-diller li:hover { transform: translateX(-6px); background: rgba(255, 255, 255, 0.12); }
+.kapi-diller b { font-size: 24px; font-weight: 750; font-stretch: 82%; letter-spacing: -0.02em; }
+.kapi-diller span { font-size: 14px; color: rgba(231, 236, 244, 0.65); }
+@media (max-width: 820px) { .kapi { grid-template-columns: 1fr; border-radius: 24px; } .dunya > * { padding: 0 10px; height: 28px; font-size: 12.5px; } .nav-kayit span { display: none; } .nav-kayit { padding: 0 11px; } .nav-tema { display: none; } .nav-in .btn { margin-left: 0; } .dunya { margin-right: auto; } }
+@media (min-width: 821px) { .nav-links { margin-left: auto; } }

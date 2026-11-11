@@ -1,5 +1,5 @@
 /* QUAGEN Pratik — alıştırma üreteci
- * Müfredattaki her fazdan (tahmin sorusu, tekrar kartları, çözümler, hata ayıklama görevleri) ve Rehber'den
+ * Müfredattaki her dersten (tahmin sorusu, tekrar kartları, çözümler, hata ayıklama görevleri) ve Kütüphane'den
  * kısa, oyunlaştırılmış bir ders üretir. Saf fonksiyonlar: aynı tohumla aynı ders (test edilebilir).
  *
  * Alıştırma türleri ve dayandıkları bulgular:
@@ -111,7 +111,7 @@
     return { tur: "secim", alt: "kart", anahtar: "kart:" + kart.id, soru: kart.q, secenekler, dogru: secenekler.indexOf(kart.a), aciklama: kart.a };
   }
 
-  /* ---------- Eşleştir: Rehber'den kavram ↔ fonksiyon ---------- */
+  /* ---------- Eşleştir: Kütüphane'den kavram ↔ fonksiyon ---------- */
   function eslestir(dil, rehber, r, anahtarTohum) {
     if (!rehber) return null;
     const rdil = dil === "js" ? "js" : dil;
@@ -134,7 +134,7 @@
     const dil = faz.language || "js";
     const r = rastgele(metinTohum(faz.id) ^ tohum);
     const ayniDil = mufredat.filter((p) => (p.language || "js") === dil);
-    // Çeldiriciler yakın fazlardan: aynı konu ailesinden gelen seçenekler soruyu zorlaştırır (benzerlerden ayırt etme)
+    // Çeldiriciler yakın derslerden: aynı konu ailesinden gelen seçenekler soruyu zorlaştırır (benzerlerden ayırt etme)
     const yakin = ayniDil.filter((p) => Math.abs(p.no - faz.no) <= 3);
     const kartHavuzu = (yakin.length >= 3 ? yakin : ayniDil).flatMap((p) => p.cards || []);
     const ogeler = [];
@@ -148,7 +148,7 @@
     let b = 0;
     for (const ch of karistir(faz.challenges, r)) { if (b >= 3) break; const x = bosluk(ch, dil, r); if (x && !ogeler.some((o) => o.anahtar === x.anahtar)) { ogeler.push(x); b++; } }
     ekle(eslestir(dil, rehber, r, faz.id));
-    // Önceki fazlardan bir hatırlatma kartı (aralıklı ve karışık pratik)
+    // Önceki derslerden bir hatırlatma kartı (aralıklı ve karışık pratik)
     const onceki = ayniDil.filter((x) => x.no < faz.no && (x.track || "") === (faz.track || ""));
     if (onceki.length) { const of = sec(onceki, r); const kk = sec(of.cards || [], r); if (kk) ekle(Object.assign(kartSorusu(kk, kartHavuzu, r) || {}, { alt: "hatirlatma", hatirlatma: of.title })); }
     const temiz = ogeler.filter((o) => o && o.tur);

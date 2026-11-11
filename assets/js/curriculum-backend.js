@@ -1,6 +1,6 @@
-/* QUAGEN NextGen — Müfredat: Backend ve veritabanı, Faz 41–50
+/* QUAGEN NextGen — Müfredat: Backend ve veritabanı, Ders 41–50
  * JS görevleri worker'da çalışır. SQL görevleri (lang: "sql") gerçek SQLite (sql.js) üzerinde, her testte temiz
- * bir veritabanıyla çalışır. Faz 50'de JS kodu `sorgu(sql, params)` ve `calistir(sql, params)` ile veritabanına erişir.
+ * bir veritabanıyla çalışır. Ders 50'de JS kodu `sorgu(sql, params)` ve `calistir(sql, params)` ile veritabanına erişir.
  * SQL test biçimleri: { label, expected } (son sorgunun satırları) · { label, verify, expected } (öğrenci kodundan
  * sonra çalışan doğrulama sorgusu) · { label, fails } (reddedilmesi gereken komut) · { label, verify, contains } ·
  * { label, codeMatch } (kodda bulunması gereken ifade) · unordered: true (sıra önemsiz)
@@ -28,7 +28,7 @@ INSERT INTO kayitlar VALUES
   const B64 = "const b64url = (bytes) => btoa(String.fromCharCode(...new Uint8Array(bytes))).replace(/\\+/g, \"-\").replace(/\\//g, \"_\").replace(/=+$/, \"\");\nconst b64urlCoz = (s) => Uint8Array.from(atob(s.replace(/-/g, \"+\").replace(/_/g, \"/\")), (c) => c.charCodeAt(0));\n";
 
   const BACKEND = [
-  /* ============================ FAZ 41 ============================ */
+  /* ============================ DERS 41 ============================ */
   {
     id: "p41", no: 41, track: "backend", title: "HTTP ve REST", short: "HTTP & REST",
     goal: "Bir sunucunun isteği nasıl karşılayıp cevap ürettiğini, framework kullanmadan kendi yönlendiricinle anla.",
@@ -46,7 +46,7 @@ INSERT INTO kayitlar VALUES
         { lines: [3], text: "Express, Fastify ya da Next.js API rotası: hepsinin özünde istek alıp yanıt döndüren bir fonksiyon vardır." },
         { lines: [4, 5, 6], text: "İstek iki şeyle tanımlanır: metot (GET, POST, PUT, DELETE) ve yol. REST'te yol kaynağı, metot eylemi anlatır." },
         { lines: [7, 8, 9, 10, 11], text: "Yolun bir parçası değişken olabilir: /kurslar/2. Bulunamazsa 404 ve açıklayıcı bir gövde döndür." },
-        { lines: [13], text: "Hiçbir rota eşleşmezse yine 404. Bu fazda bu if zincirini genel bir yönlendiriciye dönüştüreceksin." }
+        { lines: [13], text: "Hiçbir rota eşleşmezse yine 404. Bu derste bu if zincirini genel bir yönlendiriciye dönüştüreceksin." }
       ]
     },
     challenges: [
@@ -100,7 +100,7 @@ INSERT INTO kayitlar VALUES
     ]
   },
 
-  /* ============================ FAZ 42 ============================ */
+  /* ============================ DERS 42 ============================ */
   {
     id: "p42", no: 42, track: "backend", title: "Doğrulama ve ara katmanlar", short: "Doğrulama",
     goal: "Sunucuya gelen veriye asla güvenme; isteği doğrulayan, yetkilendiren ve kaydeden zincirler kur.",
@@ -168,7 +168,7 @@ INSERT INTO kayitlar VALUES
     ]
   },
 
-  /* ============================ FAZ 43 ============================ */
+  /* ============================ DERS 43 ============================ */
   {
     id: "p43", no: 43, track: "backend", title: "Kimlik doğrulama ve güvenlik", short: "Güvenlik",
     goal: "Parolaları doğru saklamayı ve imzalı oturum belirteçleri üretmeyi Web Crypto ile öğren.",
@@ -237,7 +237,7 @@ INSERT INTO kayitlar VALUES
     ]
   },
 
-  /* ============================ FAZ 44 ============================ */
+  /* ============================ DERS 44 ============================ */
   {
     id: "p44", no: 44, track: "backend", title: "SQL: veri sorgulama", short: "SQL sorgu",
     goal: "İlişkisel veritabanından istediğin satırları ve sütunları seç, süz ve sırala.",
@@ -298,7 +298,7 @@ INSERT INTO kayitlar VALUES
     ]
   },
 
-  /* ============================ FAZ 45 ============================ */
+  /* ============================ DERS 45 ============================ */
   {
     id: "p45", no: 45, track: "backend", title: "SQL: gruplama ve özetleme", short: "SQL gruplama",
     goal: "Satırları gruplara ayırıp sayı, toplam ve ortalama gibi özetler üret; raporların temeli.",
@@ -359,7 +359,7 @@ INSERT INTO kayitlar VALUES
     ]
   },
 
-  /* ============================ FAZ 46 ============================ */
+  /* ============================ DERS 46 ============================ */
   {
     id: "p46", no: 46, track: "backend", title: "SQL: tabloları birleştirme", short: "SQL JOIN",
     goal: "Farklı tablolara bölünmüş ilişkili veriyi JOIN ile tek bir sonuçta bir araya getir.",
@@ -421,7 +421,7 @@ INSERT INTO kayitlar VALUES
     ]
   },
 
-  /* ============================ FAZ 47 ============================ */
+  /* ============================ DERS 47 ============================ */
   {
     id: "p47", no: 47, track: "backend", title: "SQL: veri değiştirme ve işlemler", short: "SQL değiştirme",
     goal: "Satır ekle, güncelle ve sil; birlikte olması gereken değişiklikleri tek bir işlemde (transaction) yap.",
@@ -486,7 +486,7 @@ INSERT INTO kayitlar VALUES
     ]
   },
 
-  /* ============================ FAZ 48 ============================ */
+  /* ============================ DERS 48 ============================ */
   {
     id: "p48", no: 48, track: "backend", title: "Şema tasarımı ve indeksler", short: "Şema & indeks",
     goal: "Veriyi kurallarla koruyan tablolar tasarla ve sık yapılan sorguları indekslerle hızlandır.",
@@ -553,7 +553,7 @@ INSERT INTO kayitlar VALUES
     ]
   },
 
-  /* ============================ FAZ 49 ============================ */
+  /* ============================ DERS 49 ============================ */
   {
     id: "p49", no: 49, track: "backend", title: "Sayfalama, önbellek ve hız sınırı", short: "Ölçeklenme",
     goal: "Yük altında ayakta kalan servislerin üç temel aracını yaz: sayfalama, LRU önbellek ve hız sınırlama.",
@@ -622,7 +622,7 @@ INSERT INTO kayitlar VALUES
     ]
   },
 
-  /* ============================ FAZ 50 ============================ */
+  /* ============================ DERS 50 ============================ */
   {
     id: "p50", no: 50, track: "backend", title: "Mini proje: kurs API'si", short: "API projesi",
     goal: "HTTP katmanını gerçek bir SQLite veritabanına bağla: listele, ekle ve detay getir; güvenli ve doğrulanmış.",
@@ -635,7 +635,7 @@ INSERT INTO kayitlar VALUES
     example: {
       title: "Parametreli sorgu",
       db: SEED,
-      code: "// Bu fazda sorgu() ve calistir() hazır, arkada gerçek bir SQLite var.\nconst kategori = \"x' OR '1'='1\";\n\nconst guvenli = sorgu(\"SELECT id, ad FROM kurslar WHERE kategori = ?\", [kategori]);\nconsole.log(\"parametreli:\", guvenli.length, \"satır\");\n\nconst sonuc = calistir(\"INSERT INTO kurslar (ad, kategori, sure, fiyat) VALUES (?, ?, ?, ?)\", [\"Go\", \"backend\", 22, 1300]);\nconsole.log(sonuc);\nconsole.log(sorgu(\"SELECT ad, fiyat FROM kurslar WHERE id = ?\", [sonuc.sonId]));",
+      code: "// Bu derste sorgu() ve calistir() hazır, arkada gerçek bir SQLite var.\nconst kategori = \"x' OR '1'='1\";\n\nconst guvenli = sorgu(\"SELECT id, ad FROM kurslar WHERE kategori = ?\", [kategori]);\nconsole.log(\"parametreli:\", guvenli.length, \"satır\");\n\nconst sonuc = calistir(\"INSERT INTO kurslar (ad, kategori, sure, fiyat) VALUES (?, ?, ?, ?)\", [\"Go\", \"backend\", 22, 1300]);\nconsole.log(sonuc);\nconsole.log(sorgu(\"SELECT ad, fiyat FROM kurslar WHERE id = ?\", [sonuc.sonId]));",
       steps: [
         { lines: [4], text: "? yer tutucusuna giden değer veri olarak kalır, SQL olarak yorumlanmaz. Enjeksiyon denemesi 0 satır döndürür." },
         { lines: [7], text: "calistir(), INSERT/UPDATE/DELETE için: değişen satır sayısını ve son eklenen id'yi döndürür." },

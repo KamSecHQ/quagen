@@ -1,4 +1,4 @@
-/* QUAGEN Rehber — niyet arama motoru
+/* QUAGEN Kütüphane — niyet arama motoru
  * "büyük harf yapmak istiyorum" gibi doğal Türkçe bir cümleyi doğru kavrama eşler. Sunucu ya da API anahtarı gerekmez.
  *  1. Türkçe normalleştirme: küçük harf (tr), aksanları sadeleştirme (ç→c, ğ→g, ı→i, ö→o, ş→s, ü→u), noktalama atma
  *  2. Dolgu kelimelerini atma ("istiyorum", "nasıl", "yapmak"...) ve dil adlarını yakalama ("python'da" → py)

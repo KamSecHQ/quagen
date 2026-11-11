@@ -7,7 +7,10 @@
   const nav = $("#nav");
   /* Hesap: giriş yapılmışsa menüde avatar */
   if (window.KD && KD.hesapYok && $("#nav-login")) $("#nav-login").hidden = true;
-  if (window.KD && KD.hesap) KD.hesap.ben().then((u) => {
+  let uye = null, uyeBilindi = !(window.KD && KD.hesap) || (window.KD && KD.hesapYok);
+  const hesapVar = () => window.KD && KD.hesap && !KD.hesapYok;
+  if (window.KD && KD.hesap) KD.hesap.ben().catch(() => null).then((u) => {
+    uye = u || null; uyeBilindi = true;
     const l = $("#nav-login"); if (!l || !u) return;
     const bas = String(u.ad || u.kullaniciAdi).trim().split(/\s+/).map((x) => x[0]).slice(0, 2).join("").toLocaleUpperCase("tr");
     l.outerHTML = `<a class="nav-user" href="nextgen.html#profil" title="Profilim"><span class="nav-av">${esc(bas)}</span><span class="nav-un">${esc(u.ad || "@" + u.kullaniciAdi)}</span></a>`;
@@ -21,8 +24,14 @@
     bolumler.forEach((el) => io.observe(el));
   } else bolumler.forEach((el) => el.classList.add("in"));
   addEventListener("scroll", () => nav.classList.toggle("scrolled", scrollY > 8), { passive: true });
+  /* Tema: QUAGEN varsayılan olarak koyu; seçim tüm sayfalarda geçerli */
+  if ($("#tema")) $("#tema").onclick = () => {
+    const yeni = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = yeni;
+    try { const p = JSON.parse(localStorage.getItem("kd-profile") || "{}"); p.theme = yeni; localStorage.setItem("kd-profile", JSON.stringify(p)); } catch (_) {}
+  };
 
-  /* ---------- Rehber önizlemesi: niyet araması canlı çalışır ---------- */
+  /* ---------- Kütüphane önizlemesi: niyet araması canlı çalışır ---------- */
   const rdGirdi = $("#rd-girdi"), rdSonuc = $("#rd-sonuc");
   if (rdGirdi && window.KD_REHBER_ARA) {
     const R = window.KD_REHBER;
@@ -149,9 +158,15 @@
       c = await H.secenek(DILLER.map((d) => d[1]));
     }
     const [dil, dilAd] = DILLER[c.i];
-    await H.kam(`Tamam, ${dilAd}. Seni dersliğe götürüyorum; orada bir plan yapacağız.`);
+    const hedef = "nextgen.html?dil=" + dil;
+    if (hesapVar() && !uye) {
+      await H.kam(`Tamam, ${dilAd}. Şimdi aramıza katıl, sonra derslere geçelim. Kayıt olursan ilerlemen hesabında saklanır; telefonda ya da başka bilgisayarda kaldığın yerden devam edersin.`);
+      const k = await H.secenek(["Aramıza katıl", "Kayıtsız devam et"]);
+      if (k.i === 0) { try { localStorage.setItem("kd-lang", dil); } catch (_) {} location.href = "hesap.html?sonra=" + encodeURIComponent(hedef) + "#kayit"; return; }
+      await H.kam("Olur. İlerlemen bu tarayıcıda saklanacak; istediğin zaman kayıt olabilirsin.");
+    } else await H.kam(`Tamam, ${dilAd}. Seni NextGen'e götürüyorum; orada bir plan yapacağız.`);
     await bekle(500);
-    startWarp("nextgen.html?dil=" + dil + "#panel", $("#sahne").getBoundingClientRect(), dil);
+    startWarp(hedef + "#panel", $("#sahne").getBoundingClientRect(), dil);
   }
 
   /* ---------- Parkur sekmeleri ---------- */
@@ -170,7 +185,7 @@
     tabs.innerHTML = TRACKS.map((t, i) => {
       const n = C.filter(parkurda(t)).length;
       if (!n) return "";
-      return `<button role="tab" id="tab-${t.id}" aria-controls="track-panel" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-id="${t.id}">${t.title}<small>${n} faz</small></button>`;
+      return `<button role="tab" id="tab-${t.id}" aria-controls="track-panel" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-id="${t.id}">${t.title}<small>${n} ders</small></button>`;
     }).join("");
     const show = (id) => {
       const t = TRACKS.find((x) => x.id === id);
@@ -253,7 +268,7 @@
       return `<button type="button" class="ch-card ${l.id === last ? "last" : ""}" data-dil="${l.id}">
         <span class="ch-mark">${esc(l.kisa)}</span>
         <span class="ch-body"><b>${esc(l.ad)}</b><span>${esc(l.aciklama)}</span>
-          <small>${pr.phases} faz · ${pr.total} görev${pr.passed ? ` · ${pr.passed} görev geçtin` : ""}</small></span>
+          <small>${pr.phases} ders · ${pr.total} görev${pr.passed ? ` · ${pr.passed} görev geçtin` : ""}</small></span>
         <span class="ch-go">${pr.passed ? "Devam et" : "Başla"}</span>
       </button>`;
     }).join("");
@@ -292,5 +307,24 @@
   }
   document.querySelectorAll(".js-warp").forEach((a) => a.addEventListener("click", a.dataset.dil ? launch : openChooser));
   addEventListener("pageshow", (e) => { if (e.persisted) { running = false; warp.classList.remove("on", "flash"); } });
-  if (hAkis) setTimeout(() => karsila().catch(() => {}), reduced ? 0 : 900);
+  /* İlk ziyarette önce KAM siteyi gezdirir; sonra sohbet başlar */
+  const TUR_ANAHTAR = "kam-tur-quagen";
+  function turBaslat() {
+    const adimlar = [
+      { sec: "#kam-dev", baslik: "Ben KAM.", metin: "Bu sitenin yapay zekâ öğretmeniyim. Önce sana etrafı göstereyim; bir dakika sürmez." },
+      { sec: "#dunya", baslik: "İki ayrı dünya var.", metin: "**QUAGEN** şu an bulunduğun yer: tanışma, Kütüphane ve Pratik burada. **NextGen** ise dersliğin; dersler yalnızca orada açılır. Buradan birinden diğerine geçersin." },
+      { sec: "#sahne", baslik: "Burada benimle konuşursun.", metin: "Solda yazışırız, sağda kod aynı anda değişir. Tur bitince sana kısa bir örnek göstereceğim." },
+      { sec: "#nav-kutuphane", baslik: "Kütüphane", metin: "Bir şeyin nasıl yapıldığını unuttuğunda kendi cümlenle sorarsın: “listeyi nasıl sıralarım?” gibi. Çalışan örneğiyle cevap verir." },
+      { sec: "#nav-pratik", baslik: "Pratik", metin: "Günde beş dakikalık kısa alıştırmalar. Otobüste, molada; ders dışında elini sıcak tutar." },
+      { sec: "#kapi", baslik: "NextGen'in kapısı", metin: "Dersler burada başlar. Hangi dili seçeceğini bilmiyorsan sohbetimizde bana sor." }
+    ];
+    if (hesapVar() && !uye) adimlar.push({ sec: "#nav-login", baslik: "Şimdi aramıza katıl.", metin: "Sonra derslere geçelim. Kayıt ücretsiz; ilerlemen hesabında saklanır ve hiçbir cihazda kaybolmaz.", dugme: "Aramıza katıl", git: "hesap.html?sonra=nextgen.html#kayit", ikinci: { ad: "Şimdi değil" } });
+    const basladi = window.KAM_TUR.baslat(adimlar, { anahtar: TUR_ANAHTAR, bitince: (neden) => { if (neden !== "git") { scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" }); setTimeout(() => karsila().catch(() => {}), 500); } } });
+    if (!basladi) return;
+  }
+  if (hAkis) {
+    const ilkZiyaret = window.KAM_TUR && !window.KAM_TUR.goruldu(TUR_ANAHTAR);
+    if (!ilkZiyaret) setTimeout(() => karsila().catch(() => {}), reduced ? 0 : 900);
+    else { const dene = (n) => (uyeBilindi || n > 12 ? turBaslat() : setTimeout(() => dene(n + 1), 150)); setTimeout(() => dene(0), reduced ? 100 : 1300); }
+  }
 })();

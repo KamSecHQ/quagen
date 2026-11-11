@@ -1,4 +1,4 @@
-/* QUAGEN Rehber — Türkçe başvuru verisi
+/* QUAGEN Kütüphane — Türkçe başvuru verisi
  * Her "kavram" bir niyettir ("metni büyük harfe çevirmek"); her dil için o niyetin karşılığı ayrı bir girdidir.
  * Böylece arama, dil fark etmeksizin niyeti bulur ve diğer dillerdeki karşılıkları yan yana gösterir.
  *
@@ -880,7 +880,7 @@ console.log(m.get("ada"), m.size);` },
 ogr = {"ad": "Ada", "puan": 90}
 ogr["sehir"] = "İzmir"
 print(ogr["ad"], ogr.get("yas", "bilinmiyor"), list(ogr))` },
-      c: { ad: "struct", sozdizimi: "struct Ogrenci { char ad[20]; int puan; };", aciklama: "Alanları derleme anında bilinen kayıtlar için struct. Çalışma anında anahtarla erişim için hash tablosunu kendin yazarsın (QUAGEN C Faz 16).",
+      c: { ad: "struct", sozdizimi: "struct Ogrenci { char ad[20]; int puan; };", aciklama: "Alanları derleme anında bilinen kayıtlar için struct. Çalışma anında anahtarla erişim için hash tablosunu kendin yazarsın (QUAGEN C Ders 16).",
         ornek: k`
 #include <stdio.h>
 

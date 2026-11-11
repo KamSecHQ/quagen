@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>QUAGEN — KAM ile kod yazmayı öğren</title>
-  <meta name="description" content="QUAGEN'de kod yazmayı KAM öğretir: konuyu mesajlaşarak anlatır, kod yanında değişir, sonra sen yazarsın. JavaScript, Python ve C; 90 faz, 270 testli görev, günlük pratik ve Türkçe rehber." />
+  <meta name="description" content="QUAGEN'de kod yazmayı KAM öğretir: konuyu mesajlaşarak anlatır, kod yanında değişir, sonra sen yazarsın. JavaScript, Python ve C; 90 ders, 270 testli görev, günlük pratik ve Türkçe rehber." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="assets/css/landing.css" />
   <link rel="stylesheet" href="assets/css/kam.css" />
   <link rel="stylesheet" href="assets/css/cam.css" />
+  <script>(function () { var t = "dark"; try { if (JSON.parse(localStorage.getItem("kd-profile") || "{}").theme === "light") t = "light"; } catch (e) {} document.documentElement.dataset.theme = t; })();</script>
   <link rel="prefetch" href="nextgen.html" />
 </head>
 <body>
@@ -22,15 +23,14 @@
   <header class="nav" id="nav">
     <div class="nav-in cam">
       <a href="#" class="logo" aria-label="QUAGEN ana sayfa">QUAGEN</a>
+      <nav class="dunya" id="dunya" aria-label="Dünyalar"><span aria-current="page">QUAGEN</span><a href="nextgen.html" class="js-warp">NextGen</a></nav>
       <nav class="nav-links" aria-label="Bölümler">
-        <a href="#ders">Bir ders</a>
-        <a href="#mufredat">Dersler</a>
-        <a href="pratik.html">Pratik</a>
-        <a href="rehber.html">Rehber</a>
+        <a href="rehber.html" id="nav-kutuphane">Kütüphane</a>
+        <a href="pratik.html" id="nav-pratik">Pratik</a>
         <a href="#sss">Sorular</a>
       </nav>
-      <a href="hesap.html" class="nav-login" id="nav-login">Giriş yap</a>
-      <a href="nextgen.html" class="btn btn-ink js-warp">Derslere gir</a>
+      <button class="nav-tema" id="tema" aria-label="Temayı değiştir"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
+      <a href="hesap.html#kayit" class="btn btn-ink nav-kayit" id="nav-login"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="10" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 20a6.5 6.5 0 0 1 13 0M19 8v6M16 11h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Kayıt ol</span></a>
     </div>
   </header>
 
@@ -56,7 +56,7 @@
           <div class="sahne-cikti" id="h-cikti" hidden></div>
         </section>
       </div>
-      <noscript><p class="lead">Sohbeti görmek için JavaScript gerekir. <a href="nextgen.html">Derslere doğrudan gir.</a></p></noscript>
+      <noscript><p class="lead">Sohbeti görmek için JavaScript gerekir. <a href="nextgen.html">NextGen'e doğrudan git.</a></p></noscript>
     </section>
 
     <!-- Bir ders nasıl geçer -->
@@ -73,32 +73,36 @@
       </ol>
     </section>
 
-    <!-- Dersler -->
-    <section class="section wrap" id="mufredat">
-      <header class="sec-head">
-        <h2>Üç dil, doksan ders.</h2>
-        <p>Hangisinden başlayacağını bilmiyorsan yukarıda KAM'e sor. İstediğin an dil değiştirebilirsin; her birinin ilerlemesi ayrı tutulur.</p>
-      </header>
-      <div class="tracks">
-        <div class="track-tabs cam" role="tablist" aria-label="Parkurlar" id="track-tabs"></div>
-        <div class="track-panel cam" id="track-panel" role="tabpanel"></div>
+    <!-- Öteki dünya: NextGen -->
+    <section class="section wrap" id="nextgen">
+      <div class="kapi" id="kapi">
+        <div class="kapi-yazi">
+          <h2>Dersler NextGen'de.</h2>
+          <p>QUAGEN tanışma, Kütüphane ve Pratik içindir. Derslik ayrı bir dünya: üç dil, doksan ders, 270 görev ve senin için tutulan plan orada.</p>
+          <a href="nextgen.html" class="btn btn-marker btn-lg js-warp">NextGen'e git</a>
+        </div>
+        <ul class="kapi-diller" aria-label="Diller">
+          <li><b>Python</b><span>20 ders</span></li>
+          <li><b>C</b><span>20 ders</span></li>
+          <li><b>JavaScript</b><span>50 ders</span></li>
+        </ul>
       </div>
     </section>
 
-    <!-- Pratik ve Rehber -->
+    <!-- Pratik ve Kütüphane -->
     <section class="section wrap araclar" id="araclar">
       <header class="sec-head">
         <h2>Ders dışında iki yardımcı.</h2>
       </header>
       <div class="arac-grid">
         <article class="arac arac-rehber cam">
-          <h3>Rehber: ne yapmak istediğini yaz.</h3>
+          <h3>Kütüphane: ne yapmak istediğini yaz.</h3>
           <p>Fonksiyonun adını bilmen gerekmez. Kendi cümlenle sor; doğru yapıyı ve çalışan örneğini gösterir.</p>
           <form class="rd" id="rd" role="search">
-            <input id="rd-girdi" type="search" value="listeyi büyükten küçüğe sıralamak" aria-label="Rehber'e sor" autocomplete="off" spellcheck="false" />
+            <input id="rd-girdi" type="search" value="listeyi büyükten küçüğe sıralamak" aria-label="Kütüphane'ye sor" autocomplete="off" spellcheck="false" />
           </form>
           <div class="rd-sonuc" id="rd-sonuc" aria-live="polite"></div>
-          <a href="rehber.html" class="btn btn-ink">Rehberi aç</a>
+          <a href="rehber.html" class="btn btn-ink">Kütüphaneyi aç</a>
         </article>
         <article class="arac arac-pratik cam">
           <h3>Pratik: günde beş dakika.</h3>
@@ -123,7 +127,7 @@
         <details><summary>Bir şey kurmam gerekiyor mu?</summary><p>Hayır. JavaScript, Python ve C kodun tarayıcında çalışır. İlk C ya da Python çalıştırmasında derleyici bir kez indirilir; bu birkaç saniye sürebilir.</p></details>
         <details><summary>Günde ne kadar zaman ayırmalıyım?</summary><p>Düzenli 15–30 dakika, hafta sonu yapılan beş saatlik bir maratondan daha iyi sonuç verir. KAM ilk girişte ne kadar zamanın olduğunu sorar ve planı ona göre kurar.</p></details>
         <details><summary>İlerlemem nerede saklanıyor?</summary><p>Hesap açmazsan kendi tarayıcında. Ücretsiz hesap açarsan ilerlemen hesabına kaydedilir ve başka cihazda kaldığın yerden devam edersin.</p></details>
-        <details><summary>Ücretli mi?</summary><p>Hayır. Tüm dersler, Pratik ve Rehber ücretsiz.</p></details>
+        <details><summary>Ücretli mi?</summary><p>Hayır. Tüm dersler, Pratik ve Kütüphane ücretsiz.</p></details>
       </div>
     </section>
 
@@ -131,7 +135,7 @@
       <div class="cta-in cam">
         <span class="kam-av" aria-hidden="true"><b></b><b></b></span>
         <h2>İlk dersin hazır.</h2>
-        <a href="nextgen.html" class="btn btn-marker btn-lg js-warp">Derslere gir</a>
+        <a href="nextgen.html" class="btn btn-marker btn-lg js-warp">NextGen'e git</a>
       </div>
     </section>
   </main>
@@ -139,7 +143,7 @@
   <footer class="foot">
     <div class="wrap foot-in">
       <span class="logo">QUAGEN</span>
-      <a href="rehber.html">Rehber</a>
+      <a href="rehber.html">Kütüphane</a>
       <a href="pratik.html">Pratik</a>
       <span class="foot-c">© 2026 QUAGEN</span>
     </div>
@@ -178,6 +182,7 @@
   <script src="assets/js/rehber-ara.js"></script>
   <script src="assets/js/engine.js"></script>
   <script src="assets/js/python.js"></script>
+  <script src="assets/js/tur.js"></script>
   <script src="assets/js/landing.js"></script>
 </body>
 </html>

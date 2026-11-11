@@ -117,13 +117,11 @@ body:has(.kam-ders) .kam-fab { display: none; }   /* derste soru alanı sohbetin
 .kam-bas .kam-av { font-size: 38px; }
 .m-head .kam-av { font-size: 32px; }
 .kam-cekmece.genis { background: color-mix(in srgb, var(--surface) 90%, transparent); }
-.kam-cekmece.genis .kam-bas .kam-av > i { display: none; }
 
 /* Panelde karşılamayı KAM yapar: eski selamlama başlığı gizlenir, kart büyür */
 .kam-kart ~ .dash-head, .kam-kart ~ * .dash-head { display: none; }
 .kam-kart { align-items: flex-start; gap: 20px; padding: 24px 26px; border-radius: 24px; margin-bottom: 24px; }
 .kam-kart .kam-av { font-size: 76px; animation: kam-sal 5s ease-in-out infinite; }
-.kam-kart .kam-av > i { display: none; }
 .kam-kart-ad { font-size: 13px; font-weight: 700; color: var(--graphite); }
 .kam-kart-ad span { display: none; }
 .kam-kart-metin { font-size: clamp(20px, 2.1vw, 27px); font-weight: 700; font-stretch: 86%; letter-spacing: -0.02em; line-height: 1.22; max-width: 40ch; }

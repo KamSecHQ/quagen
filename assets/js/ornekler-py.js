@@ -1,8 +1,8 @@
-/* QUAGEN — görev başına benzer çözümlü örnek: Python temelleri (Faz 1–10) ve Python ile veri ve otomasyon (Faz 11–20) */
+/* QUAGEN — görev başına benzer çözümlü örnek: Python temelleri (Ders 1–10) ve Python ile veri ve otomasyon (Ders 11–20) */
 (function () {
   const k = (s, ...v) => String.raw(s, ...v).replace(/^\n/, "").replace(/\s+$/, "");
   window.KD_ORNEKLER = Object.assign(window.KD_ORNEKLER || {}, {
-  /* ---------- Python Faz 1–10 ---------- */
+  /* ---------- Python Ders 1–10 ---------- */
   py1c1: { t: "Çalışmayan selam", c: k`
 # Hatalı sürüm:  print("Selam, dünya!)   → tırnak kapanmamış (SyntaxError)
 print("Selam, dünya!")`, n: "Hata mesajının türünü oku: SyntaxError yazım kuralı, NameError tanımsız isim demektir. Python'da print küçük harfle yazılır; Print farklı bir isimdir." },
@@ -288,7 +288,7 @@ for satir in sys.stdin:
         else:
             stok -= adet`, n: "Sıra: komutu ayır → argümanı try/except ile doğrula (geçersizse mesaj yaz ve continue) → komutu uygula. Her kuralın ihlali için ayrı mesaj." },
 
-  /* ---------- Python Faz 11–20 ---------- */
+  /* ---------- Python Ders 11–20 ---------- */
   py11c1: { t: "Kumbara sınıfı", c: k`
 class Kumbara:
     def __init__(self, sahip):

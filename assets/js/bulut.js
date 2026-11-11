@@ -1,8 +1,8 @@
 /* QUAGEN — bulut köprüsü (çevrimiçi yayın)
  * Sitenin yerel sunucuya yaptığı /api/... isteklerini tarayıcıda karşılayıp Supabase'e yönlendirir.
- * Böylece hesap, eşitleme, portföy, mentor ve Rehber asistanı kodu yerel sürümle aynı kalır.
+ * Böylece hesap, eşitleme, portföy, mentor ve Kütüphane asistanı kodu yerel sürümle aynı kalır.
  *   hesap / ilerleme / portföy → Postgres fonksiyonları (quagen_*; parola bcrypt, oturum belirteci yalnızca özetiyle saklanır)
- *   mentor / Rehber asistanı  → quagen-ai Edge Function (Claude; giriş ve kullanım sınırı gerekir)
+ *   mentor / Kütüphane asistanı  → quagen-ai Edge Function (Claude; giriş ve kullanım sınırı gerekir)
  * Yapılandırma: window.QUAGEN_BULUT = { url, anahtar } (yayımlanabilir anahtar; gizli değildir)
  */
 (function () {

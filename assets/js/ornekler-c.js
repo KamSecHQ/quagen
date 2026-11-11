@@ -1,10 +1,10 @@
-/* QUAGEN — görev başına benzer çözümlü örnek: C temelleri (Faz 1–10) ve İleri C (Faz 11–20)
+/* QUAGEN — görev başına benzer çözümlü örnek: C temelleri (Ders 1–10) ve İleri C (Ders 11–20)
  * Her örnek kendi main'i olan, derlenip çalışan tam bir programdır.
  */
 (function () {
   const k = (s, ...v) => String.raw(s, ...v).replace(/^\n/, "").replace(/\s+$/, "");
   window.KD_ORNEKLER = Object.assign(window.KD_ORNEKLER || {}, {
-  /* ---------- C Faz 1–10 ---------- */
+  /* ---------- C Ders 1–10 ---------- */
   c1c1: { t: "İki satırlık kartvizit", c: k`
 #include <stdio.h>
 
@@ -512,7 +512,7 @@ int main(void) {
     return 0;
 }`, n: "Bir okun yönünü değiştirmeden önce gösterdiği düğümü bir değişkende sakla. Ters çevirmede üç işaretçi yeter: önceki, şimdiki, sonraki." },
 
-  /* ---------- C Faz 11–20 ---------- */
+  /* ---------- C Ders 11–20 ---------- */
   c11c1: { t: "Tek mi? (bit işlemiyle)", c: k`
 #include <stdio.h>
 #include <stdbool.h>

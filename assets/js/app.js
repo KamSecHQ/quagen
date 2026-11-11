@@ -74,13 +74,13 @@
   const trackComplete = (tid) => trackProgress(tid).ratio === 1;
   const lockReason = (p) => {
     const list = phasesOf(trackOf(p)), i = list.indexOf(p);
-    if (i > 0) return `Faz ${list[i - 1].no}'de en az 2 görevi geçince açılır.`;
+    if (i > 0) return `Ders ${list[i - 1].no}'de en az 2 görevi geçince açılır.`;
     return `${T(T(trackOf(p)).req).title} parkurunu bitirince açılır.`;
   };
   /* Seviye sınavını geçenler için çözümlü örnek varsayılan adım değil (uzmanlık tersine dönmesi, Kalyuga 2003) */
   const defaultStep = (p) => { const ph = S.phase(p.id); if (placed(trackOf(p))) return "kodla"; return ph.predict === null ? "tahmin" : !ph.viewed ? "incele" : "kodla"; };
   const skillPct = (p) => { const v = KD.bkt.get(p.id); return v == null ? null : Math.round(v * 100); };
-  /* Sıradaki en mantıklı hedef: açık ve bitmemiş ilk faz */
+  /* Sıradaki en mantıklı hedef: açık ve bitmemiş ilk ders */
   function nextTarget() {
     for (const t of TRACKS) for (const p of phasesOf(t.id)) {
       if (!unlocked(p) || mastery(p) === 1) continue;
@@ -180,10 +180,7 @@
       ["icgoruler", I.chart, "İçgörüler", ""],
       ["profil", I.user, "Profil", ""],
       ["sertifika", I.award, "Sertifikalar", ""]
-    ].map(([id, ic, t, extra]) => `<a href="#${id}" class="side-link ${active === id ? "on" : ""}">${ic}<span>${t}</span>${extra}</a>`).join("")
-      + `<span class="side-sep" aria-hidden="true"></span>
-      <a href="pratik.html?dil=${LANG}" class="side-link ext"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 2s5 4.5 5 10a5 5 0 0 1-10 0c0-2 1-3.5 1-3.5S9 11 10.5 11C10.5 7 12 2 12 2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>Günlük pratik</span><span class="ext-tag">5 dk</span></a>
-      <a href="rehber.html" class="side-link ext"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3Z M9 9h6M9 13h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>Rehber</span><span class="ext-tag">TR</span></a>`;
+    ].map(([id, ic, t, extra]) => `<a href="#${id}" class="side-link ${active === id ? "on" : ""}">${ic}<span>${t}</span>${extra}</a>`).join("");
 
     const openTrack = active && active.startsWith("p") ? trackOf(C.find((p) => p.id === active) || C[0]) : null;
     $("#tracks").innerHTML = TRACKS.map((t) => {
@@ -317,7 +314,7 @@
     const p = C.find((x) => x.id === a);
     if (!p) return renderDashboard();
     if (!unlocked(p)) {
-      toast(`Faz ${p.no} henüz kilitli. ${lockReason(p)}`, "warn");
+      toast(`Ders ${p.no} henüz kilitli. ${lockReason(p)}`, "warn");
       location.replace("#" + lastOpen().id);
       return;
     }
@@ -355,12 +352,12 @@
     const s = computeStats();
     const cont = nt
       ? `<a class="continue" href="#${nt.p.id}/${nt.step}${nt.step === "kodla" && nt.ch ? "/" + nt.ch.id : ""}">
-          <span class="continue-meta">${esc(T(trackOf(nt.p)).title)} · Faz ${nt.p.no}</span>
+          <span class="continue-meta">${esc(T(trackOf(nt.p)).title)} · Ders ${nt.p.no}</span>
           <span class="continue-title">${esc(nt.p.title)}</span>
           <span class="continue-next">${nt.step === "kodla" && nt.ch ? "Sıradaki görev: " + esc(nt.ch.title) : "Sıradaki adım: " + STEPS.find((x) => x[0] === nt.step)[1]}</span>
           <span class="btn primary">Devam et</span>
         </a>`
-      : `<div class="continue done"><span class="continue-title">Tüm açık fazları bitirdin.</span><span class="continue-next">Tekrar ve karma antrenmanla kalıcı hale getir.</span></div>`;
+      : `<div class="continue done"><span class="continue-title">Tüm açık dersleri bitirdin.</span><span class="continue-next">Tekrar ve karma antrenmanla kalıcı hale getir.</span></div>`;
     view.innerHTML = `
       <div class="dash">
         <header class="dash-head">
@@ -389,7 +386,7 @@
             ${(() => {
               const w = weakSkills(2);
               if (LANG === "js" && !placed("js") && !trackComplete("js") && (S.state.prefs.level === "js" || trackProgress("js").passed < 3)) return `<p>JavaScript'i biliyor musun? Seviye sınavıyla temel parkuru atlayıp diğer parkurlara geçebilirsin.</p><a class="btn" href="#seviye">Seviye sınavına gir</a>`;
-              if (w.length) return `<p class="muted small">Beceri tahminine göre en çok tekrara ihtiyaç duyan konular:</p><ul class="weak">${w.map((p) => `<li><a href="#${p.id}/kodla"><b>Faz ${p.no}: ${esc(p.short)}</b><span class="muted small">%${Math.round(KD.bkt.get(p.id) * 100)}</span></a></li>`).join("")}</ul><a class="btn" href="#icgoruler">Tüm içgörüler</a>`;
+              if (w.length) return `<p class="muted small">Beceri tahminine göre en çok tekrara ihtiyaç duyan konular:</p><ul class="weak">${w.map((p) => `<li><a href="#${p.id}/kodla"><b>Ders ${p.no}: ${esc(p.short)}</b><span class="muted small">%${Math.round(KD.bkt.get(p.id) * 100)}</span></a></li>`).join("")}</ul><a class="btn" href="#icgoruler">Tüm içgörüler</a>`;
               return `<p class="muted">Görev çözdükçe ve kart tekrar ettikçe burada zayıf becerilerin görünecek.</p><a class="btn" href="#icgoruler">İçgörüler</a>`;
             })()}
           </div>
@@ -434,30 +431,30 @@
     $$("[data-act=settings]", view).forEach((b) => (b.onclick = openSettings));
   }
 
-  /* ---------- Faz görünümü ---------- */
+  /* ---------- Ders görünümü ---------- */
   function renderPhase(p, step, chId) {
     renderSide(p.id); renderBar();
     const t = T(trackOf(p));
-    renderCrumbs([{ t: "Panel", h: "#panel" }, { t: t.short, h: "#" + phasesOf(t.id)[0].id }, { t: `Faz ${p.no}: ${p.short}` }]);
+    renderCrumbs([{ t: "Panel", h: "#panel" }, { t: t.short, h: "#" + phasesOf(t.id)[0].id }, { t: `Ders ${p.no}: ${p.short}` }]);
     const ph = S.phase(p.id), m = mastery(p);
     const done = { tahmin: ph.predict !== null, incele: ph.viewed, kodla: m === 1, hatirla: p.cards.every((c) => S.state.cards[c.id]?.reps > 0) };
     const list = phasesOf(t.id), nextP = list[list.indexOf(p) + 1];
     view.innerHTML = `
       <header class="ph-head ${step === "kodla" || (KAMLI && step === "incele") ? "compact" : ""}">
         <div class="ph-title">
-          <p class="ph-label">Faz ${p.no} <span>${esc(t.title)}</span></p>
+          <p class="ph-label">Ders ${p.no} <span>${esc(t.title)}</span></p>
           <h1>${esc(p.title)}</h1>
           <p class="lead">${esc(p.goal)}</p>
           <ul class="concepts">${p.concepts.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
         </div>
         <div class="mastery" title="Ustalık: geçilen görev oranı">
           <div class="mastery-top"><span>Ustalık</span><b>${Math.round(m * 100)}%</b></div>
-          <div class="meter tall"><i style="width:${m * 100}%"></i><em style="left:${UNLOCK * 100}%" title="Sonraki fazı açan eşik"></em></div>
+          <div class="meter tall"><i style="width:${m * 100}%"></i><em style="left:${UNLOCK * 100}%" title="Sonraki dersi açan eşik"></em></div>
           ${skillPct(p) != null ? `<div class="mastery-top skill" title="Bayesçi bilgi takibi: testler, tahminler ve kartlardan hesaplanan hâkimiyet olasılığı"><span>Beceri tahmini</span><b>${skillPct(p)}%</b></div>` : ""}
-          <p class="small muted" id="mastery-note">${m >= UNLOCK ? (nextP ? "Sonraki faz açık." : "Bu parkurun son fazı.") : "3 görevden 2'sini geçince sonraki faz açılır."}</p>
+          <p class="small muted" id="mastery-note">${m >= UNLOCK ? (nextP ? "Sonraki ders açık." : "Bu parkurun son dersi.") : "3 görevden 2'sini geçince sonraki ders açılır."}</p>
         </div>
       </header>
-      <nav class="steps" aria-label="Faz adımları">
+      <nav class="steps" aria-label="Ders adımları">
         ${STEPS.map(([k, label], i) => `<a href="#${p.id}/${k}" class="step ${k === step ? "on" : ""} ${done[k] ? "done" : ""}" ${k === step ? 'aria-current="step"' : ""}><span class="step-n">${done[k] ? I.check : i + 1}</span><span class="step-l">${label}</span></a>`).join("")}
       </nav>
       <section class="stage" id="stage"></section>`;
@@ -624,7 +621,7 @@
           <section class="brief">
             <div class="brief-top">
               <span class="kind kind-${kindCls}">${ch.kind}</span>
-              ${mode === "mix" ? `<span class="kind">Faz ${p.no}: ${esc(p.short)}</span>` : ""}
+              ${mode === "mix" ? `<span class="kind">Ders ${p.no}: ${esc(p.short)}</span>` : ""}
               <h2>${esc(ch.title)}</h2>
             </div>
             <p class="brief-text">${md(ch.prompt)}</p>
@@ -769,7 +766,7 @@
         if (clean) S.state.stats.hintless++;
         const gain = ph.solSeen[ch.id] ? 10 : 50 + (clean ? 20 : 0) + (attempts === 1 ? 10 : 0);
         S.addXP(gain);
-        if (wasLocked && unlocked(nextPhase)) setTimeout(() => toast(`<b>Faz ${nextPhase.no} açıldı:</b> ${esc(nextPhase.title)}`, "unlock"), 1200);
+        if (wasLocked && unlocked(nextPhase)) setTimeout(() => toast(`<b>Ders ${nextPhase.no} açıldı:</b> ${esc(nextPhase.title)}`, "unlock"), 1200);
         KD.srs.enroll(p.cards.map((c) => c.id));
       }
       say(hintLv === 0 && !ph.solSeen[ch.id] ? "<b>İpucu almadan çözdün.</b> Son bir adım: çözümünün neden çalıştığını aşağıya kendi cümlelerinle yaz." : "<b>Tüm testler geçti.</b> Pekiştirmek için çözümünü kendi cümlelerinle açıkla.", "m good");
@@ -778,7 +775,7 @@
       if (mb) {
         mb.querySelector("b").textContent = Math.round(mm * 100) + "%";
         mb.querySelector(".meter i").style.width = mm * 100 + "%";
-        if (mm >= UNLOCK) $("#mastery-note").textContent = "Sonraki faz açık.";
+        if (mm >= UNLOCK) $("#mastery-note").textContent = "Sonraki ders açık.";
       }
       const old = ph.explain[ch.id] || "";
       $("#after", host).innerHTML = `
@@ -840,7 +837,7 @@
     stage.innerHTML = `<div class="panel narrow"><h2>Bakmadan hatırla</h2><p class="muted">Cevabı önce hafızandan yaz, sonra kontrol et. Verdiğin puana göre kart, unutmak üzere olduğun gün tekrar gelir.</p><div id="fc"></div></div>`;
     flashcards($("#fc"), ALL_CARDS.filter((c) => c.phase === p), () => {
       const list = phasesOf(trackOf(p)), nx = list[list.indexOf(p) + 1];
-      return nx && unlocked(nx) ? `<a class="btn primary" href="#${nx.id}">Faz ${nx.no}: ${esc(nx.title)}</a>` : !nx ? `<a class="btn primary" href="#panel">Panele dön</a>` : `<a class="btn primary" href="#${p.id}/kodla">Görevlere dön</a>`;
+      return nx && unlocked(nx) ? `<a class="btn primary" href="#${nx.id}">Ders ${nx.no}: ${esc(nx.title)}</a>` : !nx ? `<a class="btn primary" href="#panel">Panele dön</a>` : `<a class="btn primary" href="#${p.id}/kodla">Görevlere dön</a>`;
     });
   }
 
@@ -854,7 +851,7 @@
       const c = cards[i];
       host.innerHTML = `
         <div class="fc">
-          <div class="fc-meta"><span>${i + 1} / ${cards.length}</span><span>Faz ${c.phase.no}: ${esc(c.phase.short)}</span></div>
+          <div class="fc-meta"><span>${i + 1} / ${cards.length}</span><span>Ders ${c.phase.no}: ${esc(c.phase.short)}</span></div>
           <div class="meter thin"><i style="width:${(i / cards.length) * 100}%"></i></div>
           <h3 class="fc-q">${md(c.q)}</h3>
           <label class="sr" for="fc-try">Cevabın</label>
@@ -888,7 +885,7 @@
     const rv = $("#rv");
     if (!due.length) {
       const nextDue = enrolled.map((c) => S.state.cards[c.id].due).sort((a, b) => a - b)[0];
-      rv.innerHTML = `<div class="empty"><h2>Şu an tekrar edilecek kart yok.</h2><p class="muted">${enrolled.length ? `Destende ${enrolled.length} kart var. Sıradaki kart ${new Date(nextDue).toLocaleString("tr-TR", { weekday: "long", hour: "2-digit", minute: "2-digit" })} zamanında gelecek.` : "Bir fazda görev geçtiğinde o fazın kartları destene eklenir."}</p><div class="row"><a class="btn primary" href="#karma">Karma antrenman yap</a></div></div>`;
+      rv.innerHTML = `<div class="empty"><h2>Şu an tekrar edilecek kart yok.</h2><p class="muted">${enrolled.length ? `Destende ${enrolled.length} kart var. Sıradaki kart ${new Date(nextDue).toLocaleString("tr-TR", { weekday: "long", hour: "2-digit", minute: "2-digit" })} zamanında gelecek.` : "Bir derste görev geçtiğinde o dersin kartları destene eklenir."}</p><div class="row"><a class="btn primary" href="#karma">Karma antrenman yap</a></div></div>`;
       return;
     }
     flashcards(rv, due.sort(() => Math.random() - 0.5), () => `<a class="btn primary" href="#panel">Panele dön</a>`);
@@ -900,7 +897,7 @@
     const pool = ALL_CH.filter((c) => S.phase(c.phase.id).passed[c.id]);
     view.innerHTML = `<header class="page-head"><h1>Karma antrenman</h1><p class="lead">Geçtiğin görevler karışık sırayla ve boş editörle gelir. Seçim uyarlanabilir: beceri tahminin düşük olan konular daha sık çıkar. Şu ana kadar ${S.state.mix || 0} karma görev çözdün.</p></header><section class="stage" id="mix"></section>`;
     if (!pool.length) {
-      $("#mix").innerHTML = `<div class="panel narrow empty"><h2>Havuzda henüz görev yok.</h2><p class="muted">Bir fazda en az bir görevi geçtiğinde burada karışık sırayla tekrar karşına çıkar.</p><div class="row"><a class="btn primary" href="#${lastOpen().id}">İlk görevine başla</a></div></div>`;
+      $("#mix").innerHTML = `<div class="panel narrow empty"><h2>Havuzda henüz görev yok.</h2><p class="muted">Bir derste en az bir görevi geçtiğinde burada karışık sırayla tekrar karşına çıkar.</p><div class="row"><a class="btn primary" href="#${lastOpen().id}">İlk görevine başla</a></div></div>`;
       return;
     }
     /* Uyarlanabilir seçim: düşük beceri tahmini ve çözümü görülmüş görevler daha sık gelir */
@@ -938,14 +935,14 @@
       <header class="page-head"><h1>İçgörüler</h1><p class="lead">Öğrenme sürecinin ölçümleri. Tüm hesaplar bu tarayıcıdaki ilerlemenden yapılır; yöntemler aşağıda kaynaklarıyla yazılı.</p></header>
       <div class="dash-grid">
         <section class="tile tile-span-12">
-          <div class="tile-row"><h2 class="tile-h">Beceri haritası</h2><p class="muted small">Her kare bir faz. Renk, Bayesçi bilgi takibiyle hesaplanan hâkimiyet olasılığı (Corbett ve Anderson, 1994).</p></div>
-          <div class="skillmap">${TRACKS.map((t) => `<div class="sm-row"><span class="sm-t">${esc(t.short)}</span><div class="sm-cells">${phasesOf(t.id).map((p) => { const v = KD.bkt.get(p.id), ok = unlocked(p); return `<a class="sm-c lv-${LV(v)} ${ok ? "" : "locked"}" href="#${p.id}" ${ok ? "" : 'aria-disabled="true"'} title="Faz ${p.no}: ${esc(p.title)} — ${v == null ? "henüz veri yok" : "%" + Math.round(v * 100)}"><b>${p.no}</b><span>${v == null ? "" : Math.round(v * 100)}</span></a>`; }).join("")}</div></div>`).join("")}</div>
+          <div class="tile-row"><h2 class="tile-h">Beceri haritası</h2><p class="muted small">Her kare bir ders. Renk, Bayesçi bilgi takibiyle hesaplanan hâkimiyet olasılığı (Corbett ve Anderson, 1994).</p></div>
+          <div class="skillmap">${TRACKS.map((t) => `<div class="sm-row"><span class="sm-t">${esc(t.short)}</span><div class="sm-cells">${phasesOf(t.id).map((p) => { const v = KD.bkt.get(p.id), ok = unlocked(p); return `<a class="sm-c lv-${LV(v)} ${ok ? "" : "locked"}" href="#${p.id}" ${ok ? "" : 'aria-disabled="true"'} title="Ders ${p.no}: ${esc(p.title)} — ${v == null ? "henüz veri yok" : "%" + Math.round(v * 100)}"><b>${p.no}</b><span>${v == null ? "" : Math.round(v * 100)}</span></a>`; }).join("")}</div></div>`).join("")}</div>
           <div class="sm-legend"><span>Veri yok <i class="lv-0"></i></span><span>Başlangıç <i class="lv-1"></i></span><span>Gelişiyor <i class="lv-2"></i></span><span>Yakın <i class="lv-3"></i></span><span>Hâkim (%95+) <i class="lv-4"></i></span></div>
         </section>
 
         <section class="tile tile-span-6">
           <h2 class="tile-h">Odaklanman gerekenler</h2>
-          ${weak.length ? `<ol class="weak">${weak.map((p) => `<li><a href="#${p.id}/kodla"><b>Faz ${p.no}: ${esc(p.title)}</b><span class="muted small">Tahmini hâkimiyet %${Math.round(KD.bkt.get(p.id) * 100)}</span></a></li>`).join("")}</ol><div class="row"><a class="btn primary" href="#karma/${Date.now()}">Bu konularla karma antrenman</a></div>` : `<p class="muted">Henüz yeterli veri yok. Birkaç görev ve tekrar kartından sonra burada en zayıf becerilerin görünecek.</p>`}
+          ${weak.length ? `<ol class="weak">${weak.map((p) => `<li><a href="#${p.id}/kodla"><b>Ders ${p.no}: ${esc(p.title)}</b><span class="muted small">Tahmini hâkimiyet %${Math.round(KD.bkt.get(p.id) * 100)}</span></a></li>`).join("")}</ol><div class="row"><a class="btn primary" href="#karma/${Date.now()}">Bu konularla karma antrenman</a></div>` : `<p class="muted">Henüz yeterli veri yok. Birkaç görev ve tekrar kartından sonra burada en zayıf becerilerin görünecek.</p>`}
         </section>
 
         <section class="tile tile-span-6">
@@ -988,7 +985,7 @@
     renderSide("panel"); renderBar(); renderCrumbs([{ t: "Panel", h: "#panel" }, { t: "Seviye sınavı" }]);
     const st = placementState();
     const dots = PLACEMENT.map((id, i) => `<li class="${st.results[id] === true ? "ok" : st.results[id] === false ? "no" : i === st.i && !st.done ? "on" : ""}">${i + 1}</li>`).join("");
-    const head = `<header class="page-head"><h1>JavaScript seviye sınavı</h1><p class="lead">JavaScript'i zaten biliyorsan temel parkuru baştan yapman gerekmez. Altı görevden en az ${PASS_MIN}'ini ipucusuz geçersen Web, React, Algoritmalar ve Backend parkurları açılır; JavaScript fazları da açık kalır ve doğrudan kodlama adımından başlar.</p><ol class="pl-dots">${dots}</ol></header>`;
+    const head = `<header class="page-head"><h1>JavaScript seviye sınavı</h1><p class="lead">JavaScript'i zaten biliyorsan temel parkuru baştan yapman gerekmez. Altı görevden en az ${PASS_MIN}'ini ipucusuz geçersen Web, React, Algoritmalar ve Backend parkurları açılır; JavaScript dersleri da açık kalır ve doğrudan kodlama adımından başlar.</p><ol class="pl-dots">${dots}</ol></header>`;
     if (placed("js")) { view.innerHTML = head + `<div class="panel narrow"><h2>Sınavı geçtin.</h2><p class="muted">Tüm parkurlar açık. Panelde sıradaki hedefini görebilirsin.</p><div class="row"><a class="btn primary" href="#panel">Panele dön</a></div></div>`; return; }
     if (st.done) {
       const n = PLACEMENT.filter((id) => st.results[id]).length;
@@ -1028,10 +1025,10 @@
         <fieldset><legend>${esc(KD.langInfo().ad)} deneyimin</legend>
           <div class="choices">
             ${(LANG === "js"
-              ? [["yeni", "Hiç kod yazmadım", "Faz 1'den, adım adım başlarız."], ["biraz", "Biraz yazdım", "Faz 1'den başla; bildiğin yerleri hızlı geçersin."], ["js", "JavaScript'i biliyorum", "Seviye sınavıyla temel parkuru atlayabilirsin."]]
+              ? [["yeni", "Hiç kod yazmadım", "Ders 1'den, adım adım başlarız."], ["biraz", "Biraz yazdım", "Ders 1'den başla; bildiğin yerleri hızlı geçersin."], ["js", "JavaScript'i biliyorum", "Seviye sınavıyla temel parkuru atlayabilirsin."]]
               : LANG === "py"
-              ? [["yeni", "Hiç Python yazmadım", "Faz 1'den başlarız: print, değişkenler, girinti."], ["biraz", "Başka bir dil biliyorum", "Python'un farkları (girinti, dinamik türler, kavramalar) üzerine odaklanırsın."], ["py", "Biraz Python biliyorum", "Temel fazları hızlı geçip sınıflar, üreteçler ve veri işlemeye gelirsin."]]
-              : [["yeni", "Hiç C yazmadım", "Faz 1'den başlarız: derleme, türler, printf."], ["biraz", "Başka bir dil biliyorum", "C'nin farkları (türler, bellek, işaretçiler) üzerine odaklanırsın."], ["c", "Biraz C biliyorum", "Bildiğin fazları hızlı geçip işaretçi ve bellek konularına gelirsin."]]).map(([v, t, d2], i) => `<label class="choice"><input type="radio" name="level" value="${v}" ${i === 0 ? "checked" : ""}/><span><b>${t}</b><small>${d2}</small></span></label>`).join("")}
+              ? [["yeni", "Hiç Python yazmadım", "Ders 1'den başlarız: print, değişkenler, girinti."], ["biraz", "Başka bir dil biliyorum", "Python'un farkları (girinti, dinamik türler, kavramalar) üzerine odaklanırsın."], ["py", "Biraz Python biliyorum", "Temel dersleri hızlı geçip sınıflar, üreteçler ve veri işlemeye gelirsin."]]
+              : [["yeni", "Hiç C yazmadım", "Ders 1'den başlarız: derleme, türler, printf."], ["biraz", "Başka bir dil biliyorum", "C'nin farkları (türler, bellek, işaretçiler) üzerine odaklanırsın."], ["c", "Biraz C biliyorum", "Bildiğin dersleri hızlı geçip işaretçi ve bellek konularına gelirsin."]]).map(([v, t, d2], i) => `<label class="choice"><input type="radio" name="level" value="${v}" ${i === 0 ? "checked" : ""}/><span><b>${t}</b><small>${d2}</small></span></label>`).join("")}
           </div>
         </fieldset>
         <fieldset><legend>Günlük hedefin</legend>
@@ -1124,7 +1121,7 @@
       for (const p of window.KD_CURRICULUM.filter((x) => (x.language || "js") === l.id)) {
         for (const c of p.challenges) {
           const kod = st.code && st.code[c.id];
-          if (st.phases[p.id] && st.phases[p.id].passed && st.phases[p.id].passed[c.id] && kod) out.push({ dil: l.id, dilAd: l.ad, gorevId: c.id, baslik: c.title, faz: `Faz ${p.no}: ${p.title}`, kod, kodDili: c.lang === "c" ? "c" : c.lang === "py" ? "py" : c.lang === "jsx" ? "jsx" : c.lang === "html" ? "html" : c.lang === "css" ? "css" : c.lang === "sql" ? "sql" : "js" });
+          if (st.phases[p.id] && st.phases[p.id].passed && st.phases[p.id].passed[c.id] && kod) out.push({ dil: l.id, dilAd: l.ad, gorevId: c.id, baslik: c.title, faz: `Ders ${p.no}: ${p.title}`, kod, kodDili: c.lang === "c" ? "c" : c.lang === "py" ? "py" : c.lang === "jsx" ? "jsx" : c.lang === "html" ? "html" : c.lang === "css" ? "css" : c.lang === "sql" ? "sql" : "js" });
         }
       }
     }
@@ -1152,7 +1149,7 @@
           <div class="meter tall"><i style="width:${x.total ? (x.passed / x.total) * 100 : 0}%"></i></div>
           <div class="kpis">
             <div><b data-count="${x.passed}">${x.passed}</b><span>/ ${x.total} görev</span></div>
-            <div><b data-count="${x.phasesDone}">${x.phasesDone}</b><span>/ ${x.phases} faz tamam</span></div>
+            <div><b data-count="${x.phasesDone}">${x.phasesDone}</b><span>/ ${x.phases} ders tamam</span></div>
             <div><b data-count="${x.xp}">${x.xp.toLocaleString("tr-TR")}</b><span>XP</span></div>
             <div><b data-count="${x.best}">${x.best}</b><span>en uzun seri</span></div>
             <div><b data-count="${x.cards}">${x.cards}</b><span>tekrar kartı</span></div>
@@ -1327,7 +1324,7 @@
       { g: "Git", t: "İçgörüler", sub: "Beceri haritası, hafıza ve kalibrasyon", h: "#icgoruler" },
       { g: "Git", t: "Sertifikalar", h: "#sertifika" },
       { g: "Git", t: "Günlük pratik", sub: "5 dakikalık oyunlaştırılmış alıştırma", run: () => (location.href = "pratik.html?dil=" + LANG) },
-      { g: "Git", t: "Rehber", sub: "Türkçe başvuru: ne yapmak istediğini yaz", run: () => (location.href = "rehber.html") },
+      { g: "Git", t: "Kütüphane", sub: "Türkçe başvuru: ne yapmak istediğini yaz", run: () => (location.href = "rehber.html") },
       ...(LANG === "js" ? [{ g: "Git", t: "Seviye belirleme sınavı", sub: "JavaScript biliyorsan parkuru atla", h: "#seviye" }] : []),
       { g: "Git", t: "Profil", sub: "Tüm dillerdeki ilerlemen", h: "#profil" },
       ...KD.LANGS.filter((l) => l.id !== LANG).map((l) => ({ g: "Komut", t: `Dili değiştir: ${l.ad}`, sub: "Kaldığın yerden devam et", run: () => switchLang(l.id) })),
@@ -1337,8 +1334,8 @@
     ];
     for (const p of C) {
       const ok = unlocked(p);
-      items.push({ g: "Fazlar", t: `Faz ${p.no}: ${p.title}`, sub: T(trackOf(p)).short + " · " + p.concepts.join(", "), h: "#" + p.id, off: !ok });
-      if (ok) p.challenges.forEach((c) => items.push({ g: "Görevler", t: c.title, sub: `Faz ${p.no}: ${p.short} · ${c.kind}`, h: `#${p.id}/kodla/${c.id}`, ok: S.phase(p.id).passed[c.id] }));
+      items.push({ g: "Dersler", t: `Ders ${p.no}: ${p.title}`, sub: T(trackOf(p)).short + " · " + p.concepts.join(", "), h: "#" + p.id, off: !ok });
+      if (ok) p.challenges.forEach((c) => items.push({ g: "Görevler", t: c.title, sub: `Ders ${p.no}: ${p.short} · ${c.kind}`, h: `#${p.id}/kodla/${c.id}`, ok: S.phase(p.id).passed[c.id] }));
     }
     return items;
   }
@@ -1364,7 +1361,7 @@
   function markSel() { $$(".pal-i").forEach((li) => { const on = +li.dataset.i === palSel; li.classList.toggle("on", on); li.setAttribute("aria-selected", on); if (on) li.scrollIntoView({ block: "nearest" }); }); }
   function choose(i) {
     const x = palRes[i]; if (!x) return;
-    if (x.off) { toast("Bu faz henüz kilitli.", "warn"); return; }
+    if (x.off) { toast("Bu ders henüz kilitli.", "warn"); return; }
     closePalette();
     if (x.run) x.run(); else location.hash = x.h;
   }

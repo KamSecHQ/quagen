@@ -1,4 +1,4 @@
-/* QUAGEN — görev başına benzer çözümlü örnek: Web temelleri (Faz 11–20) ve React (Faz 21–30)
+/* QUAGEN — görev başına benzer çözümlü örnek: Web temelleri (Ders 11–20) ve React (Ders 21–30)
  * Web örnekleri kendi başına çalışan HTML (lang: "html"), React örnekleri JSX (lang: "jsx") olarak önizlenir.
  */
 (function () {
@@ -6,7 +6,7 @@
   const H = (t, c, n) => ({ t, c, n, lang: "html" });
   const X = (t, c, n) => ({ t, c, n, lang: "jsx" });
   window.KD_ORNEKLER = Object.assign(window.KD_ORNEKLER || {}, {
-  /* ---------- Faz 11–20: Web ---------- */
+  /* ---------- Ders 11–20: Web ---------- */
   p11c1: H("Tarif sayfasını anlamlandır", k`
 <!-- Önce: <div class="ust">, <div class="yan">, <div class="govde"> -->
 <header><h1>Menemen</h1></header>
@@ -297,7 +297,7 @@
   ciz();
 </script>`, "Sayma ve silme filter ile yapılır; özet her çizimde yeniden hesaplanır. Form gönderiminde: preventDefault, ekle, kutuyu boşalt, çiz."),
 
-  /* ---------- Faz 21–30: React ---------- */
+  /* ---------- Ders 21–30: React ---------- */
   p21c1: X("Karşılama kartı", k`
 function Karsilama() {
   return (

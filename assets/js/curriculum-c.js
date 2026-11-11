@@ -1,4 +1,4 @@
-/* QUAGEN NextGen — Müfredat: C temelleri, Faz 1–10 (dil: C)
+/* QUAGEN NextGen — Müfredat: C temelleri, Ders 1–10 (dil: C)
  * Kod yerel clang ile AddressSanitizer + UBSan açık derlenir (server.js → /api/c/run).
  * mode "stdout": öğrenci main() yazar; testler { label, stdin, stdout }
  * mode "fn" (varsayılan): öğrenci fonksiyon yazar; testler { label, setup, expr, type, expected }
@@ -14,7 +14,7 @@
   const c = (o) => Object.assign({ lang: "c" }, o);
 
   const C = [
-  /* ============================ C · FAZ 1 ============================ */
+  /* ============================ C · DERS 1 ============================ */
   {
     id: "c1", no: 1, language: "c", track: "c", title: "İlk program, printf ve değişkenler", short: "printf & değişkenler",
     goal: "Bir C programının iskeletini, değişken türlerini ve biçimli giriş-çıkışı (printf, scanf) öğren.",
@@ -77,7 +77,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 2 ============================ */
+  /* ============================ C · DERS 2 ============================ */
   {
     id: "c2", no: 2, language: "c", track: "c", title: "Koşullar ve operatörler", short: "Koşullar",
     goal: "C'de karar vermeyi, mantıksal operatörleri ve C'ye özgü tuzakları (= ile ==) öğren.",
@@ -146,7 +146,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 3 ============================ */
+  /* ============================ C · DERS 3 ============================ */
   {
     id: "c3", no: 3, language: "c", track: "c", title: "Döngüler", short: "Döngüler",
     goal: "for ve while ile tekrar et; türlerin sınırlarını ve döngü tuzaklarını tanı.",
@@ -216,7 +216,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 4 ============================ */
+  /* ============================ C · DERS 4 ============================ */
   {
     id: "c4", no: 4, language: "c", track: "c", title: "Fonksiyonlar ve özyineleme", short: "Fonksiyonlar",
     goal: "Fonksiyon prototiplerini, değer ile aktarımı ve özyinelemenin çağrı yığınındaki karşılığını öğren.",
@@ -225,7 +225,7 @@
       lang: "c",
       code: "#include <stdio.h>\n\nvoid arttir(int x) {\n  x++;\n}\n\nint main(void) {\n  int a = 5;\n  arttir(a);\n  printf(\"%d\\n\", a);\n  return 0;\n}",
       options: ["5", "6", "0", "Derleme hatası"], answer: 0,
-      why: "C'de argümanlar değer ile aktarılır: arttir, a'nın bir kopyasını alır ve kopyayı artırır. a değişmez. Çağıranın değişkenini değiştirmek için adresini (işaretçi) vermek gerekir; Faz 7'de."
+      why: "C'de argümanlar değer ile aktarılır: arttir, a'nın bir kopyasını alır ve kopyayı artırır. a değişmez. Çağıranın değişkenini değiştirmek için adresini (işaretçi) vermek gerekir; Ders 7'de."
     },
     example: {
       title: "Prototip ve özyineleme",
@@ -285,7 +285,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 5 ============================ */
+  /* ============================ C · DERS 5 ============================ */
   {
     id: "c5", no: 5, language: "c", track: "c", title: "Diziler", short: "Diziler",
     goal: "Sabit boyutlu dizilerle çalış; dizinin fonksiyona nasıl geçtiğini ve sınır dışı erişimi kavra.",
@@ -352,7 +352,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 6 ============================ */
+  /* ============================ C · DERS 6 ============================ */
   {
     id: "c6", no: 6, language: "c", track: "c", title: "Karakter dizileri", short: "Metinler",
     goal: "C'de metnin '\\0' ile biten bir char dizisi olduğunu kavra; metin fonksiyonlarını kendin yaz.",
@@ -420,7 +420,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 7 ============================ */
+  /* ============================ C · DERS 7 ============================ */
   {
     id: "c7", no: 7, language: "c", track: "c", title: "İşaretçiler", short: "İşaretçiler",
     goal: "Adresleri, & ve * operatörlerini ve fonksiyonların çağıranın değişkenini nasıl değiştirdiğini öğren.",
@@ -485,7 +485,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 8 ============================ */
+  /* ============================ C · DERS 8 ============================ */
   {
     id: "c8", no: 8, language: "c", track: "c", title: "Struct'lar", short: "Struct",
     goal: "İlişkili verileri struct ile bir araya getir; kopyalama ve işaretçiyle erişim farkını kavra.",
@@ -494,7 +494,7 @@
       lang: "c",
       code: "#include <stdio.h>\n\ntypedef struct { int x; } Nokta;\n\nint main(void) {\n  Nokta a = {1};\n  Nokta b = a;\n  b.x = 2;\n  printf(\"%d\\n\", a.x);\n  return 0;\n}",
       options: ["1", "2", "0", "Derleme hatası"], answer: 0,
-      why: "C'de struct ataması tüm alanları kopyalar: b, a'nın bağımsız bir kopyasıdır. JavaScript'te nesne ataması aynı nesneyi paylaşıyordu (Faz 6); C'de paylaşım için işaretçi gerekir."
+      why: "C'de struct ataması tüm alanları kopyalar: b, a'nın bağımsız bir kopyasıdır. JavaScript'te nesne ataması aynı nesneyi paylaşıyordu (Ders 6); C'de paylaşım için işaretçi gerekir."
     },
     example: {
       title: "Struct, işaretçi ve ok operatörü",
@@ -549,7 +549,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 9 ============================ */
+  /* ============================ C · DERS 9 ============================ */
   {
     id: "c9", no: 9, language: "c", track: "c", title: "Dinamik bellek", short: "malloc & free",
     goal: "Çalışma anında bellek ayır, büyüt ve geri ver; sızıntıyı ve taşmayı sanitizer ile yakala.",
@@ -616,7 +616,7 @@
     ]
   },
 
-  /* ============================ C · FAZ 10 ============================ */
+  /* ============================ C · DERS 10 ============================ */
   {
     id: "c10", no: 10, language: "c", track: "c", title: "Mini proje: bağlı liste", short: "Bağlı liste",
     goal: "İşaretçiler, struct'lar ve dinamik belleği birleştirerek sızıntısız bir bağlı liste kütüphanesi yaz.",

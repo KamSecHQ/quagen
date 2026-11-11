@@ -1,9 +1,9 @@
-/* QUAGEN — KAM: öğrencinin yanındaki yapay zekâ yol arkadaşı (her dilde; sohbetle ders şimdilik C'de)
+/* QUAGEN — KAM: öğrencinin yanındaki yapay zekâ öğretmeni (her dilde; sohbetle ders şimdilik C'de)
  *  1. Tanışma: ilk girişte sohbetle tanır, gerçekçi bir çalışma planı çıkarır.
  *  2. Karşılama: panelde duruma göre (seri, ara verme, bekleyen kartlar) konuşur ve bugünün planını verir.
  *  3. Ders: konuyu mesajlaşarak anlatır; anlattıkça yandaki sahnede kod değişir, satırlar vurgulanır, çalışır.
- *  4. Sohbet penceresi: her sayfada sağ altta. Yapay zekâ açıksa /api/kam, değilse Rehber'in niyet aramasıyla cevaplar.
- * Senaryolar: assets/js/kam-dersler-c.js. Senaryosu olmayan fazlar için faz verisinden otomatik sohbet üretilir.
+ *  4. Sohbet penceresi: her sayfada sağ altta. Yapay zekâ açıksa /api/kam, değilse Kütüphane'nin niyet aramasıyla cevaplar.
+ * Senaryolar: assets/js/kam-dersler-c.js. Senaryosu olmayan dersler için ders verisinden otomatik sohbet üretilir.
  */
 (function () {
   const KD = window.KD;
@@ -74,10 +74,10 @@
     const sonGun = st.last ? Math.round((new Date(S.day()) - new Date(st.last)) / GUN) : null;
     return { toplam: fazlar.length, biten, kalan: fazlar.length - biten, seri: st.count || 0, sonGun, bugunXp: S.state.daily[S.day()] || 0, hedef: S.state.prefs.goal || 50, bekleyen: a.due ? a.due() : 0, sirada: a.nextTarget ? a.nextTarget() : null };
   }
-  /* Faz başına gerçekçi süre: ders ~10 dk + üç görev ~25 dk + kartlar ~5 dk */
+  /* Ders başına gerçekçi süre: ders ~10 dk + üç görev ~25 dk + kartlar ~5 dk */
   const FAZ_DK = 40;
   function planHesapla(dk, kalanFaz) {
-    const ileri = Math.max(0, cFazlar().length - 10);        // ilk 10 faz temel, kalanı ileri düzey
+    const ileri = Math.max(0, cFazlar().length - 10);        // ilk 10 ders temel, kalanı ileri düzey
     const temel = Math.max(0, Math.min(10, kalanFaz - ileri));
     const gun = (faz) => Math.max(1, Math.ceil((faz * FAZ_DK) / dk));
     return { dk, temelFaz: temel, temelGun: gun(temel), tumGun: gun(kalanFaz), kalanFaz };
@@ -88,7 +88,7 @@
     return `Günde **${pl.dk} dakika** ile ${temel}${EK.nin} tamamını (kalan ${pl.kalanFaz} faz) **${sureMetni(pl.tumGun)}** içinde bitirirsin. Bu, her gün çalıştığın varsayımıyla; hafta sonları boş geçerse süre uzar, sorun değil.`;
   }
   const selamSaat = () => { const h = new Date().getHours(); return h < 5 ? "Geç oldu" : h < 12 ? "Günaydın" : h < 18 ? "Selam" : "İyi akşamlar"; };
-  const adimAdi = (k) => ({ tahmin: "tahmin sorusu", incele: "ders (ben anlatacağım)", kodla: "görevler", hatirla: "tekrar kartları" })[k] || k;
+  const adimAdi = (k) => ({ tahmin: "tahmin sorusu", incele: "konuyu ben anlatacağım", kodla: "görevler", hatirla: "tekrar kartları" })[k] || k;
 
   /* Duruma göre gerçekçi karşılama cümlesi */
   function karsilamaMetni(d) {
@@ -107,7 +107,7 @@
     if (d.bekleyen > 0) liste.push({ metin: `${d.bekleyen} kartı tekrar et`, sure: Math.max(2, Math.round(d.bekleyen * 0.5)) + " dk", href: "#tekrar" });
     if (d.sirada) {
       const { p, step, ch } = d.sirada;
-      liste.push({ metin: `Faz ${p.no} · ${p.short || p.title}: ${step === "kodla" && ch ? "“" + ch.title + "” görevi" : adimAdi(step)}`, sure: step === "kodla" ? "10 dk" : step === "incele" ? "10 dk" : "3 dk", href: `#${p.id}/${step}${step === "kodla" && ch ? "/" + ch.id : ""}` });
+      liste.push({ metin: `Ders ${p.no} · ${p.short || p.title}: ${step === "kodla" && ch ? "“" + ch.title + "” görevi" : adimAdi(step)}`, sure: step === "kodla" ? "10 dk" : step === "incele" ? "10 dk" : "3 dk", href: `#${p.id}/${step}${step === "kodla" && ch ? "/" + ch.id : ""}` });
     }
     return liste;
   }
@@ -121,10 +121,10 @@
     kart.className = "kam-kart";
     kart.innerHTML = `${AVATAR}
       <div class="kam-kart-govde">
-        <p class="kam-kart-ad">KAM <span>yol arkadaşın</span></p>
+        <p class="kam-kart-ad">KAM</p>
         <p class="kam-kart-metin" id="kam-kart-metin"></p>
         ${plan.length ? `<ol class="kam-plan">${plan.map((x, i) => `<li style="--i:${i}"><a href="${x.href}"><span class="kp-no">${i + 1}</span><span class="kp-t">${esc(x.metin)}</span><span class="kp-s">${x.sure}</span></a></li>`).join("")}</ol>` : ""}
-        <div class="kam-kart-alt"><button class="btn sm" id="kam-kart-ac">KAM ile konuş</button>${durum().dk ? `<span class="muted small">Planın: günde ${durum().dk} dk · ${d.biten}/${d.toplam} faz</span>` : ""}</div>
+        <div class="kam-kart-alt"><button class="btn sm" id="kam-kart-ac">KAM ile konuş</button>${durum().dk ? `<span class="muted small">Planın: günde ${durum().dk} dk · ${d.biten}/${d.toplam} ders</span>` : ""}</div>
       </div>`;
     view.prepend(kart);
     yazdir($("#kam-kart-metin", kart), karsilamaMetni(d));
@@ -148,7 +148,7 @@
     cekmece = document.createElement("aside");
     cekmece.className = "kam-cekmece"; cekmece.hidden = true; cekmece.setAttribute("aria-label", "KAM ile sohbet");
     cekmece.innerHTML = `
-      <header class="kam-bas">${AVATAR}<div><b>KAM</b><small id="kam-mod">yol arkadaşın</small></div><button class="icon-btn" id="kam-kapat" aria-label="Kapat">×</button></header>
+      <header class="kam-bas">${AVATAR}<div><b>KAM</b><small id="kam-mod">Bir şey sor, anlatayım</small></div><button class="icon-btn" id="kam-kapat" aria-label="Kapat">×</button></header>
       <div class="kam-akis" id="kam-akis" aria-live="polite"></div>
       <div class="kam-cevap" id="kam-cevap" data-odak="yok"></div>
       <form class="kam-form" id="kam-form"><input id="kam-girdi" placeholder="KAM'e yaz… (ör. işaretçi ne demek?)" autocomplete="off" maxlength="300" /><button class="btn primary sm" aria-label="Gönder">Gönder</button></form>`;
@@ -158,7 +158,7 @@
     $("#kam-kapat", cekmece).onclick = cekmeceKapat;
     $("#kam-form", cekmece).onsubmit = (e) => { e.preventDefault(); const g = $("#kam-girdi", cekmece); const q = g.value.trim(); if (!q) return; g.value = ""; soruCevapla(q); };
     addEventListener("keydown", (e) => { if (e.key === "Escape" && !cekmece.hidden) cekmeceKapat(); });
-    if (KD.tutor) KD.tutor.available().then((on) => { aiVar = on; $("#kam-mod", cekmece).textContent = on ? "yapay zekâ çevrimiçi" : "yol arkadaşın"; });
+    if (KD.tutor) KD.tutor.available().then((on) => { aiVar = on; $("#kam-mod", cekmece).textContent = on ? "Yapay zekâ çevrimiçi" : "Bir şey sor, anlatayım"; });
     return cekmece;
   }
   let selamVerildi = false;
@@ -187,7 +187,7 @@
       else await cs.kam(`Bugün için önerim, sırayla:\n${plan.map((x, k) => `**${k + 1}.** ${x.metin} (${x.sure})`).join("\n")}\n\nHepsi ${plan.length > 1 ? "yaklaşık 15 dakika" : "10 dakika kadar"} sürer.`, `<div class="kam-linkler">${plan.map((x) => `<a class="kam-chip dolu" href="${x.href}">${esc(x.metin.split(":")[0])} →</a>`).join("")}</div>`);
     } else if (i === 1) {
       const dk = durum().dk || 30;
-      await cs.kam(`Şu ana kadar **${d.biten}/${d.toplam}** fazı tamamladın${d.seri ? `, serin ${d.seri} gün` : ""}.\n\n${planMetni(planHesapla(dk, d.kalan))}`);
+      await cs.kam(`Şu ana kadar **${d.biten}/${d.toplam}** dersi tamamladın${d.seri ? `, serin ${d.seri} gün` : ""}.\n\n${planMetni(planHesapla(dk, d.kalan))}`);
       const j = await cs.secenek(["Tempo iyi", "Daha hafif olsun", "Daha yoğun olsun"], { beklet: true });
       if (j > 0) {
         const yeni = j === 1 ? Math.max(10, Math.round(dk / 2 / 5) * 5) : Math.min(120, dk * 2);
@@ -203,14 +203,14 @@
       const m = d.seri >= 3
         ? `Motivasyon gelip gider; ona güvenme. Sen ${d.seri} gündür buradasın, yani zaten alışkanlık kurmuşsun. Bugün canın istemiyorsa yalnızca tekrar kartlarını yap ve kapat. O da sayılır.`
         : d.biten > 0
-        ? `Dürüst olayım: programlama zor ve herkes bir noktada “ben bunu yapamayacağım” diyor. Sen ${d.biten} faz bitirdin; başladığın günkü hâlinle bugünkü arasında gerçek bir fark var. Bugün yalnızca 10 dakika ayır. Çoğu zaman başlamak yetiyor.`
+        ? `Dürüst olayım: programlama zor ve herkes bir noktada “ben bunu yapamayacağım” diyor. Sen ${d.biten} ders bitirdin; başladığın günkü hâlinle bugünkü arasında gerçek bir fark var. Bugün yalnızca 10 dakika ayır. Çoğu zaman başlamak yetiyor.`
         : "İlk günlerde her şey yabancı gelir ve yavaş ilerlersin; bu yeteneksizlik değil, başlangıç. Kimse işaretçileri ilk seferde anlamadı. Bugün tek bir şey yap: ilk dersi aç ve 10 dakika dinle. Devam edip etmemeye ondan sonra karar verirsin.";
       await cs.kam(m);
     }
     anaMenu();
   }
 
-  /* Serbest soru: yapay zekâ açıksa ona, değilse Rehber'in niyet aramasına */
+  /* Serbest soru: yapay zekâ açıksa ona, değilse Kütüphane'nin niyet aramasına */
   async function soruCevapla(q) {
     cekmeceKur();
     $("#kam-cevap", cekmece).innerHTML = "";
@@ -241,7 +241,7 @@
     if (!m) return { sayfa: "panel" };
     const p = cFazlar().find((x) => x.id === m[1]);
     const ch = p && m[3] ? p.challenges.find((c) => c.id === m[3]) : null;
-    return { sayfa: "faz", faz: p ? `Faz ${p.no}: ${p.title}` : "", adim: m[2] || "", gorev: ch ? ch.title + " — " + ch.prompt : "" };
+    return { sayfa: "faz", faz: p ? `Ders ${p.no}: ${p.title}` : "", adim: m[2] || "", gorev: ch ? ch.title + " — " + ch.prompt : "" };
   }
   async function yerelCevap(q) {
     const ara = window.KD_REHBER_ARA, R = window.KD_REHBER;
@@ -255,7 +255,7 @@
       if (t && (r.tanimSorusu || !k)) return cs.kam(`**${t.terim.terim}** (${t.terim.ing}): ${t.terim.tanim}`);
       if (k && r.guven >= 0.3) {
         const g = k.kavram.diller[DIL];
-        return cs.kam(`${k.kavram.baslik} için ${EK.de} \`${g.ad}\` kullanılır.\n\n${g.aciklama}${g.not ? "\n\n**Dikkat:** " + g.not : ""}`, `<pre class="code kam-kod"><code>${KD.hlDoc ? KD.hlDoc(g.ornek, DIL).join("\n") : esc(g.ornek)}</code></pre><a class="kam-chip" href="rehber.html#/k/${k.kavram.id}/${DIL}" target="_blank" rel="noopener">Rehber'de aç ve çalıştır →</a>`);
+        return cs.kam(`${k.kavram.baslik} için ${EK.de} \`${g.ad}\` kullanılır.\n\n${g.aciklama}${g.not ? "\n\n**Dikkat:** " + g.not : ""}`, `<pre class="code kam-kod"><code>${KD.hlDoc ? KD.hlDoc(g.ornek, DIL).join("\n") : esc(g.ornek)}</code></pre><a class="kam-chip" href="rehber.html#/k/${k.kavram.id}/${DIL}" target="_blank" rel="noopener">Kütüphane'de aç ve çalıştır →</a>`);
       }
     }
     if (/hata|error|warning|çök|segmentation|sanitizer|overflow/.test(duz)) return cs.kam("Hata mesajlarında üç şeye bak: **satır numarası**, hatanın **türü** (ör. `undeclared`, `expected ';'`, `buffer-overflow`) ve o satırda hangi değişkenlerin geçtiği. Mesajın tamamını buraya yapıştırırsan daha net konuşabiliriz.");
@@ -290,22 +290,22 @@
       ({ c: "İyi; değişken ve döngü fikri sende var. C'de asıl yeni olan şey bellek: türler, işaretçiler, `malloc`. Orada yavaşlayacağız.",
          py: "İyi; değişken ve döngü fikri sende var. Python'da yeni olan şey girintiler ve hazır veri yapıları: liste, sözlük, küme. Onlara zaman ayıracağız.",
          js: "İyi; değişken ve döngü fikri sende var. JavaScript'te asıl yeni olan şey fonksiyonların değer gibi dolaşması ve asenkron kod. Orada yavaşlayacağız." })[DIL] || "İyi; temel fikirler sende var, bu dilin kendine özgü yanlarına odaklanacağız.",
-      "O zaman ilk fazlar hızlı geçer. Yine de atlama; eksik kalan yerler ileri fazlarda ortaya çıkıyor."
+      "O zaman ilk dersler hızlı geçer. Yine de atlama; eksik kalan yerler ileri derslerde ortaya çıkıyor."
     ][dz]);
     await cs.kam("Günde ne kadar zaman ayırabilirsin? Dürüst ol; tutamayacağın bir söz verme.");
     const zi = await cs.secenek(["15 dakika", "30 dakika", "1 saat"], { beklet: true });
     const dk = [15, 30, 60][zi];
     await cs.kam(`Son soru: ${EK.yi} neden öğrenmek istiyorsun?`);
     const NEDEN = ({
-      c: [["Okul / ders için", "okul", "Anladım. Sınavda çıkan şeylerin çoğu ilk 10 fazda: döngüler, diziler, işaretçiler. Oraya odaklanacağız."],
+      c: [["Okul / ders için", "okul", "Anladım. Sınavda çıkan şeylerin çoğu ilk 10 derste: döngüler, diziler, işaretçiler. Oraya odaklanacağız."],
           ["Merak ediyorum", "merak", "En sağlam motivasyon bu. C sana bilgisayarın içeride nasıl çalıştığını gösterecek."],
           ["İş ve kariyer", "kariyer", "C bilmek başka dillerde de fark yaratır; belleği anlayan programcı az. Ama gerçekçi olalım: iş için C tek başına yetmez, bu bir temel."],
-          ["Gömülü sistem, oyun, donanım", "donanim", "Doğru dili seçmişsin; o alanların dili C. İşaretçiler ve bit işlemleri fazları senin için en değerli kısım."]],
-      py: [["Okul / ders için", "okul", "Anladım. Derslerde en çok çıkanlar ilk 10 fazda: döngüler, listeler, fonksiyonlar. Oraya odaklanacağız."],
+          ["Gömülü sistem, oyun, donanım", "donanim", "Doğru dili seçmişsin; o alanların dili C. İşaretçiler ve bit işlemleri dersleri senin için en değerli kısım."]],
+      py: [["Okul / ders için", "okul", "Anladım. Derslerde en çok çıkanlar ilk 10 derste: döngüler, listeler, fonksiyonlar. Oraya odaklanacağız."],
            ["Merak ediyorum", "merak", "En sağlam motivasyon bu. Python ile fikri koda dökmek hızlıdır; küçük araçlar yazmaya erken başlayacağız."],
            ["İş ve kariyer", "kariyer", "Python veri, otomasyon ve yapay zekâ işlerinde standart. Ama gerçekçi olalım: dil tek başına iş getirmez; bitirdiğin projeler getirir."],
-           ["Veri ve otomasyon", "veri", "Doğru dil. İleri fazlarda dosya okuyup rapor üreten bir araç yazacağız; asıl hedef o."]],
-      js: [["Okul / ders için", "okul", "Anladım. Temeller ilk 10 fazda: değişkenler, döngüler, diziler, fonksiyonlar. Oraya odaklanacağız."],
+           ["Veri ve otomasyon", "veri", "Doğru dil. İleri derslerde dosya okuyup rapor üreten bir araç yazacağız; asıl hedef o."]],
+      js: [["Okul / ders için", "okul", "Anladım. Temeller ilk 10 derste: değişkenler, döngüler, diziler, fonksiyonlar. Oraya odaklanacağız."],
            ["Merak ediyorum", "merak", "En sağlam motivasyon bu. JavaScript'in güzel yanı, yazdığın şeyi tarayıcıda hemen görmen."],
            ["İş ve kariyer", "kariyer", "Web işlerinin çoğu JavaScript ister. Ama gerçekçi olalım: temeller bitince web ve React parkurlarını da tamamlaman gerekir; bu aylar sürer."],
            ["Web sitesi yapmak", "web", "O zaman hedef belli: önce dilin temeli, ardından Web temelleri parkuru. Kendi sayfanı orada yapacaksın."]]
@@ -315,7 +315,7 @@
     await cs.kam(NEDEN[ni][2]);
     const d = ilerleme();
     const pl = planHesapla(dk, d.kalan || 20);
-    await cs.kam(`Planın şöyle:\n\n${planMetni(pl)}\n\nHer faz dört adım: kısa bir tahmin sorusu, konunun anlatımı, üç görev ve tekrar kartları. Unutma: iki günden uzun ara verirsen unutma başlar; kartlar bunun için var.`);
+    await cs.kam(`Planın şöyle:\n\n${planMetni(pl)}\n\nHer ders dört adım: kısa bir tahmin sorusu, konunun anlatımı, üç görev ve tekrar kartları. Unutma: iki günden uzun ara verirsen unutma başlar; kartlar bunun için var.`);
     let sec = await cs.secenek(["Başlayalım", "Daha hafif bir plan"], { beklet: true });
     let sonDk = dk;
     if (sec === 1) {
@@ -332,19 +332,19 @@
     $("#kam-form", cekmece).hidden = false;
     cekmece.classList.remove("genis");
     const ilk = cFazlar()[0];
-    setTimeout(() => { cekmeceKapat(); if (ilk && (!location.hash || location.hash === "#panel")) location.hash = `#${ilk.id}/tahmin`; }, 1400);
+    setTimeout(() => { cekmeceKapat(); setTimeout(() => tur(() => { if (ilk && (!location.hash || location.hash === "#panel")) location.hash = `#${ilk.id}/tahmin`; }), 350); }, 1400);
     anaMenuSessiz();
     return true;
   }
 
   /* ------------------------------------------------------------------ ders oynatıcı */
-  /* Senaryosu yazılmamış fazlar için faz verisinden sohbet üret */
+  /* Senaryosu yazılmamış dersler için ders verisinden sohbet üret */
   function otomatikSenaryo(p) {
-    const s = [["k", `Bu fazda **${p.title}** var. ${p.goal}`], ["k", "Önce çalışan bir örneğe bakalım, sonra parça parça üzerinden geçeriz."], ["kod", p.example.code], ["sen", "Tamam, anlat", "Önce bir çalıştır"]];
+    const s = [["k", `Bu derste **${p.title}** var. ${p.goal}`], ["k", "Önce çalışan bir örneğe bakalım, sonra parça parça üzerinden geçeriz."], ["kod", p.example.code], ["sen", "Tamam, anlat", "Önce bir çalıştır"]];
     p.example.steps.forEach((ad, i) => { s.push(["v", ad.lines || [], ad.text]); if (i % 2 === 1 && i < p.example.steps.length - 1) s.push(["sen", "Devam", "Anladım"]); });
     s.push(["k", "Şimdi çalıştıralım:"], ["calis"]);
     if (p.cards && p.cards[0]) s.push(["k", `Aklında kalması gereken şey: ${p.cards[0].a}`]);
-    s.push(["k", `Bu fazın kavramları: ${p.concepts.join(", ")}. Görevlerde hepsini kullanacaksın; takılırsan bana yaz.`]);
+    s.push(["k", `Bu dersin kavramları: ${p.concepts.join(", ")}. Görevlerde hepsini kullanacaksın; takılırsan bana yaz.`]);
     return s;
   }
 
@@ -356,7 +356,7 @@
     stage.innerHTML = `
       <div class="kam-ders">
         <section class="kam-sohbet" aria-label="KAM anlatıyor">
-          <header class="kam-bas">${AVATAR}<div><b>KAM anlatıyor</b><small>Faz ${p.no} · ${esc(p.title)}</small></div>
+          <header class="kam-bas">${AVATAR}<div><b>KAM anlatıyor</b><small>Ders ${p.no} · ${esc(p.title)}</small></div>
             <button class="btn sm ghost" id="kd-hizli" title="Animasyonları atla">Hızlı geç</button><button class="btn sm ghost" id="kd-bastan">Baştan</button></header>
           <div class="kam-ilerleme"><i id="kd-ilerleme"></i></div>
           <div class="kam-akis" id="kd-akis" aria-live="polite"></div>
@@ -451,6 +451,23 @@
     oynat();
   }
 
+  /* ------------------------------------------------------------------ tur: NextGen'i gezdirir, sonunda katılmaya çağırır */
+  const TUR_ANAHTAR = "kam-tur-nextgen";
+  const uyeDegil = () => !KD.hesapYok && KD.hesap && !KD.hesap.kullanici;
+  function tur(bitince) {
+    if (!window.KAM_TUR || window.KAM_TUR.goruldu(TUR_ANAHTAR)) { if (bitince) bitince(); return false; }
+    const adimlar = [
+      { sec: ".kam-kart", baslik: "Her girişinde buradayım.", metin: "Bugün ne yapman gerektiğini burada söylerim. Satıra tıklaman yeter." },
+      { sec: "#tracks", baslik: "Derslerin", metin: "Dersler sırayla açılır. Bir dersin üç görevinden ikisini geçince sonraki açılır." },
+      { sec: '#side-main a[href="#tekrar"]', baslik: "Tekrar", metin: "Öğrendiklerin kısa kartlarla geri gelir; tam unutmaya başlayacağın gün." },
+      { sec: "#btn-search", baslik: "Arama", metin: "Bir dersi ya da görevi adıyla bulursun." },
+      { sec: ".bar .dunya", baslik: "İki dünya", metin: "Burası **NextGen**, dersliğin. Kütüphane ve Pratik **QUAGEN**'de; buradan geçersin." },
+      { sec: "#kam-fab", baslik: "Takıldığında bana yaz.", metin: "Hangi sayfada olursan ol bu düğme burada durur." }
+    ];
+    if (uyeDegil()) adimlar.push({ sec: "#acct", baslik: "Şimdi aramıza katıl.", metin: "Sonra derslere geçelim. Kayıt ücretsiz; ilerlemen hesabında saklanır ve başka cihazda kaldığın yerden devam edersin.", dugme: "Aramıza katıl", git: "hesap.html?sonra=" + encodeURIComponent("nextgen.html?dil=" + DIL) + "#kayit", ikinci: { ad: "Kayıtsız devam et" } });
+    return window.KAM_TUR.baslat(adimlar, { anahtar: TUR_ANAHTAR, bitince: (neden) => { if (neden !== "git" && bitince) bitince(); } });
+  }
+
   /* ------------------------------------------------------------------ kurulum */
   function kur() {
     if (!aktif() || !$("#view")) return;
@@ -459,8 +476,10 @@
     const bak = () => { if (!location.hash || location.hash === "#panel") karsila(view); };
     new MutationObserver(bak).observe(view, { childList: true });
     bak();
+    /* Tanışmayı daha önce yapmış ama turu görmemiş kişi: panelde bir kez gezdir */
+    if (S.state.prefs.onboarded) setTimeout(() => { if (!tanisiyor && (!location.hash || location.hash === "#panel")) tur(); }, 1600);
   }
   if (document.readyState === "loading") addEventListener("DOMContentLoaded", kur); else setTimeout(kur, 0);
 
-  window.KAM = { aktif, dersVar, ders, tanis, karsila, ac: cekmeceAc, planHesapla, planMetni, karsilamaMetni, otomatikSenaryo, ilerleme };
+  window.KAM = { aktif, dersVar, tur, ders, tanis, karsila, ac: cekmeceAc, planHesapla, planMetni, karsilamaMetni, otomatikSenaryo, ilerleme };
 })();

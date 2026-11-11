@@ -1,4 +1,4 @@
-/* QUAGEN — KAM'in C dersleri (Faz 1–10): sohbetle anlatım, yanda akan örnek
+/* QUAGEN — KAM'in C dersleri (Ders 1–10): sohbetle anlatım, yanda akan örnek
  * Adım biçimleri:
  *   ["k", metin]                       KAM yazar
  *   ["kod", kod]                       sahnedeki kod değişir (değişen satırlar belirir)
@@ -54,7 +54,7 @@ int main(void) {
     ["v", [5], "`scanf` klavyeden okur. Dikkat: değişkenlerin başında `&` var. Bu “değeri şu değişkenin içine koy” demek. Yeni başlayan herkes bunu en az bir kez unutur."],
     ["k", "Girdi olarak `3 4` veriyorum:"],
     ["calis", "3 4\n"],
-    ["k", "Bu fazın özü bu kadar: `printf` yazar, değişken saklar, `scanf` okur. Görevlerde bunların üçünü de kullanacaksın. Takılırsan sağ alttan bana yaz."]
+    ["k", "Bu dersin özü bu kadar: `printf` yazar, değişken saklar, `scanf` okur. Görevlerde bunların üçünü de kullanacaksın. Takılırsan sağ alttan bana yaz."]
   ],
 
   c2: [
@@ -197,7 +197,7 @@ int main(void) {
 }`],
     ["v", [3, 4], "`arttir` kendi kopyasını (x) değiştiriyor. `void` “hiçbir şey döndürmüyorum” demek."],
     ["calis"],
-    ["k", "Gördün mü, hâlâ 5. Çağıranın değişkenine dokunamadık. Bunu Faz 7'de işaretçilerle çözeceğiz; şimdilik aklının bir köşesinde dursun."],
+    ["k", "Gördün mü, hâlâ 5. Çağıranın değişkenine dokunamadık. Bunu Ders 7'de işaretçilerle çözeceğiz; şimdilik aklının bir köşesinde dursun."],
     ["sen", "Özyineleme ne demek?", "Devam"],
     ["k", "Bir fonksiyonun **kendini çağırması**. Büyük problemi aynı türden daha küçük bir probleme indirirsin."],
     ["kod", k`
@@ -342,7 +342,7 @@ int main(void) {
     ["v", [7], "`*p`, “p'nin gösterdiği yerdeki değer”. Adrese gidip içeri bakmak gibi. İkisi de 42 yazacak."],
     ["calis"],
     ["sen", "Neden buna ihtiyacım olsun?", "Devam"],
-    ["k", "Faz 4'ü hatırla: fonksiyona verdiğimiz değer kopyalanıyordu ve asıl değişkeni değiştiremiyorduk. Adresini verirsek değiştirebiliriz."],
+    ["k", "Ders 4'ü hatırla: fonksiyona verdiğimiz değer kopyalanıyordu ve asıl değişkeni değiştiremiyorduk. Adresini verirsek değiştirebiliriz."],
     ["kod", k`
 #include <stdio.h>
 
@@ -494,7 +494,7 @@ int main(void) {
   ],
 
   c10: [
-    ["k", "Son faz bir mini proje: öğrendiğin her şeyi (struct, işaretçi, malloc) birleştirip **bağlı liste** kuracağız."],
+    ["k", "Son ders bir mini proje: öğrendiğin her şeyi (struct, işaretçi, malloc) birleştirip **bağlı liste** kuracağız."],
     ["k", "Dizinin bir sorunu var: boyutu sabit ve araya eleman eklemek zor. Bağlı listede her eleman, bir sonrakinin **adresini** tutar. Vagonları birbirine bağlı bir tren gibi."],
     ["kod", k`
 #include <stdio.h>
