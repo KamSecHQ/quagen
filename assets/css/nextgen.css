@@ -751,3 +751,160 @@ ol.weak { counter-reset: w; }
 
 /* Statik demo rozeti */
 .demo-pill { display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 999px; background: var(--marker); color: var(--marker-ink); font-weight: 700; font-size: 12.5px; letter-spacing: 0.03em; cursor: help; }
+
+/* ==========================================================================
+   v7 — Cam (saydam) yüzeyler, adım çubuğu ve sadeleştirilmiş çalışma alanı
+   ========================================================================== */
+:root {
+  --glass: rgba(255, 255, 255, 0.58);
+  --glass-strong: rgba(255, 255, 255, 0.8);
+  --glass-line: rgba(255, 255, 255, 0.85);
+  --glass-edge: rgba(19, 33, 58, 0.09);
+  --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 1px 2px rgba(19, 33, 58, 0.04), 0 18px 40px -24px rgba(19, 33, 58, 0.35);
+  --blur: saturate(1.7) blur(20px);
+  --isik-1: rgba(255, 216, 77, 0.34);
+  --isik-2: rgba(84, 132, 255, 0.2);
+  --isik-3: rgba(46, 196, 150, 0.16);
+}
+:root[data-theme="dark"] {
+  --glass: rgba(24, 36, 60, 0.5);
+  --glass-strong: rgba(28, 41, 68, 0.74);
+  --glass-line: rgba(255, 255, 255, 0.09);
+  --glass-edge: rgba(255, 255, 255, 0.07);
+  --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 20px 44px -24px rgba(0, 0, 0, 0.7);
+  --isik-1: rgba(255, 216, 77, 0.1);
+  --isik-2: rgba(84, 132, 255, 0.2);
+  --isik-3: rgba(46, 196, 150, 0.11);
+}
+/* Arkada yumuşak ışık lekeleri: cam yüzeylerin arkasından görünür */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(46vw 40vh at 8% -6%, var(--isik-1), transparent 70%),
+    radial-gradient(42vw 46vh at 102% 8%, var(--isik-2), transparent 70%),
+    radial-gradient(50vw 44vh at 60% 108%, var(--isik-3), transparent 70%);
+}
+.bar { background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border-bottom: 1px solid var(--glass-edge); box-shadow: inset 0 -1px 0 var(--glass-line); }
+.side { background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border-right: 1px solid var(--glass-edge); }
+.panel, .brief, .mastery, .out, .tile, .task, .explain {
+  background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow);
+}
+.search, .pill-stat, .lang-switch { background: var(--glass-strong); border: 1px solid var(--glass-edge); }
+.btn { background: var(--glass-strong); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border-color: var(--glass-edge); box-shadow: inset 0 1px 0 var(--glass-line), 0 1px 2px rgba(19, 33, 58, 0.06); transition: background 0.15s, border-color 0.15s, transform 0.14s var(--ease), box-shadow 0.2s; }
+.btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: inset 0 1px 0 var(--glass-line), 0 8px 18px -10px rgba(19, 33, 58, 0.45); }
+.btn:active:not(:disabled) { transform: translateY(0) scale(0.985); }
+.btn.primary { background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 88%, #6b7fb0), var(--ink)); border-color: transparent; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 8px 20px -10px rgba(19, 33, 58, 0.7); }
+:root[data-theme="dark"] .btn.primary { background: linear-gradient(180deg, #ffffff, #dfe6f2); color: #0c1424; }
+.btn.ghost { background: transparent; box-shadow: none; backdrop-filter: none; }
+.btn.blok { width: 100%; height: 44px; }
+dialog { background: var(--glass-strong); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-edge); }
+dialog::backdrop { background: rgba(10, 16, 30, 0.38); backdrop-filter: blur(6px); }
+
+/* ---------- Faz başlığı: kodlama adımında tek satır ---------- */
+.ph-head.compact { grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; margin-bottom: 14px; }
+.ph-head.compact .ph-label { margin-bottom: 2px; font-size: 13px; }
+.ph-head.compact h1 { font-size: clamp(22px, 2.2vw, 28px); margin: 0; }
+.ph-head.compact .lead, .ph-head.compact .concepts, .ph-head.compact #mastery-note, .ph-head.compact .mastery-top.skill { display: none; }
+.ph-head.compact .mastery { display: flex; align-items: center; gap: 12px; padding: 8px 14px; border-radius: 999px; }
+.ph-head.compact .mastery-top { gap: 8px; font-size: 13px; }
+.ph-head.compact .mastery-top b { font-size: 15px; }
+.ph-head.compact .mastery .meter { width: 110px; }
+
+/* ---------- Adım çubuğu: dört net adım ---------- */
+.steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; width: 100%; padding: 6px; margin-bottom: 18px; border-radius: 18px; background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow); overflow: visible; }
+.step { justify-content: center; height: 46px; padding: 0 12px; border-radius: 13px; gap: 10px; font-size: 14.5px; }
+.step:hover { background: color-mix(in srgb, var(--glass-strong) 70%, transparent); color: var(--ink); }
+.step-n { width: 26px; height: 26px; font-size: 13px; font-weight: 700; flex: none; transition: transform 0.25s var(--ease), background 0.2s; }
+.step.done .step-n { background: var(--pass); color: #fff; }
+.step.on { background: var(--surface); box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 6px 18px -8px rgba(19, 33, 58, 0.35); }
+.step.on .step-n { transform: scale(1.08); }
+.step.on::after { left: 22%; right: 22%; bottom: 5px; }
+.step + .step::before { content: ""; position: absolute; left: -4px; top: 14px; bottom: 14px; width: 1px; background: var(--glass-edge); }
+.step.on::before, .step.on + .step::before { display: none; }
+
+/* ---------- Görev seçici ---------- */
+.tasks { gap: 8px; margin-bottom: 14px; padding: 2px; }
+.task { border-radius: 14px; padding: 8px 16px 8px 10px; transition: transform 0.18s var(--ease), border-color 0.15s, box-shadow 0.2s; }
+.task:hover { transform: translateY(-1px); }
+.task.on { background: var(--surface); border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink), 0 8px 20px -12px rgba(19, 33, 58, 0.5); }
+.task.ok .task-n { background: var(--pass); color: #fff; }
+
+/* ---------- Çalışma alanı: solda adımlar (Örnek → Görev → Mentor), sağda editör ---------- */
+.ws { display: grid; grid-template-columns: minmax(360px, 44%) minmax(0, 1fr); gap: 16px; align-items: start; }
+.ws-left { position: sticky; top: 72px; display: flex; flex-direction: column; max-height: calc(100vh - 88px); min-width: 0; border-radius: 20px; overflow: hidden; background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow); }
+.ws-right { display: grid; gap: 14px; min-width: 0; }
+.ws-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; padding: 6px; border-bottom: 1px solid var(--glass-edge); background: color-mix(in srgb, var(--sunken) 45%, transparent); }
+.ws-tabs button { position: relative; display: flex; align-items: center; gap: 10px; min-width: 0; padding: 8px 10px; border-radius: 13px; text-align: left; color: var(--graphite); transition: background 0.18s, color 0.18s, box-shadow 0.2s; }
+.ws-tabs button > span:last-of-type { display: grid; min-width: 0; line-height: 1.25; }
+.ws-tabs b { font-size: 13.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ws-tabs small { font-size: 11.5px; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ws-tabs button:hover { color: var(--ink); background: color-mix(in srgb, var(--surface) 55%, transparent); }
+.ws-tabs button.on { background: var(--surface); color: var(--ink); box-shadow: 0 6px 16px -10px rgba(19, 33, 58, 0.5); }
+.ws-n { display: grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 50%; font-size: 12.5px; font-weight: 700; background: var(--surface); box-shadow: inset 0 0 0 1px var(--rule-2); transition: background 0.2s, color 0.2s; }
+.ws-tabs button.on .ws-n { background: var(--marker); color: var(--marker-ink); box-shadow: none; }
+.ws-dot { position: absolute; top: 7px; right: 8px; width: 9px; height: 9px; border-radius: 50%; background: var(--fail); box-shadow: 0 0 0 3px color-mix(in srgb, var(--fail) 25%, transparent); animation: nokta 1.4s ease-in-out infinite; }
+@keyframes nokta { 50% { transform: scale(1.25); } }
+.ws-pane { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; animation: paneGir 0.28s var(--ease) both; }
+@keyframes paneGir { from { opacity: 0; transform: translateY(8px); } }
+.ws-pane .brief { border: 0; border-radius: 0; background: transparent; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; padding: 20px 22px 24px; }
+.ws-pane .brief-top h2 { font-size: 22px; }
+#pane-mentor:not([hidden]) { display: flex; min-height: 430px; }
+.ws-pane .mentor { position: static; flex: 1; height: auto; min-height: 0; border: 0; border-radius: 0; background: transparent; }
+.ws-pane .m-head { border-bottom: 1px solid var(--glass-edge); }
+
+/* Çözümlü örnek */
+.ornek { display: grid; gap: 12px; }
+.ornek-k { justify-self: start; font: 700 11.5px var(--mono); letter-spacing: 0.07em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; background: var(--pass-wash); color: var(--pass); }
+.ornek h2 { font-size: 22px; letter-spacing: -0.02em; }
+.ornek .code { margin: 0; border-radius: 14px; font-size: 13px; max-height: 44vh; overflow: auto; }
+.ornek-con { border-radius: 12px; background: var(--sunken); padding: 10px 12px; max-height: 180px; overflow: auto; }
+.ornek-prev { border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-edge); background: #fff; }
+.ornek-prev iframe { display: block; width: 100%; min-height: 150px; border: 0; }
+.ornek-not { padding: 12px 14px 12px 16px; border-radius: 14px; background: color-mix(in srgb, var(--marker) 20%, transparent); border-left: 4px solid var(--marker); }
+.ornek-not b { font: 700 11.5px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.ornek-not p { margin-top: 4px; font-size: 14.5px; }
+.ornek-not code { padding: 1px 5px; border-radius: 5px; background: color-mix(in srgb, var(--surface) 70%, transparent); font-size: 0.88em; }
+
+.editor { border-radius: 20px; border-color: var(--glass-edge); box-shadow: var(--glass-shadow); }
+.ed-actions { background: var(--glass-strong); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border-top-color: var(--glass-edge); gap: 10px; padding: 12px; }
+.ed-actions #b-test { height: 42px; padding: 0 20px; font-size: 15px; }
+.out { border-radius: 20px; }
+
+@media (max-width: 1180px) {
+  .ws { grid-template-columns: 1fr; }
+  .ws-left { position: static; max-height: none; }
+  .ws-pane { overflow: visible; }
+}
+@media (max-width: 860px) {
+  .ph-head.compact { grid-template-columns: 1fr; }
+  .ph-head.compact .mastery { justify-self: start; }
+  .step-l { display: none; }
+  .step.on .step-l { display: inline; }
+  .steps { grid-template-columns: auto auto auto auto; justify-content: space-between; }
+}
+@media (max-width: 560px) {
+  .ws-tabs small { display: none; }
+  .ws-tabs button { justify-content: center; padding: 8px 6px; }
+}
+@media (prefers-reduced-motion: reduce) { .ws-pane, .ws-dot { animation: none; } }
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  :root { --glass: rgba(255, 255, 255, 0.94); --glass-strong: #fff; }
+  :root[data-theme="dark"] { --glass: rgba(18, 28, 48, 0.96); --glass-strong: #121c30; }
+}
+
+.side-link.ext > .ext-tag { flex: none; }
+.side-link.on { background: var(--glass-strong); box-shadow: inset 0 0 0 1px var(--glass-edge), 0 6px 14px -10px rgba(19, 33, 58, 0.4); }
+
+/* Eminlik sorusu: düğmelerin altında, sade tek satır */
+.ed-actions .conf { order: 5; flex-basis: 100%; display: flex; align-items: center; gap: 6px; padding-top: 10px; margin-top: 2px; border-top: 1px dashed var(--glass-edge); background: transparent; }
+.ed-actions .conf-l { font-size: 12.5px; color: var(--graphite); margin-right: 4px; }
+.ed-actions .conf button { height: 28px; padding: 0 12px; border-radius: 999px; font-size: 12.5px; }
+@media (max-width: 560px) {
+  .bar-stats { display: none; }
+  .bar .search { flex: none; }
+  .ornek .code, .ws-pane .brief { max-width: 100%; }
+}
+html, body { overflow-x: clip; }
+.ws-left, .ws-pane, .ws-right { min-width: 0; }
+@media (max-width: 560px) { .bar { gap: 2px; padding: 0 6px; } .bar .pill-login { padding: 0 10px; font-size: 13px; } .bar .icon-btn { width: 32px; } }

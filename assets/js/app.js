@@ -218,7 +218,7 @@
       conEl.innerHTML = consoleHTML(await KD.runWeb({ lang: snip.lang, code: snip.code, host: prevEl }));
     } else if (snip.lang === "c") {
       conEl.innerHTML = '<div class="log muted">Derleniyor (clang)…</div>';
-      conEl.innerHTML = consoleHTML(await KD.runC(snip.code, {}));
+      conEl.innerHTML = consoleHTML(await KD.runC(snip.code, { stdin: snip.stdin || "" }));
     } else if (snip.lang === "py") {
       conEl.innerHTML = '<div class="log muted">Python hazırlanıyor…</div>';
       conEl.innerHTML = consoleHTML(await KD.runPy(snip.code, { stdin: snip.stdin || "" }));
@@ -440,7 +440,7 @@
     const done = { tahmin: ph.predict !== null, incele: ph.viewed, kodla: m === 1, hatirla: p.cards.every((c) => S.state.cards[c.id]?.reps > 0) };
     const list = phasesOf(t.id), nextP = list[list.indexOf(p) + 1];
     view.innerHTML = `
-      <header class="ph-head">
+      <header class="ph-head ${step === "kodla" ? "compact" : ""}">
         <div class="ph-title">
           <p class="ph-label">Faz ${p.no} <span>${esc(t.title)}</span></p>
           <h1>${esc(p.title)}</h1>
@@ -455,7 +455,7 @@
         </div>
       </header>
       <nav class="steps" aria-label="Faz adımları">
-        ${STEPS.map(([k, label], i) => `<a href="#${p.id}/${k}" class="step ${k === step ? "on" : ""} ${done[k] ? "done" : ""}" ${k === step ? 'aria-current="step"' : ""}><span class="step-n">${done[k] ? I.check : i + 1}</span>${label}</a>`).join("")}
+        ${STEPS.map(([k, label], i) => `<a href="#${p.id}/${k}" class="step ${k === step ? "on" : ""} ${done[k] ? "done" : ""}" ${k === step ? 'aria-current="step"' : ""}><span class="step-n">${done[k] ? I.check : i + 1}</span><span class="step-l">${label}</span></a>`).join("")}
       </nav>
       <section class="stage" id="stage"></section>`;
     const stage = $("#stage");
@@ -588,13 +588,35 @@
         ? KD.run(code, { mode: "sql", setup: ch.setup, tests, timeout: ch.timeout || 15000 })
         : KD.run(code, tests ? { fn: ch.fn, tests, timeout: ch.timeout, db: ch.db } : { timeout: ch.timeout, wait: 300, db: ch.db });
     let conf = null;
+    const ornek = mode === "phase" ? (window.KD_ORNEKLER || {})[ch.id] || null : null;
+    const ornekDil = ornek ? ornek.lang || (isC ? "c" : isPy ? "py" : isSql ? "sql" : "js") : null;
+    ph.ornekSeen = ph.ornekSeen || {};
     const kindCls = ch.kind === "Hata Ayıkla" ? "bug" : ch.kind === "Değiştir" ? "mod" : "make";
     const testLabel = (t) => t.label || ch.fn + "(" + (t.args || []).map((a) => JSON.stringify(a)).join(", ") + ")";
     const testExpect = (t) => ("throws" in t ? "hata: " + t.throws : t.maxMs ? JSON.stringify(t.expected) + " · en fazla " + t.maxMs + " ms" : JSON.stringify(t.expected));
 
     host.innerHTML = `
-      <div class="ide">
-        <div class="ide-left">
+      <div class="ws ${ornek ? "" : "ws-orneksiz"}">
+        <aside class="ws-left" aria-label="Görev paneli">
+          <div class="ws-tabs" role="tablist" aria-label="Çalışma adımları">
+            ${ornek ? `<button role="tab" data-p="ornek"><span class="ws-n">1</span><span><b>Örnek</b><small>Benzeri çözülmüş</small></span></button>` : ""}
+            <button role="tab" data-p="gorev"><span class="ws-n">${ornek ? 2 : 1}</span><span><b>Görev</b><small>${ch.tests.length} test</small></span></button>
+            <button role="tab" data-p="mentor"><span class="ws-n">${ornek ? 3 : 2}</span><span><b>Mentor</b><small>İpucu al</small></span><i class="ws-dot" hidden></i></button>
+          </div>
+          ${ornek ? `<div class="ws-pane" id="pane-ornek" role="tabpanel" hidden>
+            <section class="brief ornek">
+              <p class="ornek-k">Çözümlü örnek</p>
+              <h2>${esc(ornek.t)}</h2>
+              <p class="muted small">Bu örnek, görevde kullanacağın tekniği <b>başka bir problemde</b> çözülmüş olarak gösterir. Oku, çalıştır, sonra kapatıp görevi kendin yaz.</p>
+              ${codeBlock(ornek.c, "ornek-kod", hlLang(ornekDil))}
+              <div class="row"><button class="btn sm" id="b-ornek-run">${I.play} Örneği çalıştır</button></div>
+              <div class="ornek-prev" id="ornek-prev" hidden></div>
+              <div class="out-body console ornek-con" id="ornek-con" hidden></div>
+              <div class="ornek-not"><b>Göreve taşı</b><p>${md(ornek.n)}</p></div>
+              <button class="btn primary blok" id="b-ornek-gec">Anladım, göreve geç →</button>
+            </section>
+          </div>` : ""}
+          <div class="ws-pane" id="pane-gorev" role="tabpanel" hidden>
           <section class="brief">
             <div class="brief-top">
               <span class="kind kind-${kindCls}">${ch.kind}</span>
@@ -610,6 +632,18 @@
             ${ch.db ? `<p class="muted small db-note">Bu görevde <code>sorgu(sql, params)</code> ve <code>calistir(sql, params)</code> gerçek bir SQLite veritabanına bağlı.</p>` : ""}
             ${ch.scaffold ? `<details class="scaffold"><summary>Sayfanın HTML'i (değiştirilemez, kodun buna uygulanır)</summary>${codeBlock(ch.scaffold, "mini", "html")}</details>` : ""}
           </section>
+          </div>
+          <div class="ws-pane" id="pane-mentor" role="tabpanel" hidden><div class="mentor">
+          <div class="m-head"><span class="m-av" aria-hidden="true">M</span><div><b>Mentor</b><small id="m-mode">${aiOn ? "Yapay zekâ, Sokratik mod" : "Yerel ipucu motoru"}</small></div></div>
+          <div class="m-feed" id="feed" aria-live="polite"></div>
+          <div class="m-actions">
+            <button class="btn sm" id="b-hint" ${mode === "placement" ? "hidden" : ""}>İpucu al (${Math.min(hintLv + 1, ch.hints.length)}/${ch.hints.length})</button>
+            <button class="btn sm danger" id="b-sol" ${attempts >= 3 ? "" : "hidden"}>Çözümü göster</button>
+          </div>
+          <form class="m-ask" id="ask"><label class="sr" for="ask-in">Mentora soru sor</label><input id="ask-in" placeholder="Örn: neden NaN çıkıyor?" autocomplete="off" /><button class="btn primary sm" aria-label="Gönder">Sor</button></form>
+</div></div>
+        </aside>
+        <div class="ws-right">
           <section class="editor" aria-label="Kod editörü">
             <div class="ed-bar"><span class="file">${fileName}</span><span class="kbd-hint"><kbd>${isMac ? "⌘" : "Ctrl"}</kbd><kbd>Enter</kbd> testleri çalıştırır</span></div>
             <div class="ed-host" id="ed"></div>
@@ -629,25 +663,29 @@
           </section>
           <div id="after"></div>
         </div>
-        <aside class="mentor" aria-label="Mentor">
-          <div class="m-head"><span class="m-av" aria-hidden="true">M</span><div><b>Mentor</b><small id="m-mode">${aiOn ? "Yapay zekâ, Sokratik mod" : "Yerel ipucu motoru"}</small></div></div>
-          <div class="m-feed" id="feed" aria-live="polite"></div>
-          <div class="m-actions">
-            <button class="btn sm" id="b-hint" ${mode === "placement" ? "hidden" : ""}>İpucu al (${Math.min(hintLv + 1, ch.hints.length)}/${ch.hints.length})</button>
-            <button class="btn sm danger" id="b-sol" ${attempts >= 3 ? "" : "hidden"}>Çözümü göster</button>
-          </div>
-          <form class="m-ask" id="ask"><label class="sr" for="ask-in">Mentora soru sor</label><input id="ask-in" placeholder="Örn: neden NaN çıkıyor?" autocomplete="off" /><button class="btn primary sm" aria-label="Gönder">Sor</button></form>
-        </aside>
       </div>`;
 
     const feed = $("#feed", host);
-    const say = (html, who = "m") => { const d = document.createElement("div"); d.className = "msg " + who; d.innerHTML = html; feed.appendChild(d); feed.scrollTop = feed.scrollHeight; return d; };
+    let aktifPane = null;
+    const pane = (ad) => {
+      aktifPane = ad;
+      $$(".ws-tabs [data-p]", host).forEach((b) => { const on = b.dataset.p === ad; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
+      $$(".ws-pane", host).forEach((el) => (el.hidden = el.id !== "pane-" + ad));
+      if (ad === "mentor") { $(".ws-dot", host).hidden = true; feed.scrollTop = feed.scrollHeight; }
+    };
+    $$(".ws-tabs [data-p]", host).forEach((b) => (b.onclick = () => pane(b.dataset.p)));
+    const say = (html, who = "m") => { const d = document.createElement("div"); d.className = "msg " + who; d.innerHTML = html; feed.appendChild(d); feed.scrollTop = feed.scrollHeight; if (aktifPane && aktifPane !== "mentor") $(".ws-dot", host).hidden = false; return d; };
+    if (ornek) {
+      $("#b-ornek-run", host).onclick = () => runSnippet({ lang: ornekDil, code: ornek.c, setup: ch.setup, db: ch.db, stdin: ornek.stdin }, $("#ornek-con", host), $("#ornek-prev", host));
+      $("#b-ornek-gec", host).onclick = () => { ph.ornekSeen[ch.id] = true; S.save(); pane("gorev"); ed.focus && ed.focus(); };
+    }
     say(mode === "placement"
       ? "Seviye sınavındasın: ipucu ve çözüm kapalı. Testleri istediğin kadar çalıştırabilirsin. Emin değilsen soruyu atlayabilirsin."
       : mode === "mix"
       ? "Bu görevi daha önce çözdün. Şimdi <b>hafızandan, sıfırdan</b> yaz. Konuların karışık gelmesi, hangi aracı ne zaman kullanacağını seçme becerini geliştirir."
       : "Cevabı vermem; seni cevaba götürecek soruyu sorarım. Önce kendin dene. Testleri çalıştırdığında hatanı birlikte inceleriz.");
     for (let k = 0; k < hintLv; k++) say(`<span class="lvl">İpucu ${k + 1}</span>${md(ch.hints[k])}`);
+    pane(ornek && !ph.passed[ch.id] && !attempts && !ph.ornekSeen[ch.id] && !saved ? "ornek" : "gorev");
 
     let liveT = null;
     const ed = makeEditor($("#ed", host), saved || ch.starter, (v) => {
@@ -705,6 +743,7 @@
       if (mode === "placement") { if (pass) return placementPass(ch); return; }
       if (pass) return onPass();
       KD.tutor.diagnose(res, ch).forEach((t) => say(md(t), "m diag"));
+      pane("mentor");
       if (attempts >= 3) $("#b-sol", host).hidden = false;
       if (attempts === 3) say("Üç deneme oldu; bu normal. Bir ipucu daha alabilir ya da çözümü inceleyebilirsin. Çözümü görürsen bu görev karma antrenmanda tekrar karşına çıkar.");
     }
