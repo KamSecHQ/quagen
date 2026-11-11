@@ -6,9 +6,10 @@
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const view = $("#view");
   const UNLOCK = 0.66;
-  const KAMLI = LANG === "c" && !!window.KAM;   // C'de konuları ve ipuçlarını KAM anlatır
+  const KAM_VAR = !!window.KAM;                              // karşılama, plan ve ipuçları her dilde KAM'den
+  const KAMLI = KAM_VAR && window.KAM.dersVar();             // konuyu sohbetle anlatma: şimdilik C
   const STEPS = [["tahmin", "Tahmin et"], ["incele", KAMLI ? "KAM anlatıyor" : "İncele"], ["kodla", "Kodla"], ["hatirla", "Hatırla"]];
-  const MENTOR_AD = KAMLI ? "KAM" : "Mentor";
+  const MENTOR_AD = KAM_VAR ? "KAM" : "Mentor";
   const ALL_CARDS = C.flatMap((p) => p.cards.map((c) => Object.assign({ phase: p }, c)));
   const ALL_CH = C.flatMap((p) => p.challenges.map((c) => Object.assign({ phase: p }, c)));
   const isMac = /Mac|iPhone|iPad/.test(navigator.platform);
@@ -637,7 +638,7 @@
           </section>
           </div>
           <div class="ws-pane" id="pane-mentor" role="tabpanel" hidden><div class="mentor">
-          <div class="m-head"><span class="m-av" aria-hidden="true">${MENTOR_AD[0]}</span><div><b>${MENTOR_AD}</b><small id="m-mode">${aiOn ? "Yapay zekâ, Sokratik mod" : "Yerel ipucu motoru"}</small></div></div>
+          <div class="m-head">${KAM_VAR ? '<span class="kam-av" aria-hidden="true"><b></b><b></b></span>' : '<span class="m-av" aria-hidden="true">M</span>'}<div><b>${MENTOR_AD}</b><small id="m-mode">${aiOn ? "Yapay zekâ, Sokratik mod" : "Yerel ipucu motoru"}</small></div></div>
           <div class="m-feed" id="feed" aria-live="polite"></div>
           <div class="m-actions">
             <button class="btn sm" id="b-hint" ${mode === "placement" ? "hidden" : ""}>İpucu al (${Math.min(hintLv + 1, ch.hints.length)}/${ch.hints.length})</button>
@@ -1448,7 +1449,7 @@
   window.KD_APP = { nextTarget, mastery, renderBar, due: () => KD.srs.due(ALL_CARDS).length };
   route();
   checkBadges();
-  if (!prefs().onboarded) setTimeout(KAMLI ? window.KAM.tanis : openOnboarding, document.documentElement.classList.contains("entering") ? 1800 : 300);
+  if (!prefs().onboarded) setTimeout(KAM_VAR ? window.KAM.tanis : openOnboarding, document.documentElement.classList.contains("entering") ? 1800 : 300);
 
   /* Ana sayfadan gelince giriş animasyonu */
   if (document.documentElement.classList.contains("entering")) {

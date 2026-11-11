@@ -1,4 +1,4 @@
-/* QUAGEN — KAM: öğrencinin yanındaki yapay zekâ yol arkadaşı (şimdilik C dili)
+/* QUAGEN — KAM: öğrencinin yanındaki yapay zekâ yol arkadaşı (her dilde; sohbetle ders şimdilik C'de)
  *  1. Tanışma: ilk girişte sohbetle tanır, gerçekçi bir çalışma planı çıkarır.
  *  2. Karşılama: panelde duruma göre (seri, ara verme, bekleyen kartlar) konuşur ve bugünün planını verir.
  *  3. Ders: konuyu mesajlaşarak anlatır; anlattıkça yandaki sahnede kod değişir, satırlar vurgulanır, çalışır.
@@ -16,10 +16,13 @@
   const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
   const bekle = (ms) => new Promise((r) => setTimeout(r, ms));
   const A = () => window.KD_APP || {};
-  const aktif = () => KD.lang === "c";
+  const DIL = KD.lang;
+  const aktif = () => true;                      // karşılama, plan ve sohbet her dilde
+  const dersVar = () => DIL === "c";             // sohbetle ders: şimdilik yalnızca C
+  const EK = ({ c: { ad: "C", de: "C'de", yi: "C'yi", nin: "C'nin" }, py: { ad: "Python", de: "Python'da", yi: "Python'ı", nin: "Python'ın" }, js: { ad: "JavaScript", de: "JavaScript'te", yi: "JavaScript'i", nin: "JavaScript'in" } })[DIL] || { ad: "Bu dil", de: "Bu dilde", yi: "Bu dili", nin: "Bu dilin" };
   const durum = () => (S.state.kam = S.state.kam || {});
   const GUN = 864e5;
-  const AVATAR = '<span class="kam-av" aria-hidden="true"><i></i>K</span>';
+  const AVATAR = '<span class="kam-av" aria-hidden="true"><b></b><b></b><i></i></span>';
 
   /* ------------------------------------------------------------------ sohbet akışı */
   function sohbet(akis, cevapAlani) {
@@ -63,7 +66,7 @@
   }
 
   /* ------------------------------------------------------------------ plan ve durum */
-  const cFazlar = () => (window.KD_CURRICULUM || []).filter((p) => p.language === "c");
+  const cFazlar = () => (window.KD_CURRICULUM || []).filter((p) => (p.language || "js") === DIL);
   function ilerleme() {
     const fazlar = cFazlar(), a = A();
     const biten = a.mastery ? fazlar.filter((p) => a.mastery(p) === 1).length : 0;
@@ -74,14 +77,15 @@
   /* Faz başına gerçekçi süre: ders ~10 dk + üç görev ~25 dk + kartlar ~5 dk */
   const FAZ_DK = 40;
   function planHesapla(dk, kalanFaz) {
-    const temel = Math.max(0, Math.min(10, kalanFaz - 10));   // ilk 10 faz temel, kalanı ileri düzey
+    const ileri = Math.max(0, cFazlar().length - 10);        // ilk 10 faz temel, kalanı ileri düzey
+    const temel = Math.max(0, Math.min(10, kalanFaz - ileri));
     const gun = (faz) => Math.max(1, Math.ceil((faz * FAZ_DK) / dk));
     return { dk, temelFaz: temel, temelGun: gun(temel), tumGun: gun(kalanFaz), kalanFaz };
   }
   const sureMetni = (gun) => (gun <= 10 ? gun + " gün" : gun <= 45 ? "yaklaşık " + Math.round(gun / 7) + " hafta" : "yaklaşık " + Math.round(gun / 30) + " ay");
   function planMetni(pl) {
-    const temel = pl.temelFaz > 0 ? `C temellerini (kalan ${pl.temelFaz} faz) **${sureMetni(pl.temelGun)}** içinde, ` : "";
-    return `Günde **${pl.dk} dakika** ile ${temel}C'nin tamamını (kalan ${pl.kalanFaz} faz) **${sureMetni(pl.tumGun)}** içinde bitirirsin. Bu, her gün çalıştığın varsayımıyla; hafta sonları boş geçerse süre uzar, sorun değil.`;
+    const temel = pl.temelFaz > 0 ? `${EK.ad} temellerini (kalan ${pl.temelFaz} faz) **${sureMetni(pl.temelGun)}** içinde, ` : "";
+    return `Günde **${pl.dk} dakika** ile ${temel}${EK.nin} tamamını (kalan ${pl.kalanFaz} faz) **${sureMetni(pl.tumGun)}** içinde bitirirsin. Bu, her gün çalıştığın varsayımıyla; hafta sonları boş geçerse süre uzar, sorun değil.`;
   }
   const selamSaat = () => { const h = new Date().getHours(); return h < 5 ? "Geç oldu" : h < 12 ? "Günaydın" : h < 18 ? "Selam" : "İyi akşamlar"; };
   const adimAdi = (k) => ({ tahmin: "tahmin sorusu", incele: "ders (ben anlatacağım)", kodla: "görevler", hatirla: "tekrar kartları" })[k] || k;
@@ -89,7 +93,7 @@
   /* Duruma göre gerçekçi karşılama cümlesi */
   function karsilamaMetni(d) {
     const ad = S.state.prefs.name ? ", " + S.state.prefs.name : "";
-    if (d.biten === d.toplam && d.toplam) return `${selamSaat()}${ad}. C parkurunun tamamını bitirdin; bunu çok az kişi yapıyor. Artık iş tekrar kartlarını canlı tutmakta.`;
+    if (d.biten === d.toplam && d.toplam) return `${selamSaat()}${ad}. ${EK.ad} parkurunun tamamını bitirdin; bunu çok az kişi yapıyor. Artık iş tekrar kartlarını canlı tutmakta.`;
     if (d.sonGun === null) return `${selamSaat()}${ad}. Henüz ilk dersi yapmadık. İlk adım en zoru; 10 dakika ayır, gerisi gelir.`;
     if (d.sonGun === 0) return d.bugunXp >= d.hedef
       ? `Bugünkü hedefini tamamladın${ad}. Devam etmek istersen buradayım, ama bırakmak da gayet makul; yarın daha taze olursun.`
@@ -144,7 +148,7 @@
     cekmece = document.createElement("aside");
     cekmece.className = "kam-cekmece"; cekmece.hidden = true; cekmece.setAttribute("aria-label", "KAM ile sohbet");
     cekmece.innerHTML = `
-      <header class="kam-bas">${AVATAR}<div><b>KAM</b><small id="kam-mod">yanındayım</small></div><button class="icon-btn" id="kam-kapat" aria-label="Kapat">×</button></header>
+      <header class="kam-bas">${AVATAR}<div><b>KAM</b><small id="kam-mod">yol arkadaşın</small></div><button class="icon-btn" id="kam-kapat" aria-label="Kapat">×</button></header>
       <div class="kam-akis" id="kam-akis" aria-live="polite"></div>
       <div class="kam-cevap" id="kam-cevap" data-odak="yok"></div>
       <form class="kam-form" id="kam-form"><input id="kam-girdi" placeholder="KAM'e yaz… (ör. işaretçi ne demek?)" autocomplete="off" maxlength="300" /><button class="btn primary sm" aria-label="Gönder">Gönder</button></form>`;
@@ -154,7 +158,7 @@
     $("#kam-kapat", cekmece).onclick = cekmeceKapat;
     $("#kam-form", cekmece).onsubmit = (e) => { e.preventDefault(); const g = $("#kam-girdi", cekmece); const q = g.value.trim(); if (!q) return; g.value = ""; soruCevapla(q); };
     addEventListener("keydown", (e) => { if (e.key === "Escape" && !cekmece.hidden) cekmeceKapat(); });
-    if (KD.tutor) KD.tutor.available().then((on) => { aiVar = on; $("#kam-mod", cekmece).textContent = on ? "yapay zekâ çevrimiçi" : "yanındayım"; });
+    if (KD.tutor) KD.tutor.available().then((on) => { aiVar = on; $("#kam-mod", cekmece).textContent = on ? "yapay zekâ çevrimiçi" : "yol arkadaşın"; });
     return cekmece;
   }
   let selamVerildi = false;
@@ -199,7 +203,7 @@
       const m = d.seri >= 3
         ? `Motivasyon gelip gider; ona güvenme. Sen ${d.seri} gündür buradasın, yani zaten alışkanlık kurmuşsun. Bugün canın istemiyorsa yalnızca tekrar kartlarını yap ve kapat. O da sayılır.`
         : d.biten > 0
-        ? `Dürüst olayım: C zor bir dil ve herkes bir noktada “ben bunu yapamayacağım” diyor. Sen ${d.biten} faz bitirdin; başladığın günkü hâlinle bugünkü arasında gerçek bir fark var. Bugün yalnızca 10 dakika ayır. Çoğu zaman başlamak yetiyor.`
+        ? `Dürüst olayım: programlama zor ve herkes bir noktada “ben bunu yapamayacağım” diyor. Sen ${d.biten} faz bitirdin; başladığın günkü hâlinle bugünkü arasında gerçek bir fark var. Bugün yalnızca 10 dakika ayır. Çoğu zaman başlamak yetiyor.`
         : "İlk günlerde her şey yabancı gelir ve yavaş ilerlersin; bu yeteneksizlik değil, başlangıç. Kimse işaretçileri ilk seferde anlamadı. Bugün tek bir şey yap: ilk dersi aç ve 10 dakika dinle. Devam edip etmemeye ondan sonra karar verirsin.";
       await cs.kam(m);
     }
@@ -233,7 +237,7 @@
     return String(s).split(/```(\w*)\n?([\s\S]*?)```/).map((p, i) => (i % 3 === 1 ? "" : i % 3 === 2 ? `<pre class="code kam-kod"><code>${KD.hlDoc ? KD.hlDoc(p.replace(/\n$/, ""), "c").join("\n") : esc(p)}</code></pre>` : p.split(/\n{2,}/).filter((x) => x.trim()).map((x) => `<p>${md(x.trim()).replace(/\n/g, "<br>")}</p>`).join(""))).join("");
   }
   function baglam() {
-    const m = location.hash.match(/^#(c\d+)(?:\/(\w+))?(?:\/(\w+))?/);
+    const m = location.hash.match(/^#([a-z]+\d+)(?:\/(\w+))?(?:\/(\w+))?/);
     if (!m) return { sayfa: "panel" };
     const p = cFazlar().find((x) => x.id === m[1]);
     const ch = p && m[3] ? p.challenges.find((c) => c.id === m[3]) : null;
@@ -245,18 +249,18 @@
     if (/te[sş]ekk[uü]r|sa[gğ] ?ol|eyvallah/.test(duz)) return cs.kam("Ne demek. Buradayım.");
     if (/^(selam|merhaba|hey|sa\b|naber|nasılsın)/.test(duz)) return cs.kam("Selam. İyiyim, senin için buradayım. Bugün neye bakalım?");
     if (ara && R) {
-      const r = ara(q, { dil: "c" });
-      const k = r.sonuclar.find((x) => x.tur === "kavram" && x.kavram.diller.c);
+      const r = ara(q, { dil: DIL });
+      const k = r.sonuclar.find((x) => x.tur === "kavram" && x.kavram.diller[DIL]);
       const t = r.sonuclar.find((x) => x.tur === "terim");
       if (t && (r.tanimSorusu || !k)) return cs.kam(`**${t.terim.terim}** (${t.terim.ing}): ${t.terim.tanim}`);
       if (k && r.guven >= 0.3) {
-        const g = k.kavram.diller.c;
-        return cs.kam(`${k.kavram.baslik} için C'de \`${g.ad}\` kullanılır.\n\n${g.aciklama}${g.not ? "\n\n**Dikkat:** " + g.not : ""}`, `<pre class="code kam-kod"><code>${KD.hlDoc ? KD.hlDoc(g.ornek, "c").join("\n") : esc(g.ornek)}</code></pre><a class="kam-chip" href="rehber.html#/k/${k.kavram.id}/c" target="_blank" rel="noopener">Rehber'de aç ve çalıştır →</a>`);
+        const g = k.kavram.diller[DIL];
+        return cs.kam(`${k.kavram.baslik} için ${EK.de} \`${g.ad}\` kullanılır.\n\n${g.aciklama}${g.not ? "\n\n**Dikkat:** " + g.not : ""}`, `<pre class="code kam-kod"><code>${KD.hlDoc ? KD.hlDoc(g.ornek, DIL).join("\n") : esc(g.ornek)}</code></pre><a class="kam-chip" href="rehber.html#/k/${k.kavram.id}/${DIL}" target="_blank" rel="noopener">Rehber'de aç ve çalıştır →</a>`);
       }
     }
     if (/hata|error|warning|çök|segmentation|sanitizer|overflow/.test(duz)) return cs.kam("Hata mesajlarında üç şeye bak: **satır numarası**, hatanın **türü** (ör. `undeclared`, `expected ';'`, `buffer-overflow`) ve o satırda hangi değişkenlerin geçtiği. Mesajın tamamını buraya yapıştırırsan daha net konuşabiliriz.");
     return cs.kam(aiVar === false
-      ? "Bunu tam çıkaramadım. Daha kısa sorar mısın? Örneğin: “işaretçi nedir”, “dizi nasıl tanımlanır”, “malloc ne işe yarar”. Hata aldıysan mesajı yapıştır."
+      ? "Bunu tam çıkaramadım. Daha kısa sorar mısın? Örneğin: “döngü nedir”, “liste nasıl sıralanır”, “fonksiyon nasıl yazılır”. Hata aldıysan mesajı yapıştır."
       : "Bunu tam çıkaramadım; biraz daha açık yazar mısın?");
   }
 
@@ -270,33 +274,48 @@
     cekmeceAc();
     $("#kam-form", cekmece).hidden = true;
     const pr = S.state.prefs;
-    await cs.kam("Selam, ben **KAM**. Bu yolculukta yanında ben olacağım: konuları ben anlatacağım, takıldığında bana yazacaksın.");
-    await cs.kam("Önce seni tanıyayım. Sana nasıl hitap edeyim?");
-    const ad = await cs.yaz("Adın", pr.name ? "Aynı kalsın" : "Sonra söylerim");
-    if (ad) pr.name = ad;
-    await cs.kam(`${pr.name ? "Memnun oldum, " + pr.name + "." : "Tamam, isimsiz devam ediyoruz."} Daha önce hiç kod yazdın mı?`);
-    const dz = await cs.secenek(["Hiç yazmadım", "Başka bir dil biliyorum", "Biraz C biliyorum"], { beklet: true });
-    pr.level = ["yeni", "biraz", "c"][dz];
+    if (pr.name) await cs.kam(`Selam ${pr.name}, ben **KAM**. ${EK.yi} birlikte öğreneceğiz: konuları ben anlatacağım, takıldığında bana yazacaksın.`);
+    else {
+      await cs.kam("Selam, ben **KAM**. Bu yolculukta yanında ben olacağım: konuları ben anlatacağım, takıldığında bana yazacaksın.");
+      await cs.kam("Önce seni tanıyayım. Sana nasıl hitap edeyim?");
+      const ad = await cs.yaz("Adın", "Sonra söylerim");
+      if (ad) pr.name = ad;
+      await cs.kam(pr.name ? "Memnun oldum, " + pr.name + "." : "Tamam, isimsiz devam ediyoruz.");
+    }
+    await cs.kam("Daha önce hiç kod yazdın mı?");
+    const dz = await cs.secenek(["Hiç yazmadım", "Başka bir dil biliyorum", `Biraz ${EK.ad} biliyorum`], { beklet: true });
+    pr.level = ["yeni", "biraz", DIL][dz];
     await cs.kam([
       "Güzel, sıfırdan başlıyoruz. Bildiğini varsaydığım hiçbir şey olmayacak; her yeni kelimeyi ilk geçtiği yerde açıklayacağım.",
-      "İyi; değişken ve döngü fikri sende var. C'de asıl yeni olan şey bellek: türler, işaretçiler, `malloc`. Orada yavaşlayacağız.",
-      "O zaman ilk fazlar hızlı geçer. Yine de atlama; işaretçi ve bellek fazlarında eksik kalan yerler orada ortaya çıkıyor."
+      ({ c: "İyi; değişken ve döngü fikri sende var. C'de asıl yeni olan şey bellek: türler, işaretçiler, `malloc`. Orada yavaşlayacağız.",
+         py: "İyi; değişken ve döngü fikri sende var. Python'da yeni olan şey girintiler ve hazır veri yapıları: liste, sözlük, küme. Onlara zaman ayıracağız.",
+         js: "İyi; değişken ve döngü fikri sende var. JavaScript'te asıl yeni olan şey fonksiyonların değer gibi dolaşması ve asenkron kod. Orada yavaşlayacağız." })[DIL] || "İyi; temel fikirler sende var, bu dilin kendine özgü yanlarına odaklanacağız.",
+      "O zaman ilk fazlar hızlı geçer. Yine de atlama; eksik kalan yerler ileri fazlarda ortaya çıkıyor."
     ][dz]);
     await cs.kam("Günde ne kadar zaman ayırabilirsin? Dürüst ol; tutamayacağın bir söz verme.");
     const zi = await cs.secenek(["15 dakika", "30 dakika", "1 saat"], { beklet: true });
     const dk = [15, 30, 60][zi];
-    await cs.kam("Son soru: C'yi neden öğrenmek istiyorsun?");
-    const ni = await cs.secenek(["Okul / ders için", "Merak ediyorum", "İş ve kariyer", "Gömülü sistem, oyun, donanım"], { beklet: true });
-    const neden = ["okul", "merak", "kariyer", "donanim"][ni];
-    await cs.kam([
-      "Anladım. Sınavda çıkan şeylerin çoğu ilk 10 fazda: döngüler, diziler, işaretçiler. Oraya odaklanacağız.",
-      "En sağlam motivasyon bu. C sana bilgisayarın içeride nasıl çalıştığını gösterecek.",
-      "C bilmek başka dillerde de fark yaratır; belleği anlayan programcı az. Ama gerçekçi olalım: iş için C tek başına yetmez, bu bir temel.",
-      "Doğru dili seçmişsin; o alanların dili C. İşaretçiler ve bit işlemleri fazları senin için en değerli kısım."
-    ][ni]);
+    await cs.kam(`Son soru: ${EK.yi} neden öğrenmek istiyorsun?`);
+    const NEDEN = ({
+      c: [["Okul / ders için", "okul", "Anladım. Sınavda çıkan şeylerin çoğu ilk 10 fazda: döngüler, diziler, işaretçiler. Oraya odaklanacağız."],
+          ["Merak ediyorum", "merak", "En sağlam motivasyon bu. C sana bilgisayarın içeride nasıl çalıştığını gösterecek."],
+          ["İş ve kariyer", "kariyer", "C bilmek başka dillerde de fark yaratır; belleği anlayan programcı az. Ama gerçekçi olalım: iş için C tek başına yetmez, bu bir temel."],
+          ["Gömülü sistem, oyun, donanım", "donanim", "Doğru dili seçmişsin; o alanların dili C. İşaretçiler ve bit işlemleri fazları senin için en değerli kısım."]],
+      py: [["Okul / ders için", "okul", "Anladım. Derslerde en çok çıkanlar ilk 10 fazda: döngüler, listeler, fonksiyonlar. Oraya odaklanacağız."],
+           ["Merak ediyorum", "merak", "En sağlam motivasyon bu. Python ile fikri koda dökmek hızlıdır; küçük araçlar yazmaya erken başlayacağız."],
+           ["İş ve kariyer", "kariyer", "Python veri, otomasyon ve yapay zekâ işlerinde standart. Ama gerçekçi olalım: dil tek başına iş getirmez; bitirdiğin projeler getirir."],
+           ["Veri ve otomasyon", "veri", "Doğru dil. İleri fazlarda dosya okuyup rapor üreten bir araç yazacağız; asıl hedef o."]],
+      js: [["Okul / ders için", "okul", "Anladım. Temeller ilk 10 fazda: değişkenler, döngüler, diziler, fonksiyonlar. Oraya odaklanacağız."],
+           ["Merak ediyorum", "merak", "En sağlam motivasyon bu. JavaScript'in güzel yanı, yazdığın şeyi tarayıcıda hemen görmen."],
+           ["İş ve kariyer", "kariyer", "Web işlerinin çoğu JavaScript ister. Ama gerçekçi olalım: temeller bitince web ve React parkurlarını da tamamlaman gerekir; bu aylar sürer."],
+           ["Web sitesi yapmak", "web", "O zaman hedef belli: önce dilin temeli, ardından Web temelleri parkuru. Kendi sayfanı orada yapacaksın."]]
+    })[DIL];
+    const ni = await cs.secenek(NEDEN.map((x) => x[0]), { beklet: true });
+    const neden = NEDEN[ni][1];
+    await cs.kam(NEDEN[ni][2]);
     const d = ilerleme();
     const pl = planHesapla(dk, d.kalan || 20);
-    await cs.kam(`Planın şöyle:\n\n${planMetni(pl)}\n\nHer faz dört adım: kısa bir tahmin sorusu, benim anlatımım, üç görev ve tekrar kartları. Unutma: iki günden uzun ara verirsen unutma başlar; kartlar bunun için var.`);
+    await cs.kam(`Planın şöyle:\n\n${planMetni(pl)}\n\nHer faz dört adım: kısa bir tahmin sorusu, konunun anlatımı, üç görev ve tekrar kartları. Unutma: iki günden uzun ara verirsen unutma başlar; kartlar bunun için var.`);
     let sec = await cs.secenek(["Başlayalım", "Daha hafif bir plan"], { beklet: true });
     let sonDk = dk;
     if (sec === 1) {
@@ -443,5 +462,5 @@
   }
   if (document.readyState === "loading") addEventListener("DOMContentLoaded", kur); else setTimeout(kur, 0);
 
-  window.KAM = { aktif, ders, tanis, karsila, ac: cekmeceAc, planHesapla, planMetni, karsilamaMetni, otomatikSenaryo, ilerleme };
+  window.KAM = { aktif, dersVar, ders, tanis, karsila, ac: cekmeceAc, planHesapla, planMetni, karsilamaMetni, otomatikSenaryo, ilerleme };
 })();

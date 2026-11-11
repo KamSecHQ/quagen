@@ -1,0 +1,132 @@
+/* QUAGEN — ortak cam katmanı: tüm sayfalarda aynı arka plan sahnesi, cam yüzey değişkenleri,
+   düğme davranışları ve KAM'in yüzü. Sayfa stilinden SONRA yüklenir. */
+:root {
+  --glass: rgba(255, 255, 255, 0.44);
+  --glass-strong: rgba(255, 255, 255, 0.72);
+  --glass-line: rgba(255, 255, 255, 0.85);
+  --glass-edge: rgba(19, 33, 58, 0.09);
+  --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 1px 2px rgba(19, 33, 58, 0.04), 0 22px 48px -28px rgba(19, 33, 58, 0.4);
+  --blur: saturate(1.7) blur(22px);
+  --isik-1: rgba(255, 208, 60, 0.72);
+  --isik-2: rgba(84, 132, 255, 0.46);
+  --isik-3: rgba(46, 196, 150, 0.36);
+  --nokta: rgba(19, 33, 58, 0.13);
+  --kam-1: #ffe27a;
+  --kam-2: #ffc93a;
+  --kam-goz: #13213a;
+}
+:root[data-theme="dark"] {
+  --glass: rgba(26, 38, 64, 0.46);
+  --glass-strong: rgba(30, 44, 73, 0.72);
+  --glass-line: rgba(255, 255, 255, 0.1);
+  --glass-edge: rgba(255, 255, 255, 0.08);
+  --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 24px 52px -26px rgba(0, 0, 0, 0.75);
+  --isik-1: rgba(255, 216, 77, 0.22);
+  --isik-2: rgba(84, 132, 255, 0.38);
+  --isik-3: rgba(46, 196, 150, 0.22);
+  --nokta: rgba(255, 255, 255, 0.07);
+}
+
+/* ---------- Arka plan sahnesi: ağır ağır gezen üç ışık + kenarlara doğru sönen nokta ızgarası ---------- */
+html { background: var(--paper); }
+body { background: transparent; }
+body::before {
+  content: ""; position: fixed; inset: -25vmax; z-index: -2; pointer-events: none;
+  background:
+    radial-gradient(38vmax 34vmax at 26% 24%, var(--isik-1), transparent 68%),
+    radial-gradient(40vmax 38vmax at 78% 30%, var(--isik-2), transparent 68%),
+    radial-gradient(44vmax 36vmax at 56% 78%, var(--isik-3), transparent 68%);
+  animation: sahne-gez 46s ease-in-out infinite alternate;
+  will-change: transform;
+}
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background-image: radial-gradient(var(--nokta) 1px, transparent 1.4px);
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 28%, #000 20%, transparent 78%);
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 28%, #000 20%, transparent 78%);
+}
+@keyframes sahne-gez {
+  0% { transform: translate3d(-3%, -2%, 0) rotate(0deg) scale(1); }
+  50% { transform: translate3d(4%, 3%, 0) rotate(7deg) scale(1.08); }
+  100% { transform: translate3d(-2%, 5%, 0) rotate(-6deg) scale(1.03); }
+}
+
+/* ---------- Cam yüzey ---------- */
+.cam {
+  background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow);
+}
+
+/* ---------- Düğmeler: kalkar, basılır; dolu düğmelerin üzerinden ışık geçer ---------- */
+.btn { transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.16s var(--ease), box-shadow 0.22s; }
+@media (hover: hover) {
+  .btn:hover:not(:disabled) { transform: translateY(-2px); }
+}
+.btn:active:not(:disabled) { transform: translateY(0) scale(0.97); transition-duration: 0.08s; }
+.btn-ink, .btn-marker, .btn.primary, .btn.isik { position: relative; overflow: hidden; isolation: isolate; }
+.btn-ink::after, .btn-marker::after, .btn.primary::after, .btn.isik::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.38) 50%, transparent 65%);
+  transform: translateX(-120%);
+}
+@media (hover: hover) {
+  .btn-ink:hover::after, .btn-marker:hover::after, .btn.primary:hover:not(:disabled)::after, .btn.isik:hover::after { transform: translateX(120%); transition: transform 0.7s var(--ease); }
+}
+
+/* ---------- KAM'in yüzü: sarı cam bir gövde, iki göz. Kırpar, düşünür, konuşur. ----------
+   Boyut font-size ile ölçeklenir: .kam-av { font-size: 36px } → 36px'lik yüz. */
+.kam-av {
+  --gx: 0; --gy: 0;
+  position: relative; display: inline-grid; place-items: center; flex: none;
+  width: 1em; height: 1em; font-size: 36px; border-radius: 34%;
+  background:
+    radial-gradient(120% 90% at 30% 12%, rgba(255, 255, 255, 0.85), transparent 46%),
+    linear-gradient(160deg, var(--kam-1), var(--kam-2));
+  box-shadow: inset 0 -0.06em 0.1em rgba(160, 105, 0, 0.35), inset 0 0.03em 0 rgba(255, 255, 255, 0.8), 0 0.14em 0.36em -0.1em rgba(214, 150, 0, 0.75);
+}
+.kam-av > b {
+  position: absolute; top: 37%; width: 0.13em; height: 0.24em; border-radius: 0.07em; background: var(--kam-goz);
+  transform: translate(calc(var(--gx) * 0.055em), calc(var(--gy) * 0.045em));
+  animation: kam-kirp 5.6s infinite; transition: transform 0.18s var(--ease), height 0.2s, border-radius 0.2s;
+}
+.kam-av > b:first-of-type { left: 27%; }
+.kam-av > b:last-of-type { right: 27%; }
+.kam-av > i { position: absolute; right: -6%; bottom: -6%; width: 0.24em; height: 0.24em; border-radius: 50%; background: var(--pass); box-shadow: 0 0 0 0.06em var(--surface); }
+@keyframes kam-kirp { 0%, 92%, 100% { scale: 1 1; } 95.5% { scale: 1 0.1; } }
+/* Düşünürken gözler noktaya döner ve sırayla zıplar */
+.kam-av.dusunuyor > b { height: 0.13em; border-radius: 50%; animation: kam-dusun 0.9s infinite; }
+.kam-av.dusunuyor > b:last-of-type { animation-delay: 0.18s; }
+@keyframes kam-dusun { 0%, 100% { translate: 0 0; } 40% { translate: 0 -0.08em; } }
+/* Sevinince gözler kısılır */
+.kam-av.mutlu > b { height: 0.11em; border-radius: 0.11em 0.11em 0 0; animation: none; }
+/* Büyük KAM: etrafında nefes alan bir hale */
+.kam-av.dev { font-size: clamp(72px, 9vw, 116px); animation: kam-sal 5s ease-in-out infinite; }
+.kam-av.dev::before {
+  content: ""; position: absolute; inset: -16%; z-index: -1; border-radius: 40%;
+  background: radial-gradient(closest-side, rgba(255, 216, 77, 0.55), transparent);
+  animation: kam-hale 3.6s ease-in-out infinite;
+}
+@keyframes kam-sal { 0%, 100% { translate: 0 0; rotate: -2deg; } 50% { translate: 0 -6px; rotate: 2deg; } }
+@keyframes kam-hale { 0%, 100% { opacity: 0.55; scale: 0.92; } 50% { opacity: 1; scale: 1.08; } }
+
+@media (prefers-reduced-motion: reduce) {
+  body::before, .kam-av.dev, .kam-av.dev::before, .kam-av > b { animation: none; }
+  .btn, .btn::after { transition: none; }
+}
+
+/* ---------- Sayfalara özel cam yüzeyler (Rehber, Pratik, hesap, portfolyo) ---------- */
+.rb-top, .pt-top { background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border-bottom: 1px solid var(--glass-edge); box-shadow: inset 0 -1px 0 var(--glass-line); }
+.big-search, .niyet, .kat, .dene, .kk, .ai, .side-terim, .kv-tabs, .harf-dizin,
+.pt-yan .kart, .pop, .cs-kart, .basla-balon,
+.tabs, .lang, .tm, .cert, .proj {
+  background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+  border-color: var(--glass-edge); box-shadow: var(--glass-shadow);
+}
+.niyet > header { background: linear-gradient(135deg, var(--marker-wash), transparent 70%); }
+.rb-top .btn, .pt-top .btn, .dene .btn:not(.primary), .rb-langs button, .pt-dil { background: var(--glass-strong); border-color: var(--glass-edge); }
+.kat, .kk, .proj, .cert, .pt-yan .kart { transition: transform 0.28s var(--ease), box-shadow 0.28s, border-color 0.2s; }
+@media (hover: hover) { .kat:hover, .kk:hover, .proj:hover { transform: translateY(-3px); } }
+.auth-panel { background: transparent; }
+.field input { background: var(--glass-strong); border-color: var(--glass-edge); }
+.auth-panel .card { padding: 28px; border-radius: 24px; background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow); }

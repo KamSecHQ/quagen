@@ -5,160 +5,104 @@
   <script src="assets/js/bulut.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>QUAGEN — Kod yazmayı, kod yazarak öğren</title>
-  <meta name="description" content="QUAGEN'de dersler videoyla değil, tarayıcında çalışan bir editörle ilerler. JavaScript, Python ve C. 90 faz, 270 testli görev, günlük pratik ve Türkçe başvuru rehberi, yapay zekâ mentor, FSRS aralıklı tekrar ve beceri modeli." />
+  <title>QUAGEN — KAM ile kod yazmayı öğren</title>
+  <meta name="description" content="QUAGEN'de kod yazmayı KAM öğretir: konuyu mesajlaşarak anlatır, kod yanında değişir, sonra sen yazarsın. JavaScript, Python ve C; 90 faz, 270 testli görev, günlük pratik ve Türkçe rehber." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
   <link rel="stylesheet" href="assets/css/tokens.css" />
   <link rel="stylesheet" href="assets/css/landing.css" />
+  <link rel="stylesheet" href="assets/css/kam.css" />
+  <link rel="stylesheet" href="assets/css/cam.css" />
   <link rel="prefetch" href="nextgen.html" />
 </head>
 <body>
   <a class="skip" href="#ana">İçeriğe geç</a>
 
   <header class="nav" id="nav">
-    <div class="wrap nav-in">
+    <div class="nav-in cam">
       <a href="#" class="logo" aria-label="QUAGEN ana sayfa">QUAGEN</a>
       <nav class="nav-links" aria-label="Bölümler">
-        <a href="#nasil">Nasıl çalışır</a>
-        <a href="#mufredat">Müfredat</a>
-        <a href="#araclar">Pratik</a>
+        <a href="#ders">Bir ders</a>
+        <a href="#mufredat">Dersler</a>
+        <a href="pratik.html">Pratik</a>
         <a href="rehber.html">Rehber</a>
-        <a href="#mentor">Mentor</a>
-        <a href="#arastirma">Araştırma</a>
         <a href="#sss">Sorular</a>
       </nav>
       <a href="hesap.html" class="nav-login" id="nav-login">Giriş yap</a>
-      <a href="nextgen.html" class="btn btn-ink js-warp">NextGen'i aç</a>
+      <a href="nextgen.html" class="btn btn-ink js-warp">Derslere gir</a>
     </div>
   </header>
 
   <main id="ana">
-    <!-- Hero: canlı ilk görev -->
-    <section class="hero wrap">
-      <div class="hero-copy">
-        <h1 class="hero-h"><span class="w">Kod</span> <span class="w">yazmayı,</span> <span class="w">kod</span> <span class="w">yazarak</span> <span class="w">öğren.</span></h1>
-        <p class="lead">QUAGEN'de dersler videoyla değil, tarayıcında çalışan bir editörle ilerler. Her görevin otomatik testleri var. Takıldığında yapay zekâ mentor sana cevabı değil, cevaba götüren soruyu verir.</p>
-        <div class="hero-cta">
-          <a href="nextgen.html" class="btn btn-ink btn-lg js-warp">Ücretsiz başla</a>
-          <a href="#mufredat" class="btn btn-line btn-lg">Müfredatı incele</a>
+    <!-- Açılış: KAM kendini tanıtır, konuşurken kod sahnesi canlı değişir -->
+    <section class="hero wrap" aria-labelledby="hero-h">
+      <div class="hero-ust">
+        <span class="kam-av dev" id="kam-dev" aria-hidden="true"><b></b><b></b></span>
+        <div>
+          <h1 class="hero-h" id="hero-h">Selam, ben KAM.</h1>
+          <p class="lead">Kod yazmayı sana ben öğreteceğim. Konuşarak anlatırım, kod yanımızda değişir, sonra klavye sana geçer.</p>
         </div>
-        <dl class="facts">
-          <div><dt>3</dt><dd>dil: JavaScript, Python ve C</dd></div>
-          <div><dt>270</dt><dd>otomatik testli görev</dd></div>
-          <div><dt>90</dt><dd>faz, dokuz parkurda</dd></div>
-        </dl>
       </div>
 
-      <div class="try" id="try" aria-label="Deneme görevi">
-        <p class="try-kicker">Şimdi dene</p>
-        <p class="try-lang">JavaScript</p>
-        <h2 class="try-title"><code>selamla(isim)</code> fonksiyonu <span class="mark">"Merhaba, İSİM!"</span> döndürsün.</h2>
-        <div class="try-editor" id="try-editor"></div>
-        <div class="try-bar">
-          <span class="try-hint"><kbd id="try-kbd">Ctrl</kbd><kbd>Enter</kbd> ile de çalışır</span>
-          <button class="btn btn-ink" id="try-run">Testleri çalıştır</button>
-        </div>
-        <ul class="try-tests" id="try-tests">
-          <li><span class="ti"></span><code>selamla("Ayşe")</code><span class="te">"Merhaba, Ayşe!"</span></li>
-          <li><span class="ti"></span><code>selamla("Mert")</code><span class="te">"Merhaba, Mert!"</span></li>
-          <li><span class="ti"></span><code>selamla("")</code><span class="te">"Merhaba, !"</span></li>
-        </ul>
-        <p class="try-mentor" id="try-mentor"><b>Mentor</b> <span id="try-say">Döndürmen gereken metnin hangi kısmı her seferinde aynı, hangi kısmı değişiyor?</span></p>
-        <div class="try-done" id="try-done" hidden>
-          <p><b>İlk görevini geçtin.</b> Kodun kaydedildi; NextGen'de Faz 1'in kalanından devam edebilirsin.</p>
-          <a href="nextgen.html?dil=js#p1/kodla/p1c2" class="btn btn-marker js-warp" data-dil="js">Faz 1'e devam et</a>
-        </div>
+      <div class="sahne cam" id="sahne">
+        <section class="s-sohbet" aria-label="KAM ile sohbet">
+          <div class="kam-akis" id="h-akis" aria-live="polite"></div>
+          <div class="kam-cevap" id="h-cevap" data-odak="yok"></div>
+        </section>
+        <section class="s-kod" aria-label="KAM'in yazdığı kod">
+          <header class="sahne-bas"><span class="s-isik" aria-hidden="true"><i></i><i></i><i></i></span><span class="file" id="h-dosya">merhaba.c</span><span class="sahne-durum" id="h-durum"></span></header>
+          <pre class="sahne-kod" id="h-kod"><code><span class="sahne-bos">KAM anlatmaya başlayınca kod burada belirecek.</span></code></pre>
+          <div class="sahne-cikti" id="h-cikti" hidden></div>
+        </section>
       </div>
+      <noscript><p class="lead">Sohbeti görmek için JavaScript gerekir. <a href="nextgen.html">Derslere doğrudan gir.</a></p></noscript>
     </section>
 
-    <!-- Nasıl çalışır -->
-    <section class="section wrap" id="nasil">
+    <!-- Bir ders nasıl geçer -->
+    <section class="section wrap" id="ders">
       <header class="sec-head">
-        <h2>Her faz aynı dört adımla ilerler.</h2>
-        <p>Programlama eğitimi araştırmalarındaki PRIMM ve "kullan, değiştir, yarat" modellerinden türettiğimiz bu döngü, bilgiyi kısa süreli hafızadan uzun süreli hafızaya taşımak için tasarlandı.</p>
+        <h2>Bir ders yirmi dakika sürer.</h2>
+        <p>Her konu aynı dört adımla ilerler. Okuyarak değil, yaparak geçersin.</p>
       </header>
-      <ol class="flow">
-        <li>
-          <span class="flow-n">1</span>
-          <h3>Tahmin et</h3>
-          <p>Konuyu görmeden kodun ne yapacağını tahmin edersin. Yanılmak serbest; ön tahmin, sonraki açıklamayı daha kalıcı yapar.</p>
-          <div class="mini" aria-hidden="true">
-<pre><span class="t-k">let</span> a = <span class="t-n">5</span>, b = <span class="t-s">"5"</span>;
-console.log(a + b);</pre>
-            <div class="mini-opts"><span>10</span><span class="on">"55"</span><span>NaN</span></div>
-          </div>
-        </li>
-        <li>
-          <span class="flow-n">2</span>
-          <h3>İncele</h3>
-          <p>Çözümlü bir örneği satır satır, adım adım incelersin. Yeni başlayan biri için bilişsel yükü en çok azaltan yöntem budur.</p>
-          <div class="mini" aria-hidden="true">
-<pre><span class="dim"><span class="t-k">let</span> sonuc = <span class="t-n">1</span>;</span>
-<span class="hl"><span class="t-k">for</span> (<span class="t-k">let</span> i = <span class="t-n">1</span>; i &lt;= <span class="t-n">5</span>; i++)</span>
-<span class="dim">  sonuc *= i;</span></pre>
-            <p class="mini-note">Üç parça: başlangıç, koşul, adım.</p>
-          </div>
-        </li>
-        <li>
-          <span class="flow-n">3</span>
-          <h3>Kodla</h3>
-          <p>Önce hazır kodu değiştirir, sonra sıfırdan yazar, en son hatalı kodu düzeltirsin. Testler saniyeler içinde sonuç verir.</p>
-          <div class="mini mini-tests" aria-hidden="true">
-            <span class="ok">faktoriyel(0)</span>
-            <span class="ok">faktoriyel(5)</span>
-            <span class="no">faktoriyel(10)<em>beklenen 3628800, gelen 0</em></span>
-          </div>
-        </li>
-        <li>
-          <span class="flow-n">4</span>
-          <h3>Hatırla</h3>
-          <p>Kartlarla öğrendiklerini hafızandan çağırırsın. FSRS algoritması her kartı, hatırlama olasılığın %90'a düştüğü gün tekrar sorar.</p>
-          <div class="mini" aria-hidden="true">
-            <p class="mini-q">Closure nedir?</p>
-            <div class="mini-opts"><span>Unuttum</span><span>Zor</span><span class="on">İyi</span><span>Kolay</span></div>
-          </div>
-        </li>
+      <ol class="adimlar">
+        <li class="cam"><span class="adim-n">1</span><h3>Tahmin edersin</h3><p>Kısa bir kodun ne yazacağını tahmin edersin. Yanılmak serbest; aklında bir soru oluşması yeter.</p></li>
+        <li class="cam"><span class="adim-n">2</span><h3>KAM anlatır</h3><p>Mesaj mesaj, senin hızında. Anlattığı satır yanda parlar, kod çalışır, çıktıyı görürsün.</p></li>
+        <li class="cam"><span class="adim-n">3</span><h3>Sen yazarsın</h3><p>Üç görev: önce hazır kodu değiştirir, sonra sıfırdan yazar, en son bir hatayı düzeltirsin. Testler anında sonuç verir.</p></li>
+        <li class="cam"><span class="adim-n">4</span><h3>Unutmazsın</h3><p>Kısa kartlar, tam unutmaya başlayacağın gün geri gelir. Günde birkaç dakika yeter.</p></li>
       </ol>
     </section>
 
-    <!-- Müfredat -->
-    <section class="section section-sunken" id="mufredat">
-      <div class="wrap">
-        <header class="sec-head">
-          <h2>Üç dil, dokuz parkur, doksan faz.</h2>
-          <p>JavaScript'te önce dilin kendisi, sonra web ve React; algoritma ve backend parkurları temellerden sonra açılır. Python parkurları değişkenlerden veri raporu aracına uzanır ve tarayıcında gerçek Python 3.12 ile çalışır. C parkurları bilgisayarın nasıl çalıştığını öğretir: bellek, işaretçiler, derleyici; ileri C ise veri yapılarını sıfırdan kurdurur. Her dilin ilerlemesi ayrı tutulur. Bir sonraki faz, mevcut fazdaki görevlerin en az üçte ikisini geçince açılır.</p>
-        </header>
-        <div class="tracks">
-          <div class="track-tabs" role="tablist" aria-label="Parkurlar" id="track-tabs"></div>
-          <div class="track-panel" id="track-panel" role="tabpanel"></div>
-        </div>
+    <!-- Dersler -->
+    <section class="section wrap" id="mufredat">
+      <header class="sec-head">
+        <h2>Üç dil, doksan ders.</h2>
+        <p>Hangisinden başlayacağını bilmiyorsan yukarıda KAM'e sor. İstediğin an dil değiştirebilirsin; her birinin ilerlemesi ayrı tutulur.</p>
+      </header>
+      <div class="tracks">
+        <div class="track-tabs cam" role="tablist" aria-label="Parkurlar" id="track-tabs"></div>
+        <div class="track-panel cam" id="track-panel" role="tabpanel"></div>
       </div>
     </section>
 
     <!-- Pratik ve Rehber -->
     <section class="section wrap araclar" id="araclar">
       <header class="sec-head">
-        <h2>Dersin bittiği yerde de yanında.</h2>
-        <p>İki ayrı alan, aynı ilerleme: günde beş dakikalık oyunlaştırılmış pratik ve ne yapmak istediğini kendi cümlenle sorabildiğin Türkçe başvuru rehberi.</p>
+        <h2>Ders dışında iki yardımcı.</h2>
       </header>
       <div class="arac-grid">
-        <article class="arac arac-rehber">
-          <p class="arac-k">Rehber · Türkçe başvuru</p>
-          <h3>Fonksiyonun adını bilmene gerek yok.</h3>
-          <p>“Metni büyük harf yapmak istiyorum” yaz; Rehber niyetini anlar, doğru yapıyı, kullanım şeklini ve JavaScript, Python, C, SQL karşılıklarını gösterir. Her örnek sayfada çalışır.</p>
+        <article class="arac arac-rehber cam">
+          <h3>Rehber: ne yapmak istediğini yaz.</h3>
+          <p>Fonksiyonun adını bilmen gerekmez. Kendi cümlenle sor; doğru yapıyı ve çalışan örneğini gösterir.</p>
           <form class="rd" id="rd" role="search">
             <input id="rd-girdi" type="search" value="listeyi büyükten küçüğe sıralamak" aria-label="Rehber'e sor" autocomplete="off" spellcheck="false" />
           </form>
           <div class="rd-sonuc" id="rd-sonuc" aria-live="polite"></div>
           <a href="rehber.html" class="btn btn-ink">Rehberi aç</a>
         </article>
-        <article class="arac arac-pratik">
-          <p class="arac-k">Pratik · günde 5 dakika</p>
-          <h3>Kısa dersler, can ve kombo, hata defteri.</h3>
-          <p>Kodun çıktısını tahmin et, karışık satırları sırala, boşluğu doldur, hatayı bul. Yanlışların hata defterine düşer ve Leitner kutularıyla unutmaya başladığın gün geri gelir.</p>
+        <article class="arac arac-pratik cam">
+          <h3>Pratik: günde beş dakika.</h3>
+          <p>Çıktıyı tahmin et, satırları sırala, hatayı bul. Yanlışların bir deftere düşer ve unutmadan önce yeniden sorulur.</p>
           <div class="pd" aria-hidden="true">
             <div class="pd-ust"><span class="pd-bar"><i></i></span><span class="pd-can">♥ 5</span></div>
             <p class="pd-etiket">Çıktıyı tahmin et <span class="pd-kombo">5 kombo</span></p>
@@ -170,85 +114,24 @@ console.log(a + b);</pre>
       </div>
     </section>
 
-    <!-- Mentor -->
-    <section class="section wrap mentor" id="mentor">
-      <div class="mentor-copy">
-        <h2>Cevabı vermeyen bir mentor.</h2>
-        <p>Doğrudan cevap veren yapay zekâ ödevi hızlandırır ama öğrenmeyi zayıflatabilir. QUAGEN'in mentoru önce testlerin sonucuna bakıp hatanı teşhis eder, sonra seni doğru yere bakmaya yönlendiren tek bir soru sorar.</p>
-        <ul class="ticks">
-          <li>Üç kademeli ipucu: önce soru, sonra kavram, en son neredeyse kod.</li>
-          <li>Çözüm ancak üç denemeden sonra açılır ve o görev karma antrenmanda tekrar karşına çıkar.</li>
-          <li>Doğru ama yavaş çözümlerde neden yavaş olduğunu anlatır.</li>
-        </ul>
-      </div>
-      <div class="chat" aria-label="Örnek mentor konuşması">
-        <div class="chat-code">
-<pre><span class="t-k">function</span> toplamaKadar(n) {
-  <span class="t-k">let</span> toplam = <span class="t-n">0</span>;
-  <span class="t-k">for</span> (<span class="t-k">let</span> i = <span class="t-n">1</span>; i &lt;= n; i++) toplam += i;
-  console.log(toplam);
-}</pre>
-          <p class="chat-fail"><code>toplamaKadar(5)</code> beklenen <b>15</b>, gelen <b>undefined</b></p>
-        </div>
-        <p class="bubble you">Konsolda 15 yazıyor ama test geçmiyor. Neden?</p>
-        <p class="bubble bot">Fonksiyonun ekrana bir şey yazıyor. Peki çağırana bir değer geri veriyor mu? Ekrana yazdırmak ile <code>return</code> etmek arasındaki fark ne olabilir?</p>
-        <p class="bubble you">Return yazmamışım.</p>
-      </div>
-    </section>
-
-    <!-- Araştırma -->
-    <section class="section section-ink" id="arastirma">
-      <div class="wrap">
-        <header class="sec-head">
-          <h2>Her karar bir araştırmaya dayanıyor.</h2>
-          <p>Tekrar okumak ve video izlemek "öğreniyorum" hissi verir ama kalıcılığı düşüktür. Zor ama etkili olanı seçtik.</p>
-        </header>
-        <dl class="evidence">
-          <div><dt>Hafızadan çağırmak</dt><dd>Bilgiyi tekrar okumak yerine hafızadan çağırmak, bir hafta sonraki hatırlamayı belirgin biçimde artırır. Her faz bu yüzden kartlarla biter.</dd><dd class="cite">Roediger ve Karpicke, 2006</dd></div>
-          <div><dt>Aralıklı tekrar</dt><dd>Aynı çalışma süresi günlere yayıldığında unutma azalır. Zamanlamayı FSRS yapar: her kartın kararlılığını ve zorluğunu modelleyip seni tam doğru günde yoklar.</dd><dd class="cite">Cepeda ve diğerleri, 2006; Ye ve diğerleri, 2022</dd></div>
-          <div><dt>Çözümlü örnekler</dt><dd>Yeni başlayanlar için adım adım çözülmüş örneği incelemek, sıfırdan problem çözmekten daha verimlidir.</dd><dd class="cite">Sweller, 1988</dd></div>
-          <div><dt>Karışık pratik</dt><dd>Konuları karıştırarak çalışmak, hangi yöntemin ne zaman kullanılacağını seçme becerisini geliştirir.</dd><dd class="cite">Rohrer ve Taylor, 2007</dd></div>
-          <div><dt>Kendini açıklamak</dt><dd>Çözümünü kendi cümleleriyle açıklayan öğrenci konuyu daha derin kavrar. Her görevden sonra bunu isteriz.</dd><dd class="cite">Chi ve diğerleri, 1989</dd></div>
-          <div><dt>Ustalıkla ilerlemek</dt><dd>Bir konu oturmadan diğerine geçmemek ve birebir geri bildirim almak, öğrenme sonuçlarını en çok iyileştiren ikilidir. Her faz için hâkimiyet olasılığını Bayesçi bilgi takibiyle tahmin ederiz.</dd><dd class="cite">Bloom, 1984; Corbett ve Anderson, 1994</dd></div>
-          <div><dt>Kendini doğru tanımak</dt><dd>Öğrenciler bildiklerini olduğundan fazla sanmaya yatkındır ve bu, yanlış konuyu çalışmaya yol açar. Her testten önce "geçer mi?" diye sorar, tahminlerinin isabetini ölçeriz.</dd><dd class="cite">Dunlosky ve Rawson, 2012</dd></div>
-          <div><dt>Bilene farklı yol</dt><dd>Yeni başlayana yardım eden adım adım anlatım, konuyu bilene yük olur. Seviye sınavını geçenler doğrudan kodlamadan başlar.</dd><dd class="cite">Kalyuga ve diğerleri, 2003</dd></div>
-        </dl>
-        <p class="evidence-more">Tüm kaynaklar ve platformdaki karşılıkları için <a href="docs/PEDAGOJI.md">bilimsel öğrenme modeline</a> bak.</p>
-      </div>
-    </section>
-
-    <!-- Platform -->
-    <section class="section wrap" id="platform">
-      <header class="sec-head">
-        <h2>Kurulum yok. Her şey tarayıcında çalışır.</h2>
-      </header>
-      <div class="feats">
-        <div><h3>Gerçek çalıştırma ortamı</h3><p>JavaScript izole bir çalışanda, HTML ve CSS canlı önizlemede, React 18 gerçek bileşenlerle çalışır. Sonsuz döngüler otomatik durdurulur.</p></div>
-        <div><h3>Hız da ölçülür</h3><p>Algoritma görevlerinde doğru sonuç yetmez. Testler çözümün büyük girdide ne kadar sürdüğünü ölçer ve O(n²)'yi O(n)'den ayırır.</p></div>
-        <div><h3>Beceri haritası ve içgörüler</h3><p>Elli fazın her biri için hâkimiyet tahmini, hafıza durumu, kalibrasyon ve çalışma alışkanlıkları. Karma antrenman en zayıf becerilerine öncelik verir.</p></div>
-        <div><h3>Gerçek veritabanı</h3><p>Backend parkurunda SQL sorguların tarayıcıda çalışan gerçek bir SQLite üzerinde çalışır; sonuç tablosunu anında görürsün. API projesi de aynı veritabanına bağlanır.</p></div>
-        <div><h3>Panel, seri ve rozetler</h3><p>Günlük hedef, son altı ayın etkinlik haritası, kaldığın yer ve parkur ilerlemesi tek ekranda. Ctrl K ile her faza ve göreve anında git.</p></div>
-        <div><h3>Tamamlama belgesi</h3><p>Bir parkurdaki tüm görevleri geçtiğinde doğrulama kodlu tamamlama belgen açılır. Yazdırabilir ya da PDF olarak kaydedebilirsin.</p></div>
-      </div>
-    </section>
-
     <!-- SSS -->
     <section class="section wrap faq" id="sss">
       <header class="sec-head"><h2>Sık sorulanlar</h2></header>
-      <details><summary>Hiç kod yazmadım. Başlayabilir miyim?</summary><p>Evet. Faz 1 sıfırdan başlar. Her yeni kavram önce çözümlü bir örnekle gösterilir, sonra küçük bir değişiklik görevine geçilir. Yukarıdaki deneme görevi Faz 1'in ilk görevidir.</p></details>
-      <details><summary>Yapay zekâ ödevimi benim yerime çözmez mi?</summary><p>Bilinçli olarak çözmez. Mentor hatanı teşhis eder ve yönlendirici bir soru sorar. Çözüm üç başarısız denemeden sonra açılır ve o görev daha sonra karma antrenmanda tekrar sorulur.</p></details>
-      <details><summary>JavaScript ve C'yi aynı anda öğrenebilir miyim?</summary><p>Evet. Her dilin ilerlemesi, serisi ve tekrar kartları ayrı tutulur; üst menüdeki dil düğmesiyle istediğin an geçersin ve kaldığın yerden devam edersin. Profil sayfanda her dili ayrı ayrı görürsün.</p></details>
-      <details><summary>C kodum nerede çalışıyor?</summary><p>Kendi bilgisayarındaki gerçek C derleyicisiyle (clang). Kod AddressSanitizer ve UBSan açık derlenir; dizi taşması, serbest bırakılmış belleğe erişim ve tam sayı taşması gibi hatalar satır numarasıyla yakalanır ve Türkçe açıklanır. Bu yüzden C parkuru için QUAGEN sunucusunun bu bilgisayarda çalışıyor olması gerekir.</p></details>
-      <details><summary>JavaScript biliyorum. Baştan mı başlamalıyım?</summary><p>Hayır. Altı görevlik seviye sınavında en az beşini ipucusuz geçersen Web, React, Algoritmalar ve Backend parkurları açılır. JavaScript fazları da açık kalır ve doğrudan kodlama adımından başlar.</p></details>
-      <details><summary>Günde ne kadar zaman ayırmalıyım?</summary><p>Düzenli 30–45 dakika, hafta sonu yapılan beş saatlik bir maratondan daha etkilidir. Panelden günlük hedefini 20, 50, 100 ya da 150 XP olarak ayarlayabilirsin.</p></details>
-      <details><summary>İlerlemem nerede saklanıyor?</summary><p>Şimdilik kendi tarayıcında. Ayarlardan ilerlemeni bir dosyaya aktarıp başka bir cihaza taşıyabilirsin. Hesap sistemi yol haritamızda.</p></details>
-      <details><summary>Hangi fazlar internet bağlantısı gerektiriyor?</summary><p>React fazları React'i ve derleyicisini, SQL fazları SQLite'ı internetten yükler. Diğer fazlar çevrimdışı da çalışır.</p></details>
+      <div class="faq-liste cam">
+        <details><summary>Hiç kod yazmadım. Başlayabilir miyim?</summary><p>Evet. İlk ders sıfırdan başlar ve KAM bildiğini varsaydığı hiçbir şey kullanmaz. Her yeni kelimeyi ilk geçtiği yerde açıklar.</p></details>
+        <details><summary>KAM kim, gerçek bir insan mı?</summary><p>Hayır. KAM, QUAGEN'in ders anlatan ve sorularını cevaplayan yardımcısı. Dersleri önceden hazırlanmış sohbetlerle anlatır; görevde takıldığında cevabı vermez, seni doğru yere baktıran bir ipucu verir.</p></details>
+        <details><summary>Bir şey kurmam gerekiyor mu?</summary><p>Hayır. JavaScript, Python ve C kodun tarayıcında çalışır. İlk C ya da Python çalıştırmasında derleyici bir kez indirilir; bu birkaç saniye sürebilir.</p></details>
+        <details><summary>Günde ne kadar zaman ayırmalıyım?</summary><p>Düzenli 15–30 dakika, hafta sonu yapılan beş saatlik bir maratondan daha iyi sonuç verir. KAM ilk girişte ne kadar zamanın olduğunu sorar ve planı ona göre kurar.</p></details>
+        <details><summary>İlerlemem nerede saklanıyor?</summary><p>Hesap açmazsan kendi tarayıcında. Ücretsiz hesap açarsan ilerlemen hesabına kaydedilir ve başka cihazda kaldığın yerden devam edersin.</p></details>
+        <details><summary>Ücretli mi?</summary><p>Hayır. Tüm dersler, Pratik ve Rehber ücretsiz.</p></details>
+      </div>
     </section>
 
-    <section class="cta">
-      <div class="wrap cta-in">
-        <h2>İlk satırını bugün yaz.</h2>
-        <a href="nextgen.html" class="btn btn-marker btn-lg js-warp">NextGen'i aç</a>
+    <section class="cta wrap">
+      <div class="cta-in cam">
+        <span class="kam-av" aria-hidden="true"><b></b><b></b></span>
+        <h2>İlk dersin hazır.</h2>
+        <a href="nextgen.html" class="btn btn-marker btn-lg js-warp">Derslere gir</a>
       </div>
     </section>
   </main>
@@ -256,8 +139,8 @@ console.log(a + b);</pre>
   <footer class="foot">
     <div class="wrap foot-in">
       <span class="logo">QUAGEN</span>
-      <a href="docs/PEDAGOJI.md">Bilimsel model</a>
-      <a href="docs/YOL-HARITASI.md">Yol haritası</a>
+      <a href="rehber.html">Rehber</a>
+      <a href="pratik.html">Pratik</a>
       <span class="foot-c">© 2026 QUAGEN</span>
     </div>
   </footer>
@@ -281,9 +164,6 @@ console.log(a + b);</pre>
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
   <script src="assets/js/curriculum.js"></script>
   <script src="assets/js/curriculum-web.js"></script>
   <script src="assets/js/curriculum-react.js"></script>

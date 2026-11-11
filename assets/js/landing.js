@@ -1,9 +1,8 @@
-/* QUAGEN — ana sayfa etkileşimleri: canlı deneme görevi, parkur sekmeleri, NextGen geçişi */
+/* QUAGEN — ana sayfa etkileşimleri: KAM'in karşılaması, parkur sekmeleri, NextGen geçişi */
 (function () {
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const $ = (s, r = document) => r.querySelector(s);
   const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  const isMac = /Mac|iPhone|iPad/.test(navigator.platform);
 
   const nav = $("#nav");
   /* Hesap: giriş yapılmışsa menüde avatar */
@@ -15,7 +14,7 @@
   });
   /* Açılış koreografisi ve kaydırdıkça beliren bölümler */
   requestAnimationFrame(() => document.body.classList.add("ready"));
-  const bolumler = document.querySelectorAll(".section .sec-head, .flow > li, .evidence > div, .feats > div, .faq details, .tracks, .mentor-copy, .chat, .cta-in, .arac");
+  const bolumler = document.querySelectorAll(".section .sec-head, .adimlar > li, .faq-liste, .tracks, .cta-in, .arac");
   bolumler.forEach((el) => el.classList.add("rv"));
   if (!reduced && "IntersectionObserver" in window) {
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
@@ -41,53 +40,118 @@
     goster();
   }
 
-  /* ---------- Canlı deneme görevi (Faz 1, görev 1) ---------- */
+  /* ---------- Açılış: KAM kendini tanıtır; anlattıkça yandaki kod değişir ---------- */
   const C = window.KD_CURRICULUM || [];
-  const ch = C[0] && C[0].challenges[0];
-  const host = $("#try-editor");
-  let get = () => "";
-  if (ch && host) {
-    let saved = null;
-    try { saved = KD.store.state.code[ch.id]; } catch (e) {}
-    const start = saved || ch.starter;
-    if (window.CodeMirror) {
-      const cm = CodeMirror(host, { value: start, mode: "javascript", lineNumbers: true, tabSize: 2, indentUnit: 2, autoCloseBrackets: true, lineWrapping: true,
-        extraKeys: { "Ctrl-Enter": () => run(), "Cmd-Enter": () => run(), Tab: (c) => c.execCommand("insertSoftTab") } });
-      cm.on("change", () => { try { KD.store.state.code[ch.id] = cm.getValue(); KD.store.save(); } catch (e) {} });
-      get = () => cm.getValue();
-    } else {
-      const ta = Object.assign(document.createElement("textarea"), { className: "fallback", value: start, spellcheck: false });
-      ta.setAttribute("aria-label", "Kod editörü");
-      host.appendChild(ta); get = () => ta.value;
-    }
-    $("#try-kbd").textContent = isMac ? "⌘" : "Ctrl";
-    $("#try-run").onclick = run;
-  }
+  const hAkis = $("#h-akis"), hCevap = $("#h-cevap"), hKod = $("#h-kod code"), hCikti = $("#h-cikti"), hDurum = $("#h-durum"), dev = $("#kam-dev");
+  const bekle = (ms) => new Promise((r) => setTimeout(r, reduced ? 0 : ms));
+  const bicim = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/`([^`]+)`/g, "<code>$1</code>");
+  const YUZ = '<span class="kam-av" aria-hidden="true"><b></b><b></b></span>';
+  /* KAM'in gözleri imleci izler */
+  if (dev && !reduced) addEventListener("pointermove", (e) => {
+    const r = dev.getBoundingClientRect();
+    const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1, k = Math.min(1, d / 260);
+    dev.style.setProperty("--gx", ((dx / d) * k).toFixed(2)); dev.style.setProperty("--gy", ((dy / d) * k).toFixed(2));
+  }, { passive: true });
 
-  async function run() {
-    const btn = $("#try-run"), list = $("#try-tests"), lis = [...list.children], say = $("#try-say");
-    btn.disabled = true; btn.textContent = "Test ediliyor…"; list.classList.add("running");
-    lis.forEach((li) => (li.className = ""));
-    const res = await KD.run(get(), { fn: ch.fn, tests: ch.tests });
-    btn.disabled = false; btn.textContent = "Testleri çalıştır"; list.classList.remove("running");
-    const rs = res.results || [];
-    lis.forEach((li, i) => {
-      const r = rs[i]; if (!r) return;
-      li.className = r.pass ? "pass" : "fail";
-      li.querySelector(".te").dataset.got = r.pass ? "" : "gelen " + r.got;
-    });
-    const ok = !res.error && rs.length && rs.every((r) => r.pass);
-    if (ok) {
-      say.textContent = "Tüm testler geçti. Template literal'ı doğru kullandın.";
-      $("#try-done").hidden = false;
-      try {
-        const ph = KD.store.phase("p1");
-        if (!ph.passed[ch.id]) { ph.passed[ch.id] = true; ph.attempts[ch.id] = (ph.attempts[ch.id] || 0) + 1; KD.store.state.stats.hintless++; KD.store.addXP(70); KD.srs.enroll(C[0].cards.map((c) => c.id)); }
-      } catch (e) {}
-      return;
+  const H = {
+    kaydir() { hAkis.scrollTo({ top: hAkis.scrollHeight, behavior: reduced ? "auto" : "smooth" }); },
+    balon(html, kim) { const d = document.createElement("div"); d.className = "kam-satir " + kim; d.innerHTML = (kim === "k" ? YUZ : "") + `<div class="kam-msg ${kim}">${html}</div>`; hAkis.append(d); this.kaydir(); return d; },
+    async kam(metin) {
+      if (!reduced) {
+        dev.classList.add("dusunuyor");
+        const y = this.balon('<span class="kam-yaziyor"><i></i><i></i><i></i></span>', "k");
+        await bekle(Math.min(1500, 480 + metin.length * 12));
+        y.remove(); dev.classList.remove("dusunuyor");
+      }
+      return this.balon(bicim(metin), "k");
+    },
+    sen(metin) { return this.balon(esc(metin), "s"); },
+    secenek(liste) {
+      return new Promise((coz) => {
+        hCevap.innerHTML = liste.map((t, i) => `<button class="kam-chip" style="--i:${i}" data-i="${i}">${esc(t)}</button>`).join("");
+        hCevap.querySelectorAll(".kam-chip").forEach((b) => (b.onclick = () => { const r = b.getBoundingClientRect(); hCevap.innerHTML = ""; this.sen(liste[+b.dataset.i]); coz({ i: +b.dataset.i, r }); }));
+        this.kaydir();
+      });
+    },
+    yaz(yerTutucu, atla) {
+      return new Promise((coz) => {
+        hCevap.innerHTML = `<form class="kam-yaz"><input maxlength="24" placeholder="${esc(yerTutucu)}" aria-label="${esc(yerTutucu)}" autocomplete="given-name" /><button class="kam-chip dolu">Gönder</button><button type="button" class="kam-chip" data-atla>${esc(atla)}</button></form>`;
+        const f = hCevap.querySelector("form"), inp = f.querySelector("input");
+        const bitir = (v) => { hCevap.innerHTML = ""; this.sen(v || atla); coz(v); };
+        f.onsubmit = (e) => { e.preventDefault(); bitir(inp.value.trim()); };
+        f.querySelector("[data-atla]").onclick = () => bitir("");
+        this.kaydir();
+      });
+    },
+    /* Sahne */
+    kod: "",
+    async kodYaz(yeni) {
+      const eski = this.kod.split("\n"); this.kod = yeni;
+      const ham = yeni.split("\n"), satirlar = window.KD && KD.hlDoc ? KD.hlDoc(yeni, "c") : ham.map(esc);
+      let n = 0;
+      hKod.innerHTML = satirlar.map((l, i) => { const d = ham[i] !== eski[i]; return `<span class="sk ${d ? "yeni" : ""}" data-l="${i + 1}" style="--n:${d ? n++ : 0}"><b class="sn">${i + 1}</b>${l || " "}</span>`; }).join("");
+      hCikti.hidden = true; hDurum.textContent = "KAM yazıyor";
+      await bekle(300 + n * 90);
+    },
+    vurgula(satirlar) {
+      hKod.querySelectorAll(".sk").forEach((el) => { const on = satirlar.includes(+el.dataset.l); el.classList.toggle("hi", on); el.classList.toggle("dim", satirlar.length > 0 && !on); el.classList.remove("yeni"); });
+      hDurum.textContent = satirlar.length ? satirlar[0] + ". satır" : "";
+    },
+    async calistir(cikti) {
+      this.vurgula([]); hCikti.hidden = false; hDurum.textContent = "çalışıyor";
+      hCikti.innerHTML = '<p class="sahne-etiket">Çıktı</p><div class="log muted">Derleniyor…</div>';
+      await bekle(700);
+      hCikti.innerHTML = `<p class="sahne-etiket">Çıktı</p><div class="log">${esc(cikti)}</div>`;
+      hDurum.textContent = "çalıştı";
+      dev.classList.add("mutlu"); setTimeout(() => dev.classList.remove("mutlu"), 1400);
+      await bekle(500);
     }
-    const d = KD.tutor.diagnose(res, ch);
-    say.textContent = d.length ? d[0].replace(/`/g, "") : "Testlerden biri geçmedi. Beklenen ile gelen değeri karşılaştır.";
+  };
+  const programKodu = (metin) => `#include <stdio.h>\n\nint main(void) {\n    printf("${metin}\\n");\n    return 0;\n}`;
+  const DILLER = [["py", "Python"], ["c", "C"], ["js", "JavaScript"]];
+
+  async function karsila() {
+    let profil = {};
+    try { profil = KD.readProfile() || {}; } catch (_) {}
+    let ad = (profil.name || "").trim();
+    const sonDil = (() => { try { return localStorage.getItem("kd-lang"); } catch (_) { return null; } })();
+    const ilerlemeVar = DILLER.some(([id]) => langProgress(id).passed > 0);
+
+    if (ad || ilerlemeVar) {
+      await H.kam(`Tekrar hoş geldin${ad ? ", " + ad : ""}. Kaldığımız yerden devam edelim mi?`);
+      const c = await H.secenek(["Devam et", "Önce bir örnek göster"]);
+      if (c.i === 0) return startWarp("nextgen.html" + (sonDil ? "?dil=" + sonDil : "") + "#panel", c.r, sonDil);
+    } else {
+      await H.kam("QUAGEN'de dersleri ben anlatırım. Video yok, sayfalarca yazı yok; seninle böyle yazışarak ilerleriz.");
+      await H.kam("Nasıl bir şey olduğunu göstereyim mi? Yarım dakika sürer.");
+      const c = await H.secenek(["Göster", "Hiç kod yazmadım, olur mu?"]);
+      if (c.i === 1) await H.kam("Olur. Herkes sıfırdan başlıyor; ben de hiçbir şeyi bildiğini varsaymadan anlatırım. Bak:");
+    }
+    await H.kodYaz(programKodu("Merhaba, dünya!"));
+    H.vurgula([4]);
+    await H.kam("Bu bir C programı. Asıl işi yapan satır şu: `printf` ekrana yazı yazar. Çalıştırıyorum.");
+    await H.calistir("Merhaba, dünya!");
+    if (!ad) {
+      await H.kam("Çalıştı. Şimdi bunu senin için değiştireyim. Adın ne?");
+      ad = ((await H.yaz("Adın", "Söylemek istemiyorum")) || "").replace(/["\\%<>]/g, "").trim().slice(0, 24);
+      if (ad) { try { KD.store.state.prefs.name = ad; KD.store.save(); } catch (_) {} }
+    } else await H.kam("Çalıştı. Şimdi aynı programı senin için değiştiriyorum.");
+    const selam = ad ? `Merhaba, ${ad}!` : "Merhaba, yeni programcı!";
+    await H.kodYaz(programKodu(selam));
+    H.vurgula([4]);
+    await H.kam("Tek bir satır değişti. Yeniden çalıştırıyorum.");
+    await H.calistir(selam);
+    await H.kam(`İşte${ad ? ", " + ad : ""}: bir programın nasıl değiştiğini az önce okudun. Derslerde bu satırları **sen** yazacaksın, ben de yanında olacağım.`);
+    await H.kam("Hangi dille başlamak istersin?");
+    let c = await H.secenek([...DILLER.map((d) => d[1]), "Emin değilim"]);
+    if (c.i === 3) {
+      await H.kam("Kısaca: **Python** yazımı en sade olan, ilk dil için en rahatı. **C** okulda görüyorsan ya da bilgisayarın içini merak ediyorsan. **JavaScript** web sitesi yapmak istiyorsan. Kararsızsan Python'la başla; sonra değiştirmek serbest.");
+      c = await H.secenek(DILLER.map((d) => d[1]));
+    }
+    const [dil, dilAd] = DILLER[c.i];
+    await H.kam(`Tamam, ${dilAd}. Seni dersliğe götürüyorum; orada bir plan yapacağız.`);
+    await bekle(500);
+    startWarp("nextgen.html?dil=" + dil + "#panel", $("#sahne").getBoundingClientRect(), dil);
   }
 
   /* ---------- Parkur sekmeleri ---------- */
@@ -228,4 +292,5 @@
   }
   document.querySelectorAll(".js-warp").forEach((a) => a.addEventListener("click", a.dataset.dil ? launch : openChooser));
   addEventListener("pageshow", (e) => { if (e.persisted) { running = false; warp.classList.remove("on", "flash"); } });
+  if (hAkis) setTimeout(() => karsila().catch(() => {}), reduced ? 0 : 900);
 })();
