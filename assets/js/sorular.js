@@ -35,12 +35,12 @@
   function uret(p, mufredat, adet = 10) {
     const al = AL(), tum = mufredat || kok.KD_CURRICULUM || [];
     const r = rasgele(tohumOf(p.id));
-    const ex = p.example || { code: "", steps: [] };
+    const O = al.ornek(p);
     const komsu = tum.filter((q) => dilOf(q) === dilOf(p) && q.id !== p.id && q.example).sort((a, b) => Math.abs(a.no - p.no) - Math.abs(b.no - p.no) || ((a.track || "") === (p.track || "") ? -1 : 1));
-    const kodSatir = ex.code.split("\n");
+
     /* (satır, açıklama) çiftleri: KAM'in tek ya da iki satır için yaptığı açıklamalar en nettir */
     const ciftler = [];
-    (ex.steps || []).forEach((s) => { const l = (s.lines || []).map((no) => (kodSatir[no - 1] || "").trim()).filter((t) => t.length >= 4 && t.length <= 70 && /[A-Za-z]{2}/.test(t) && !/^[{}]$/.test(t)); if (l.length && s.text) ciftler.push({ satir: l[0], satirlar: l, aciklama: s.text, n: (s.lines || []).length, dar: (s.lines || []).length <= 2 }); });
+    O.parcalar.forEach((ex) => { const kodSatir = ex.code.split("\n"); (ex.steps || []).forEach((s) => { const l = (s.lines || []).map((no) => (kodSatir[no - 1] || "").trim()).filter((t) => t.length >= 4 && t.length <= 70 && /[A-Za-z]{2}/.test(t) && !/^[{}]$/.test(t)); if (l.length && s.text) ciftler.push({ satir: l[0], satirlar: l, aciklama: s.text, n: (s.lines || []).length, dar: (s.lines || []).length <= 2 }); }); });
     /* Aynı satır birden çok açıklamada geçiyorsa en dar (en özel) açıklama kalır; bir satır bir kez sorulur */
     ciftler.sort((a, b) => a.n - b.n);
     for (let i = ciftler.length - 1; i >= 0; i--) if (ciftler.findIndex((x) => x.satir === ciftler[i].satir) !== i) ciftler.splice(i, 1);
@@ -113,7 +113,7 @@
   /* ------------------------------------------------------------------ ekran */
   function baslat(p, stage, { bitince } = {}) {
     const KD = kok.KD, S = KD.store, esc = KD.esc, md = KD.md || esc, A = kok.KD_APP || {};
-    const dil = (p.example && p.example.lang) || KD.lang;
+    const dil = AL().ornek(p).dil || KD.lang;
     const vurgu = (s) => (KD.hlDoc ? KD.hlDoc(s, A.hlLang ? A.hlLang(dil) : dil).join("\n") : esc(s));
     const sorular = uret(p), ph = S.phase(p.id);
     const YUZ = '<span class="kam-av" aria-hidden="true"><b></b><b></b></span>';

@@ -69,7 +69,7 @@
   const cFazlar = () => (window.KD_CURRICULUM || []).filter((p) => (p.language || "js") === DIL);
   function ilerleme() {
     const fazlar = cFazlar(), a = A();
-    const biten = a.mastery ? fazlar.filter((p) => a.mastery(p) === 1).length : 0;
+    const biten = a.mastery ? fazlar.filter((p) => a.mastery(p) >= 0.66).length : 0;   // küçük görevleri biten ders bitmiş sayılır
     const st = S.state.streak || {};
     const sonGun = st.last ? Math.round((new Date(S.day()) - new Date(st.last)) / GUN) : null;
     return { toplam: fazlar.length, biten, kalan: fazlar.length - biten, seri: st.count || 0, sonGun, bugunXp: S.state.daily[S.day()] || 0, hedef: S.state.prefs.goal || 50, bekleyen: a.due ? a.due() : 0, sirada: a.nextTarget ? a.nextTarget() : null };
@@ -320,7 +320,7 @@
     await cs.kam(NEDEN[ni][2]);
     const d = ilerleme();
     const pl = planHesapla(dk, d.kalan || 20);
-    await cs.kam(`Planın şöyle:\n\n${planMetni(pl)}\n\nHer ders altı adım: kısa bir tahmin sorusu, konunun anlatımı, on seçmeli soru, satırları aklına yerleştiren alıştırma, üç görev ve tekrar kartları. Acele yok; amaç bakıp yazmak değil, aklında kalması. Unutma: iki günden uzun ara verirsen unutma başlar; kartlar bunun için var.`);
+    await cs.kam(`Planın şöyle:\n\n${planMetni(pl)}\n\nHer ders altı adım: kısa bir tahmin sorusu, konunun anlatımı, on seçmeli soru, satırları aklına yerleştiren alıştırma, yedi küçük kodlama görevi ve tekrar kartları. Acele yok; amaç bakıp yazmak değil, aklında kalması. Unutma: iki günden uzun ara verirsen unutma başlar; kartlar bunun için var.`);
     let sec = await cs.secenek(["Başlayalım", "Daha hafif bir plan"], { beklet: true });
     let sonDk = dk;
     if (sec === 1) {
@@ -465,7 +465,7 @@
     if (!window.KAM_TUR || (!zorla && window.KAM_TUR.goruldu(TUR_ANAHTAR))) { if (bitince) bitince(); return false; }
     const adimlar = [
       { sec: ".kam-kart", baslik: "Bugünün planı", metin: "Her girişte önce buraya bak. Sıradaki dersini ve bekleyen kartlarını senin yerine ben sıralarım; satıra tıklayıp başlarsın." },
-      { sec: "#tracks", baslik: "Dersler nasıl açılır?", metin: "Her ders altı adım: kısa bir tahmin, benim anlatımım, on seçmeli soru, satırları yazdıran alıştırma, üç görev ve kartlar. Üç görevden **ikisini** geçince sonraki ders açılır; kilitli görünenler bu yüzden kilitli." },
+      { sec: "#tracks", baslik: "Dersler nasıl açılır?", metin: "Her ders altı adım: kısa bir tahmin, benim anlatımım, on seçmeli soru, satırları yazdıran alıştırma, yedi küçük görev ve kartlar. Yedi küçük görevi bitirince sonraki ders açılır; kilitli görünenler bu yüzden kilitli." },
       { sec: '#side-main a[data-id="tekrar"]', baslik: "Tekrar nasıl çalışır?", metin: "Geçtiğin her dersin kartları buraya düşer. Bir kartı kolay hatırlarsan günler sonra, zorlanırsan ertesi gün yeniden sorulur. Yanındaki sayı **bugün** bekleyen kartlardır; günde üç beş dakika yeter." },
       { sec: '#side-main a[data-id="karma"]', baslik: "Karma antrenman ne işe yarar?", metin: "Eski derslerden karışık görevler getirir ve hangi konudan geldiğini söylemez. Hangi yöntemi kullanacağına sen karar verirsin; sınavda da gerçek işte de olan budur. Zayıf olduğun konular daha sık gelir." },
       { sec: '#side-main a[data-id="pratik"]', baslik: "Pratik", metin: "Vaktin azken: çıktıyı tahmin et, karışık satırları sırala, hatayı bul. Yanlışların bir deftere yazılır ve unutmadan önce yeniden karşına çıkar." },

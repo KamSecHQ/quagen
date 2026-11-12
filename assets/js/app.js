@@ -58,7 +58,10 @@
   const phasesOf = (tid) => C.filter((p) => trackOf(p) === tid);
 
   /* ---------- Ustalık & kilit ---------- */
-  const mastery = (p) => { const ph = S.phase(p.id); return p.challenges.filter((c) => ph.passed[c.id]).length / p.challenges.length; };
+  /* Ustalık: yedi küçük görev + üç ileri görev. Küçük görevlerin hepsi bitince 7/10 olur ve sonraki ders açılır. */
+  const miniSayi = (p) => (window.KD_KUCUK ? window.KD_KUCUK.sayi(p) : 0);
+  const miniBiten = (p) => { const m = S.phase(p.id).mini || {}, n = miniSayi(p); let k = 0; for (let i = 0; i < n; i++) if (m[i]) k++; return k; };
+  const mastery = (p) => { const ph = S.phase(p.id); return (p.challenges.filter((c) => ph.passed[c.id]).length + miniBiten(p)) / (p.challenges.length + miniSayi(p)); };
   const placed = (tid) => !!S.state.placed[tid];
   const trackUnlocked = (tid) => { const t = T(tid); if (!t.req) return true; if (placed(t.req)) return true; const prev = phasesOf(t.req); return mastery(prev[prev.length - 1]) >= UNLOCK; };
   const unlocked = (p) => {
@@ -85,7 +88,7 @@
     for (const t of TRACKS) for (const p of phasesOf(t.id)) {
       if (!unlocked(p) || mastery(p) === 1) continue;
       const ph = S.phase(p.id), step = defaultStep(p);
-      const ch = p.challenges.find((c) => !ph.passed[c.id]);
+      const ch = miniBiten(p) < miniSayi(p) ? null : p.challenges.find((c) => !ph.passed[c.id]);
       return { p, step, ch };
     }
     return null;
@@ -482,7 +485,7 @@
           <div class="mastery-top"><span>Ustalık</span><b>${Math.round(m * 100)}%</b></div>
           <div class="meter tall"><i style="width:${m * 100}%"></i><em style="left:${UNLOCK * 100}%" title="Sonraki dersi açan eşik"></em></div>
           ${skillPct(p) != null ? `<div class="mastery-top skill" title="Bayesçi bilgi takibi: testler, tahminler ve kartlardan hesaplanan hâkimiyet olasılığı"><span>Beceri tahmini</span><b>${skillPct(p)}%</b></div>` : ""}
-          <p class="small muted" id="mastery-note">${m >= UNLOCK ? (nextP ? "Sonraki ders açık." : "Bu parkurun son dersi.") : "3 görevden 2'sini geçince sonraki ders açılır."}</p>
+          <p class="small muted" id="mastery-note">${m >= UNLOCK ? (nextP ? "Sonraki ders açık." : "Bu parkurun son dersi.") : "Yedi küçük görevi bitirince sonraki ders açılır."}</p>
         </div>
       </header>
       <nav class="steps" aria-label="Ders adımları">
@@ -591,8 +594,12 @@
   /* 3 — Kodla */
   function stepCode(p, stage, chId) {
     const ph = S.phase(p.id);
+    /* Önce yedi küçük görev (yalnızca anlatılanlar). İleri görevler ayrı: #ders/kodla/ileri ya da görev kimliğiyle açılır. */
+    const ileriMi = chId === "ileri" || p.challenges.some((c) => c.id === chId);
+    if (!ileriMi && window.KD_KUCUK && miniSayi(p)) return window.KD_KUCUK.baslat(p, stage, { no: /^\d+$/.test(chId || "") ? +chId - 1 : undefined, bitince: () => { renderSide(p.id); const b = $(".mastery-top b"); if (b) b.textContent = Math.round(mastery(p) * 100) + "%"; const mt = $(".meter.tall i"); if (mt) mt.style.width = mastery(p) * 100 + "%"; const nt = $("#mastery-note"); if (nt && mastery(p) >= UNLOCK) nt.textContent = "Sonraki ders açık."; } });
     const ch = p.challenges.find((c) => c.id === chId) || p.challenges.find((c) => !ph.passed[c.id]) || p.challenges[0];
     stage.innerHTML = `
+      <div class="ileri-not"><a class="btn sm ghost" href="#${p.id}/kodla">‹ Küçük görevler</a><p><b>İleri görevler.</b> Bunlar isteğe bağlıdır ve derste anlatılanın bir adım ötesini isteyebilir (ör. klavyeden girdi almak, fonksiyon yazmak). Her birinin “Örnek” sekmesinde gereken yeni yapı çözülmüş olarak gösterilir.</p></div>
       <nav class="tasks" aria-label="Görevler">${p.challenges.map((c, i) => `<a href="#${p.id}/kodla/${c.id}" class="task ${c.id === ch.id ? "on" : ""} ${ph.passed[c.id] ? "ok" : ""}" ${c.id === ch.id ? 'aria-current="page"' : ""}>
         <span class="task-n">${ph.passed[c.id] ? I.check : i + 1}</span><span class="task-t"><small>${c.kind}</small>${esc(c.title)}</span></a>`).join("")}</nav>
       <div id="ide-host"></div>`;
@@ -626,8 +633,9 @@
     const ornekDil = ornek ? ornek.lang || (isC ? "c" : isPy ? "py" : isSql ? "sql" : "js") : null;
     ph.ornekSeen = ph.ornekSeen || {};
     const kindCls = ch.kind === "Hata Ayıkla" ? "bug" : ch.kind === "Değiştir" ? "mod" : "make";
-    const testLabel = (t) => t.label || ch.fn + "(" + (t.args || []).map((a) => JSON.stringify(a)).join(", ") + ")";
-    const testExpect = (t) => ("throws" in t ? "hata: " + t.throws : t.maxMs ? JSON.stringify(t.expected) + " · en fazla " + t.maxMs + " ms" : JSON.stringify(t.expected));
+    const girdili = (t) => t.stdin !== undefined || t.stdout !== undefined;
+    const testLabel = (t) => (girdili(t) ? "Klavyeden girilen: " + (String(t.stdin || "").trim().replace(/\n/g, ", ") || t.label || "(yok)") : t.label || ch.fn + "(" + (t.args || []).map((a) => JSON.stringify(a)).join(", ") + ")");
+    const testExpect = (t) => (girdili(t) ? "ekranda: " + String(t.stdout == null ? "" : t.stdout).trim() : "throws" in t ? "hata: " + t.throws : t.maxMs ? JSON.stringify(t.expected) + " · en fazla " + t.maxMs + " ms" : JSON.stringify(t.expected));
 
     host.innerHTML = `
       <div class="ws ${ornek ? "" : "ws-orneksiz"}">
@@ -658,8 +666,8 @@
               <h2>${esc(ch.title)}</h2>
             </div>
             <p class="brief-text">${md(ch.prompt)}</p>
-            <h3 class="sub">Testler</h3>
-            <ul class="tests" id="tests">${ch.tests.map((t) => `<li><span class="t-ico" aria-hidden="true"></span><code>${esc(testLabel(t))}</code><span class="t-exp">${esc(testExpect(t))}</span></li>`).join("")}</ul>
+            <h3 class="sub">Testler <small class="muted">sırayla açılır: biri geçince sonraki görünür</small></h3>
+            <ul class="tests" id="tests">${ch.tests.map((t, ti) => `<li ${ti > 0 ? "hidden" : ""}><span class="t-ico" aria-hidden="true"></span><code>${esc(testLabel(t))}</code><span class="t-exp">${esc(testExpect(t))}</span></li>`).join("")}</ul>
             ${ch.schema ? `<details class="scaffold" open><summary>Veritabanı şeması</summary><pre class="schema">${esc(ch.schema)}</pre></details>` : ""}
             ${isC ? `<p class="muted small db-note">${ch.mode === "stdout" ? "Bu görevde <code>main</code> yazıyorsun; testler programı farklı girdilerle çalıştırıp çıktısını karşılaştırır." : "Bu görevde <code>main</code> yazma; testler fonksiyonlarını kendi <code>main</code>'leriyle çağırır."} Kod gerçek clang ile, bellek ve tanımsız davranış denetimi açık derlenir.</p>` : ""}
             ${isPy ? `<p class="muted small db-note">${ch.mode === "stdout" ? "Bu görevde bütün bir program yazıyorsun; testler onu farklı girdilerle (<code>input()</code>) çalıştırıp çıktısını karşılaştırır. Çalıştır, ilk testin girdisini kullanır." : "Testler fonksiyonlarını kendileri çağırır; <code>input()</code> kullanma, değeri <code>return</code> et."} Python tarayıcında WebAssembly üzerinde çalışır.</p>` : ""}
@@ -761,12 +769,15 @@
       $("#out-con", host).innerHTML = isSql && res.table ? tableHTML(res.table) : consoleHTML(res);
       const rs = res.results || [];
       const lis = $$("#tests li", host);
+      /* Testler sırayla açılır: biri geçmeden sonraki gösterilmez */
+      const ilkKalan = rs.findIndex((r) => !r.pass);
+      lis.forEach((li, k) => (li.hidden = ilkKalan >= 0 ? k > ilkKalan : false));
       lis.forEach((li, k) => { const r = rs[k]; li.style.setProperty("--i", k); li.className = r ? (r.pass ? "pass flip" : "fail flip") : ""; li.querySelector(".t-ico").innerHTML = r ? (r.pass ? I.check : I.x) : ""; });
       const passN = rs.filter((r) => r.pass).length;
       $("#out-res", host).innerHTML = res.error && !rs.length
         ? `<div class="res-head fail">Kod çalışmadı</div><div class="log error">${esc(res.error)}</div>`
-        : `<div class="res-head ${passN === rs.length ? "pass" : "fail"}">${passN === rs.length ? "Tüm testler geçti" : `${passN}/${rs.length} test geçti`}</div>` +
-          rs.map((r, i) => `<div class="tr ${r.pass ? "pass" : "fail"}" style="--i:${i}"><span class="tr-ico">${r.pass ? I.check : I.x}</span><code>${esc(r.label)}</code>${r.pass ? `<span class="tr-got">${esc(r.got)}${r.ms != null ? ` · ${r.ms} ms` : ""}</span>` : `<span class="tr-diff"><span>Beklenen <em>${esc(r.expected)}</em></span><span>Gelen <em class="bad">${esc(r.got)}</em></span></span>`}</div>`).join("");
+        : `<div class="res-head ${passN === rs.length ? "pass" : "fail"}">${passN === rs.length ? "Tüm testler geçti" : `${ilkKalan + 1}. test geçmedi`}</div>` +
+          rs.filter((r, i) => ilkKalan < 0 || i <= ilkKalan).map((r, i) => `<div class="tr ${r.pass ? "pass" : "fail"}" style="--i:${i}"><span class="tr-ico">${r.pass ? I.check : I.x}</span><code>${esc(r.label)}</code>${r.pass ? `<span class="tr-got">${esc(r.got)}${r.ms != null ? ` · ${r.ms} ms` : ""}</span>` : `<span class="tr-diff"><span>Beklenen <em>${esc(r.expected)}</em></span><span>Gelen <em class="bad">${esc(r.got)}</em></span></span>`}</div>`).join("");
       tab("res");
       const line = res.line || (rs.find((r) => r.line) || {}).line;
       if (line) ed.mark(line);

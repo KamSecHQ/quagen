@@ -107,18 +107,33 @@
    * (2) o yapı bu dilde ilk kez bu derste görülüyorsa, (3) KAM o satırı ayrıca açıklamışsa.
    * Her derste yinelenen iskelet satırları (return 0; kapanış parantezi, #include) ilk dersten sonra elenir;
    * aynı kalıbın yinelemeleri (art arda üç printf) yerine farklı kalıplar tercih edilir. */
+  /* Dersin öğretilen içeriği: Sorular, Alıştır ve Kodla hep buradan beslenir, böylece yalnızca anlatılan sorulur.
+     KAM'in elle yazılmış anlatımı varsa oradaki kodlar ve satır açıklamaları; yoksa dersin çözümlü örneği. */
+  function ornek(p) {
+    const dil = (p.example && p.example.lang) || p.language || "js";
+    const senaryo = (kok.KAM_DERSLER || {})[p.id];
+    if (!senaryo) return { dil, parcalar: p.example && p.example.code ? [{ code: p.example.code, steps: p.example.steps || [], stdin: p.example.stdin || "", setup: p.example.setup, db: p.example.db }] : [] };
+    const parca = []; let son = null;
+    for (const b of senaryo) {
+      if (b[0] === "kod") { son = { code: b[1], steps: [], stdin: "" }; parca.push(son); }
+      else if (b[0] === "v" && son) son.steps.push({ lines: b[1], text: b[2] });
+      else if (b[0] === "calis" && son) son.stdin = b[1] || "";
+    }
+    return { dil, parcalar: parca };
+  }
   function satirlar(p, enCok = 5, mufredat) {
-    const ex = p.example; if (!ex || !ex.code) return [];
-    const kod = ex.code.split("\n");
+    const O = ornek(p); if (!O.parcalar.length) return [];
     const tum = mufredat || kok.KD_CURRICULUM || [];
     const onceki = new Set();
     for (const q of tum) if (dilOf(q) === dilOf(p) && (q.track || "") === (p.track || "") && q.no < p.no && q.example) parcalar(q.example.code).forEach((x) => onceki.add(x));
     const cozum = new Set(); (p.challenges || []).forEach((c) => parcalar((c.solution || "") + "\n" + (c.starter || "")).forEach((x) => cozum.add(x)));
     const kavram = (p.concepts || []).join(" ") + " " + (p.title || "");
-    const aciklama = new Map(); (ex.steps || []).forEach((s) => (s.lines || []).forEach((no) => { if (!aciklama.has(no)) aciklama.set(no, s.text); }));
+    /* Öğretilen her kod parçasında geçen yapılar "anlatılmış" sayılır; görevlerin istediği ama anlatılmayan yapılar puan getirmez */
     const iskeletSatir = /^(return 0;?|int main\s*\(.*\)\s*\{|#include\b.*|\}|\{|main\(\)|if __name__.*|<\/?(html|body|head|div)>|<\/[A-Za-z][A-Za-z0-9]*>|\);?)$/;
     const adaylar = [];
-    kod.forEach((ham, k) => {
+    O.parcalar.forEach((ex, pi) => {
+     const aciklama = new Map(); (ex.steps || []).forEach((s) => (s.lines || []).forEach((no) => { if (!aciklama.has(no)) aciklama.set(no, s.text); }));
+     ex.code.split("\n").forEach((ham, k) => {
       const t = ham.trim(), no = k + 1;
       if (t.length < 5 || t.length > 96 || !/[A-Za-zÇĞİÖŞÜçğıöşü]{2}/.test(t) || /^(\/\/|#(?!include)|\/\*|\*|<!--|--)/.test(t)) return;
       const P = parcalar(t); let puan = aciklama.has(no) ? 2 : 0;
@@ -130,7 +145,8 @@
       const iskeletMi = t.length > 64 || (iskeletSatir.test(t) && (p.no > 1 || !/#include|main/.test(t)));
       if (iskeletMi) puan -= 8;
       if (t.length > 48) puan -= 1;
-      adaylar.push({ satir: t, no, puan, iskeletMi, aciklama: aciklama.get(no) || "", ilk: (t.match(/[A-Za-z_#<][A-Za-z0-9_]*/) || [""])[0], P });
+      adaylar.push({ satir: t, no, parca: pi, puan, iskeletMi, aciklama: aciklama.get(no) || "", ilk: (t.match(/[A-Za-z_#<][A-Za-z0-9_]*/) || [""])[0], P });
+     });
     });
     const secilen = [], gorulen = new Set(), kapsanan = new Set();
     let gevsek = false;                       // yeterli satır çıkmazsa iskelet satırlarına da izin verilir
@@ -144,30 +160,70 @@
       }
       if (!en || (secilen.length >= 3 && enPuan < 1)) { if (secilen.length < 3 && !gevsek) { gevsek = true; continue; } break; }
       gorulen.add(sade(en.satir)); en.P.forEach((x) => kapsanan.add(x));
-      secilen.push({ satir: en.satir, aciklama: en.aciklama, no: en.no, puan: en.puan });
+      secilen.push({ satir: en.satir, aciklama: en.aciklama, no: en.no, parca: en.parca, puan: en.puan });
     }
-    return secilen.sort((a, b) => a.no - b.no);
+    return secilen.sort((a, b) => a.parca - b.parca || a.no - b.no);
+  }
+
+  /* Satırın niyeti: ne yapılacağını söyler ama nasıl yazıldığını ve hangi değerlerle yazıldığını söylemez */
+  function niyet(satir) {
+    const t = satir.trim(); let m;
+    if (/^#include/.test(t)) return "Bir başlık dosyasını programa ekle.";
+    if ((m = t.match(/^(unsigned\s+\w+|long long|int|double|float|char|long|bool|size_t)\s+\w+\s*=/))) return `Bir ${TUR[m[1]] || m[1]} değişkeni tanımla ve ona değer ver.`;
+    if ((m = t.match(/^(unsigned\s+\w+|long long|int|double|float|char|long|bool)\s+[\w\s,]+;$/))) return `Değer vermeden ${TUR[m[1]] || m[1]} değişkeni tanımla.`;
+    if ((m = t.match(/^(const|let|var)\s+\w+\s*=/))) return m[1] === "const" ? "Değeri sonradan değişmeyecek bir ad tanımla." : "Değeri sonradan değişebilecek bir ad tanımla.";
+    if (/^scanf\(/.test(t) || /=\s*(int\()?input\(/.test(t)) return "Klavyeden bir değer oku.";
+    if (/^(printf|print|console\.log)\(/.test(t)) return !/["'`]/.test(t) ? "Bir değişkenin (ya da hesabın) değerini ekrana yazdır." : /%[\d.]*[a-z]|\{|\$\{|,/.test(t) ? "Ekrana, içinde bir değişkenin değeri geçen bir cümle yazdır." : "Ekrana bir metin yazdır.";
+    if (/^for\b/.test(t)) return "Bir for döngüsü başlat.";
+    if (/^while\b/.test(t)) return "Koşul doğru oldukça dönen bir döngü yaz.";
+    if (/^(else if|elif)\b/.test(t)) return "İlk koşul tutmazsa denenecek ikinci koşulu yaz.";
+    if (/^if\b/.test(t)) return "Bir koşul yaz.";
+    if (/^return\b/.test(t)) return "Bir değeri geri döndür.";
+    if (/^(def|function)\b/.test(t) || (/^[\w\s\*]+\s+\**\w+\(.*\)\s*\{$/.test(t) && !/^(if|for|while|else|switch)\b/.test(t))) return "Bir fonksiyon tanımlamaya başla.";
+    if (/^\w+\s*(\+=|-=|\*=|\/=)|^\w+(\+\+|--)/.test(t) || /^(\w+)\s*=\s*\1\b/.test(t)) return "Bir değişkenin değerini güncelle.";
+    if (/^\w+\s*=/.test(t)) return "Bir değişkene değer koy.";
+    if (/^</.test(t)) return "Bir HTML öğesi yaz.";
+    if (/^(SELECT|INSERT|UPDATE|DELETE|CREATE|FROM|WHERE|JOIN|ORDER|GROUP)\b/i.test(t)) return "Sorgunun bu satırını yaz.";
+    return "Aşağıdaki parçalardan satırı kur.";
+  }
+  /* Satırın bütün parçaları, karışık sırada (hep aynı karışım): öğrenci sırayı ve yazımı kendi kurar */
+  function karisikParcalar(satir) {
+    const parca = satir.match(new RegExp("[fFrb]?(?:" + METIN.source + ")|[A-Za-z_ÇĞİÖŞÜçğıöşü][A-Za-z0-9_ÇĞİÖŞÜçğıöşü]*|\\d+(?:\\.\\d+)?|%\\.?\\d*[a-z]|==|!=|<=|>=|&&|\\|\\||=>|\\+=|-=|\\*=|\\+\\+|--|->|<\\/|[^\\s]", "g")) || [];
+    let h = 2166136261; for (const c of satir) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+    const r = () => { h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0; h = Math.imul(h ^ (h >>> 13), 3266489909) >>> 0; return (h >>> 0) / 4294967296; };
+    const a = parca.slice();
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    if (a.length > 2 && a.join(" ") === parca.join(" ")) a.push(a.shift());          // karışmadıysa bir kaydır
+    return a;
   }
 
   /* Alıştırma sırası: kopya ve boşluk hemen, hafıza bir satır gecikmeli.
      Her alıştırma kendi bilgisini taşır: kopyada KAM'in açıklaması, boşlukta eksik parçanın ne olduğu,
      hafızada o satıra özel görev cümlesi ve kullanılacak adlar, değerler. */
   function uret(p, mufredat) {
-    const L = satirlar(p, 5, mufredat), sira = [];
-    const hafiza = (i) => ({ tur: "hafiza", i, satir: L[i].satir, gorev: gorevCumlesi(L[i].satir, L[i].aciklama), malzeme: malzeme(L[i].satir) });
-    L.forEach((x, i) => {
-      sira.push({ tur: "kopya", i, satir: x.satir, aciklama: x.aciklama });
-      const b = boslukSec(x.satir, i); if (b) sira.push(Object.assign({ tur: "bosluk", i, satir: x.satir }, b));
-      if (i > 0) sira.push(hafiza(i - 1));
-    });
-    if (L.length) sira.push(hafiza(L.length - 1));
+    const L = satirlar(p, 4, mufredat).slice(0, 4), sira = [];
+    const kopya = (i) => ({ tur: "kopya", i, satir: L[i].satir, aciklama: L[i].aciklama });
+    const bosluk = (i) => { const b = boslukSec(L[i].satir, i); return b ? Object.assign({ tur: "bosluk", i, satir: L[i].satir }, b) : null; };
+    const hafiza = (i) => ({ tur: "hafiza", i, satir: L[i].satir, gorev: niyet(L[i].satir), parcalar: karisikParcalar(L[i].satir) });
+    if (!L.length) return { satirlar: L, sira };
+    /* Yedi alıştırma, hiçbiri bir öncekinin aynısı değil: A gör, B gör, A eksik, C gör, B hatırla, C eksik, A hatırla */
+    const A = 0, B = Math.min(1, L.length - 1), C = Math.min(2, L.length - 1);
+    const plan = [["kopya", A], ["kopya", B], ["bosluk", A], ["kopya", C], ["hafiza", B], ["bosluk", C], ["hafiza", A]];
+    const gorulen = new Set();
+    for (const [tur, i] of plan) {
+      let a = tur === "kopya" ? kopya(i) : tur === "bosluk" ? bosluk(i) : hafiza(i);
+      if (!a && tur === "bosluk") a = L[3] && !gorulen.has("kopya3") ? kopya(3) : hafiza(i);   // boşluk çıkmıyorsa: dördüncü satır ya da hatırlama
+      const k = a.tur + a.i;
+      if (gorulen.has(k)) { const yedek = [0, 1, 2, 3].filter((x) => x < L.length).map((x) => ["hafiza" + x, () => hafiza(x)]).find(([kk]) => !gorulen.has(kk)); if (!yedek) continue; a = yedek[1](); }
+      gorulen.add(a.tur + a.i); sira.push(a);
+    }
     return { satirlar: L, sira };
   }
 
   /* ------------------------------------------------------------------ ekran */
   function baslat(p, stage, { bitince } = {}) {
     const KD = kok.KD, S = KD.store, esc = KD.esc, md = KD.md || esc, A = kok.KD_APP || {};
-    const dil = (p.example && p.example.lang) || KD.lang;
+    const dil = ornek(p).dil || KD.lang;
     const vurgu = (s) => (KD.hlDoc ? KD.hlDoc(s, A.hlLang ? A.hlLang(dil) : dil).join("\n") : esc(s));
     const ph = S.phase(p.id);
     /* Daha önce yapıldıysa ve aradan en az bir gün geçtiyse: yalnızca "bakmadan yaz" turu (kısa tekrar) */
@@ -179,7 +235,7 @@
     const durum = sira.map(() => ({ dogru: false, bakildi: false, yanlis: 0, yazilan: "" }));
     let n = 0, eklenen = 0;
     const AD = { kopya: "Gör ve yaz", bosluk: "Eksiği tamamla", hafiza: "Bakmadan yaz" };
-    const SOZ1 = { kopya: "Satır ekranda. Aynısını yaz; amaç elinin alışması.", bosluk: "Satırın bir parçası boş. Yalnızca o parçayı yaz.", hafiza: "Satır gizli. Ne yazacağın aşağıda yazıyor; nasıl yazıldığını sen hatırla." };
+    const SOZ1 = { kopya: "Satır ekranda. Aynısını yaz; amaç elinin alışması.", bosluk: "Satırın bir parçası boş. Yalnızca o parçayı yaz.", hafiza: "Satır gizli. Parçaları doğru sıraya koyup yaz; az önce gördüğün bir satır." };
     stage.innerHTML = `<div class="al">
       <header class="al-ust">${YUZ}<div class="al-kam"><p class="al-tur"><span id="al-rozet"></span><span id="al-satirno"></span></p><b id="al-baslik"></b><p id="al-soz"></p></div><span class="al-sayac" id="al-sayac"></span></header>
       <ol class="al-adimlar" id="al-adimlar" aria-label="Alıştırmalar"></ol>
@@ -200,10 +256,10 @@
       noktalar();
       const bilgi = a.tur === "kopya" ? (a.aciklama ? `<div class="al-bilgi"><span>Bu satır ne yapıyor?</span><p>${esc(a.aciklama)}</p></div>` : "")
         : a.tur === "bosluk" ? `<div class="al-bilgi"><span>Eksik olan</span><p>Bir ${esc(a.kategori)}. Değişken adı ya da sayı değil; dilin kendi sözcüğü.</p></div>`
-        : `<div class="al-bilgi gorev"><span>Senden istenen</span><p>${a.gorev ? md(a.gorev) : "Aşağıdaki parçaları kullanarak satırı yeniden yaz."}</p>${a.malzeme.length ? `<div class="al-malzeme"><i>Kullanacakların</i>${a.malzeme.map((x) => `<code>${esc(x)}</code>`).join("")}</div>` : ""}</div>`;
+        : `<div class="al-bilgi gorev"><span>Senden istenen</span><p>${esc(a.gorev)}</p><div class="al-malzeme"><i>Parçalar karışık; sırayı sen kur</i>${a.parcalar.map((x) => `<code>${esc(x)}</code>`).join("")}</div></div>`;
       const gosterim = a.tur === "kopya" ? `<pre class="al-kod"><code>${vurgu(a.satir)}</code></pre>`
         : a.tur === "bosluk" ? `<pre class="al-kod"><code>${esc(a.on)}<span class="al-bos">${"_".repeat(Math.max(3, a.bos.length))}</span>${esc(a.son)}</code></pre>`
-        : `<pre class="al-kod ${d.bakildi || d.dogru ? "" : "iskelet"}" id="al-iskelet"><code>${d.bakildi || d.dogru ? vurgu(a.satir) : esc(iskelet(a.satir))}</code></pre>${d.bakildi || d.dogru ? "" : '<p class="al-not">Noktalar harf ve rakamların yerini gösterir; noktalama işaretleri yerinde duruyor.</p>'}`;
+        : d.bakildi || d.dogru ? `<pre class="al-kod" id="al-iskelet"><code>${vurgu(a.satir)}</code></pre>` : "";
       govde.innerHTML = `${bilgi}${gosterim}
         <form class="al-form" id="al-form" autocomplete="off">
           <input id="al-girdi" class="al-girdi" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="${a.tur === "bosluk" ? "Eksik parça" : "Satırı yaz"}" placeholder="${a.tur === "bosluk" ? "eksik parça" : "buraya yaz"}" value="${esc(d.dogru ? (a.tur === "bosluk" ? a.bos : a.satir) : d.yazilan)}" ${d.dogru ? "disabled" : ""} />
@@ -273,7 +329,7 @@
     ciz();
   }
 
-  const api = { sade, ayni, fark, iskelet, boslukSec, malzeme, gorevCumlesi, satirlar, uret, baslat, SOZLUK, parcalar };
+  const api = { sade, ayni, fark, iskelet, boslukSec, malzeme, gorevCumlesi, niyet, karisikParcalar, ornek, satirlar, uret, baslat, SOZLUK, parcalar };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   kok.KD_ALISTIR = api;
 })(typeof window !== "undefined" ? window : globalThis);

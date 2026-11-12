@@ -214,3 +214,45 @@ body:has(.kam-ders) .kam-fab { display: none; }   /* derste soru alanı sohbetin
 .sr-don:hover { background: var(--marker); color: var(--marker-ink); }
 @media (max-width: 640px) { .al-adimlar { padding: 0 16px 12px; gap: 3px; } .sr-sik { padding: 9px 10px; gap: 9px; grid-template-columns: 30px minmax(0, 1fr); } .sr-harf { width: 30px; height: 30px; } .al-alt { flex-wrap: wrap; } }
 @media (max-width: 640px) { body:has(.al) .kam-fab { display: none; } }
+
+/* ---------- Kodla: yedi küçük görev ---------- */
+.kg-sira { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.kg-no { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 13px; border: 1px solid var(--glass-edge); background: var(--glass-strong); color: var(--ink); font: inherit; font-weight: 800; font-size: 15px; cursor: pointer; transition: transform 0.2s var(--ease), background 0.2s, border-color 0.2s; }
+.kg-no:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--ink); }
+.kg-no.ok { background: var(--pass); color: #fff; border-color: transparent; }
+.kg-no.on { background: var(--marker); color: var(--marker-ink); border-color: transparent; box-shadow: 0 0 0 3px var(--marker-wash); }
+.kg-no.on.ok { background: var(--pass); color: #fff; box-shadow: 0 0 0 3px var(--marker); }
+.kg-no:disabled { opacity: 0.4; cursor: not-allowed; }
+.kg-ozet { margin-left: 6px; font-size: 13.5px; font-weight: 700; color: var(--graphite); font-variant-numeric: tabular-nums; }
+.kg-ileri { margin-left: auto; }
+.kg { display: grid; grid-template-columns: minmax(300px, 5fr) minmax(0, 7fr); gap: 16px; align-items: start; }
+.kg-sol, .kg-sag { border-radius: 22px; background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow); min-width: 0; }
+.kg-sol { display: grid; gap: 12px; padding: 22px; }
+.kg-tur { font-size: 12.5px; font-weight: 700; color: var(--graphite); }
+.kg-istek { font-size: 18px; font-weight: 700; font-stretch: 90%; letter-spacing: -0.01em; line-height: 1.35; }
+.kg-niyet { display: grid; gap: 6px; padding-left: 22px; font-size: 15.5px; line-height: 1.45; }
+.kg-niyet.degisim { list-style: none; padding-left: 0; }
+.kg-niyet code { display: inline-block; padding: 5px 10px; border-radius: 9px; background: var(--code-bg); border: 1px solid var(--glass-edge); font: 14px var(--mono); white-space: pre-wrap; }
+.kg-beklenen { display: grid; gap: 5px; }
+.kg-beklenen > span, .kg-iki span { font-size: 12px; font-weight: 700; color: var(--graphite); }
+.kg-beklenen small { font-weight: 500; margin-left: 6px; }
+.kg-beklenen pre, .kg-gecti pre, .kg-iki pre, .kg-cozum, .kg-kaldi pre { margin: 0; padding: 10px 12px; border-radius: 12px; background: #070c1d; color: #dbe4f5; font: 13.5px/1.55 var(--mono); white-space: pre-wrap; word-break: break-word; max-height: 180px; overflow: auto; }
+.kg-yardim:empty { display: none; }
+.kg-yardim { display: grid; gap: 8px; }
+.kg-sag { display: flex; flex-direction: column; overflow: hidden; }
+.kg-cubuk { display: flex; align-items: center; gap: 8px; padding: 10px 12px 10px 16px; border-bottom: 1px solid var(--glass-edge); }
+.kg-cubuk .file { font: 600 13px var(--mono); }
+.kg-editor { background: var(--code-bg); min-height: 240px; }
+.kg-editor .CodeMirror { height: auto; min-height: 240px; font-size: var(--code-size, 14px); }
+.kg-editor .CodeMirror-scroll { min-height: 240px; max-height: 46vh; }
+.kg-sonuc { padding: 14px 16px; border-top: 1px solid var(--glass-edge); display: grid; gap: 8px; }
+.kg-gecti, .kg-kaldi { display: grid; gap: 8px; }
+.kg-gecti > b { color: var(--pass); font-size: 16px; }
+.kg-kaldi > b { color: var(--fail); font-size: 16px; }
+.kg-iki { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.kg-iki > div { display: grid; gap: 4px; min-width: 0; }
+.ileri-not { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding: 10px 14px; border-radius: 16px; background: var(--glass); border: 1px solid var(--glass-edge); }
+.ileri-not p { font-size: 14px; color: var(--ink-2, var(--graphite)); max-width: 90ch; }
+.tests li[hidden] { display: none; }
+.sub small { font-weight: 500; font-size: 12.5px; margin-left: 6px; }
+@media (max-width: 900px) { .kg { grid-template-columns: 1fr; } .kg-no { width: 34px; height: 34px; border-radius: 11px; } .kg-iki { grid-template-columns: 1fr; } .ileri-not { flex-direction: column; align-items: flex-start; } }
