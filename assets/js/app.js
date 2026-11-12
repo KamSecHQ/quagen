@@ -8,7 +8,7 @@
   const UNLOCK = 0.66;
   const KAM_VAR = !!window.KAM;                              // karşılama, plan ve ipuçları her dilde KAM'den
   const KAMLI = KAM_VAR;                                     // konuyu her dilde KAM sohbetle anlatır
-  const STEPS = [["tahmin", "Tahmin et"], ["incele", KAMLI ? "KAM anlatıyor" : "İncele"], ["alistir", "Alıştır"], ["kodla", "Kodla"], ["hatirla", "Hatırla"]];
+  const STEPS = [["tahmin", "Tahmin et"], ["incele", KAMLI ? "KAM anlatıyor" : "İncele"], ["sorular", "Sorular"], ["alistir", "Alıştır"], ["kodla", "Kodla"], ["hatirla", "Hatırla"]];
   const MENTOR_AD = KAM_VAR ? "KAM" : "Mentor";
   const ALL_CARDS = C.flatMap((p) => p.cards.map((c) => Object.assign({ phase: p }, c)));
   const ALL_CH = C.flatMap((p) => p.challenges.map((c) => Object.assign({ phase: p }, c)));
@@ -78,7 +78,7 @@
     return `${T(T(trackOf(p)).req).title} parkurunu bitirince açılır.`;
   };
   /* Seviye sınavını geçenler için çözümlü örnek varsayılan adım değil (uzmanlık tersine dönmesi, Kalyuga 2003) */
-  const defaultStep = (p) => { const ph = S.phase(p.id); if (placed(trackOf(p))) return "kodla"; return ph.predict === null ? "tahmin" : !ph.viewed ? "incele" : !ph.drill && !Object.keys(ph.passed).length ? "alistir" : "kodla"; };
+  const defaultStep = (p) => { const ph = S.phase(p.id); if (placed(trackOf(p))) return "kodla"; return ph.predict === null ? "tahmin" : !ph.viewed ? "incele" : !ph.quiz && !ph.drill && !Object.keys(ph.passed).length ? "sorular" : !ph.drill && !Object.keys(ph.passed).length ? "alistir" : "kodla"; };
   const skillPct = (p) => { const v = KD.bkt.get(p.id); return v == null ? null : Math.round(v * 100); };
   /* Sıradaki en mantıklı hedef: açık ve bitmemiş ilk ders */
   function nextTarget() {
@@ -468,10 +468,10 @@
     const t = T(trackOf(p));
     renderCrumbs([{ t: "Panel", h: "#panel" }, { t: t.short, h: "#" + phasesOf(t.id)[0].id }, { t: `Ders ${p.no}: ${p.short}` }]);
     const ph = S.phase(p.id), m = mastery(p);
-    const done = { tahmin: ph.predict !== null, incele: ph.viewed, alistir: !!ph.drill, kodla: m === 1, hatirla: p.cards.every((c) => S.state.cards[c.id]?.reps > 0) };
+    const done = { tahmin: ph.predict !== null, incele: ph.viewed, sorular: !!ph.quiz, alistir: !!ph.drill, kodla: m === 1, hatirla: p.cards.every((c) => S.state.cards[c.id]?.reps > 0) };
     const list = phasesOf(t.id), nextP = list[list.indexOf(p) + 1];
     view.innerHTML = `
-      <header class="ph-head ${step === "kodla" || step === "alistir" || (KAMLI && step === "incele") ? "compact" : ""}">
+      <header class="ph-head ${step === "kodla" || step === "alistir" || step === "sorular" || (KAMLI && step === "incele") ? "compact" : ""}">
         <div class="ph-title">
           <p class="ph-label">Ders ${p.no} <span>${esc(t.title)}</span></p>
           <h1>${esc(p.title)}</h1>
@@ -490,7 +490,9 @@
       </nav>
       <section class="stage" id="stage"></section>`;
     const stage = $("#stage");
-    ({ tahmin: stepPredict, incele: stepExample, alistir: (pp, st) => window.KD_ALISTIR.baslat(pp, st, { bitince: () => renderSide(pp.id) }), kodla: stepCode, hatirla: stepRecall })[step](p, stage, chId);
+    /* Sorular ya da alıştırma bitince adım çubuğundaki işaret hemen güncellensin */
+    const adimIsaretle = () => { const el = $(`.steps .step[href="#${p.id}/${step}"]`); if (el && !el.classList.contains("done")) { el.classList.add("done"); const no = $(".step-n", el); if (no) no.innerHTML = I.check; } renderSide(p.id); };
+    ({ tahmin: stepPredict, incele: stepExample, sorular: (pp, st) => window.KD_SORULAR.baslat(pp, st, { bitince: adimIsaretle }), alistir: (pp, st) => window.KD_ALISTIR.baslat(pp, st, { bitince: adimIsaretle }), kodla: stepCode, hatirla: stepRecall })[step](p, stage, chId);
     view.focus({ preventScroll: true });
   }
 
@@ -571,7 +573,7 @@
       if (i < ex.steps.length - 1) { i++; paint(); return; }
       const ph = S.phase(p.id);
       if (!ph.viewed) { ph.viewed = true; S.addXP(10); }
-      location.hash = `#${p.id}/alistir`;
+      location.hash = `#${p.id}/sorular`;
     };
     $("#wprev").onclick = () => { if (i > 0) { i--; paint(); } };
     $("#wnext").onclick = next;

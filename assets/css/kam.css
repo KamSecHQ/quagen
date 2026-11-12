@@ -161,3 +161,56 @@ body:has(.kam-ders) .kam-fab { display: none; }   /* derste soru alanı sohbetin
 @media (max-width: 640px) { .al-ust { padding: 16px; } .al-govde { padding: 16px; } .al-form { flex-direction: column; } .al-kam b { font-size: 20px; } .al-ust .kam-av { font-size: 40px; } }
 @media (prefers-reduced-motion: reduce) { .al-girdi.salla, .al-govde { animation: none; } }
 @media (max-width: 640px) { .al-girdi { flex: none; width: 100%; } .al-form .btn { width: 100%; } }
+
+/* ---------- Alıştır ve Sorular: ortak, daha derli toplu görünüm ---------- */
+.al { max-width: 860px; }
+.al-tur { display: flex; align-items: center; gap: 8px; margin: 0 0 4px !important; font-size: 12.5px !important; font-weight: 700; color: var(--graphite) !important; }
+.al-tur > span:first-child { padding: 2px 10px; border-radius: 999px; background: var(--ink); color: var(--paper); }
+.al-tur .r-kopya { background: #4a6cf0; color: #fff; } .al-tur .r-bosluk { background: var(--marker); color: var(--marker-ink); } .al-tur .r-hafiza { background: var(--pass); color: #fff; }
+.al-tur .r-coklu { background: var(--marker); color: var(--marker-ink); } .al-tur .r-soru { background: #4a6cf0; color: #fff; } .al-tur .r-ozet { background: var(--ink); color: var(--paper); }
+.al-kam b { font-size: 22px; }
+.al-adimlar { list-style: none; display: flex; gap: 5px; padding: 0 24px 16px; }
+.al-adimlar li { flex: 1; min-width: 0; }
+.al-adimlar button { display: block; width: 100%; height: 8px; border: 0; padding: 0; border-radius: 6px; background: color-mix(in srgb, var(--ink) 12%, transparent); cursor: pointer; transition: background 0.2s, transform 0.2s var(--ease); }
+.al-adimlar button:hover { transform: scaleY(1.5); }
+.al-adimlar li.ok button { background: var(--pass); }
+.al-adimlar li.hata button { background: var(--fail); }
+.al-adimlar li.on button { background: var(--marker); box-shadow: 0 0 0 3px var(--marker-wash); }
+.al-adimlar li.on.ok button { background: var(--pass); box-shadow: 0 0 0 3px var(--marker); }
+.al-cubuk { display: none; }
+.al-govde { border-top: 1px solid var(--glass-edge); }
+.al-bilgi { display: grid; gap: 4px; padding: 12px 14px; border-radius: 14px; background: var(--glass-strong); border: 1px solid var(--glass-edge); }
+.al-bilgi > span { font-size: 12px; font-weight: 700; color: var(--graphite); }
+.al-bilgi p { font-size: 15.5px; line-height: 1.5; max-width: 68ch; }
+.al-bilgi.gorev { background: var(--marker-wash); border-color: color-mix(in srgb, var(--marker) 60%, transparent); }
+.al-bilgi.gorev p { font-size: 17px; font-weight: 600; }
+.al-bilgi code, .sr-soru code, .sr-not code { padding: 1px 6px; border-radius: 6px; background: color-mix(in srgb, var(--ink) 9%, transparent); font-family: var(--mono); font-size: 0.92em; font-weight: 500; }
+.al-malzeme { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 6px; }
+.al-malzeme i { font-size: 12px; font-style: normal; font-weight: 700; color: var(--graphite); margin-right: 2px; }
+.al-malzeme code { padding: 3px 9px; border-radius: 8px; background: var(--surface); border: 1px solid var(--glass-edge); font-size: 14px; user-select: none; }
+.al-not { margin-top: -6px; font-size: 12.5px; color: var(--graphite); }
+.al-alt { padding-top: 4px; border-top: 1px dashed var(--glass-edge); margin-top: 2px; padding-top: 14px; }
+.al-alt .btn.sm { height: 38px; padding: 0 14px; font-size: 14px; }
+/* Sorular */
+.sr-soru { font-size: clamp(18px, 1.9vw, 22px); font-weight: 700; font-stretch: 90%; letter-spacing: -0.012em; line-height: 1.35; max-width: 60ch; }
+.sr-not { margin-top: -6px; padding: 8px 12px; border-radius: 10px; background: var(--marker-wash); font-size: 14.5px; font-weight: 600; width: fit-content; }
+.sr-kod { font-size: 16px; padding: 14px 18px; white-space: pre; overflow-x: auto; }
+.sr-siklar { display: grid; gap: 8px; }
+.sr-sik { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: center; width: 100%; padding: 11px 14px; border-radius: 14px; border: 2px solid var(--glass-edge); background: var(--surface); color: var(--ink); font: inherit; text-align: left; cursor: pointer; transition: border-color 0.15s, background 0.15s, transform 0.12s var(--ease); }
+.sr-sik:hover:not(:disabled) { border-color: color-mix(in srgb, var(--ink) 45%, transparent); transform: translateX(3px); }
+.sr-sik:active:not(:disabled) { transform: scale(0.99); }
+.sr-harf { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: color-mix(in srgb, var(--ink) 8%, transparent); font-weight: 800; font-size: 14px; transition: background 0.15s, color 0.15s; }
+.sr-kutu .sr-sik[role="checkbox"] .sr-harf { border-radius: 8px; box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--ink) 25%, transparent); background: none; }
+.sr-metin { font-size: 15px; line-height: 1.45; overflow-wrap: anywhere; }
+.sr-metin.kod { font-family: var(--mono); font-size: 14px; white-space: pre-wrap; }
+.sr-sik.secili { border-color: var(--ink); background: var(--marker-wash); }
+.sr-sik.secili .sr-harf { background: var(--ink); color: var(--paper); box-shadow: none; }
+.sr-sik.dogru { border-color: var(--pass); background: var(--pass-wash); }
+.sr-sik.dogru .sr-harf { background: var(--pass); color: #fff; box-shadow: none; }
+.sr-sik.yanlis { border-color: var(--fail); background: var(--fail-wash); }
+.sr-sik.yanlis .sr-harf { background: var(--fail); color: #fff; box-shadow: none; }
+.sr-sik:disabled { cursor: default; opacity: 1; }
+.sr-don { margin: 2px 6px 2px 0; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--glass-edge); background: var(--surface); color: var(--ink); font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+.sr-don:hover { background: var(--marker); color: var(--marker-ink); }
+@media (max-width: 640px) { .al-adimlar { padding: 0 16px 12px; gap: 3px; } .sr-sik { padding: 9px 10px; gap: 9px; grid-template-columns: 30px minmax(0, 1fr); } .sr-harf { width: 30px; height: 30px; } .al-alt { flex-wrap: wrap; } }
+@media (max-width: 640px) { body:has(.al) .kam-fab { display: none; } }

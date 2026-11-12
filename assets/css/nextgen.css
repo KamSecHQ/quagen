@@ -812,7 +812,7 @@ dialog::backdrop { background: rgba(10, 16, 30, 0.38); backdrop-filter: blur(6px
 .ph-head.compact .mastery .meter { width: 110px; }
 
 /* ---------- Adım çubuğu: dört net adım ---------- */
-.steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; width: 100%; padding: 6px; margin-bottom: 18px; border-radius: 18px; background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow); overflow: visible; }
+.steps { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; width: 100%; padding: 6px; margin-bottom: 18px; border-radius: 18px; background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow); overflow: visible; }
 .step { justify-content: center; height: 46px; padding: 0 12px; border-radius: 13px; gap: 10px; font-size: 14.5px; }
 .step:hover { background: color-mix(in srgb, var(--glass-strong) 70%, transparent); color: var(--ink); }
 .step-n { width: 26px; height: 26px; font-size: 13px; font-weight: 700; flex: none; transition: transform 0.25s var(--ease), background 0.2s; }
@@ -881,7 +881,7 @@ dialog::backdrop { background: rgba(10, 16, 30, 0.38); backdrop-filter: blur(6px
   .ph-head.compact .mastery { justify-self: start; }
   .step-l { display: none; }
   .step.on .step-l { display: inline; }
-  .steps { grid-template-columns: repeat(5, auto); justify-content: space-between; }
+  .steps { grid-template-columns: repeat(6, auto); justify-content: space-between; }
 }
 @media (max-width: 560px) {
   .ws-tabs small { display: none; }
