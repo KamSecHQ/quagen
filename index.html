@@ -25,8 +25,9 @@
       <a href="#" class="logo" aria-label="QUAGEN ana sayfa">QUAGEN</a>
       <nav class="dunya" id="dunya" aria-label="Dünyalar"><span aria-current="page">QUAGEN</span><a href="nextgen.html" class="js-warp">NextGen</a></nav>
       <nav class="nav-links" aria-label="Bölümler">
-        <a href="rehber.html" id="nav-kutuphane">Kütüphane</a>
-        <a href="pratik.html" id="nav-pratik">Pratik</a>
+        <a href="#kam">KAM</a>
+        <a href="#ders">Nasıl öğretir</a>
+        <a href="#bilim">Bilim</a>
         <a href="#sss">Sorular</a>
       </nav>
       <button class="nav-tema" id="tema" aria-label="Temayı değiştir"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
@@ -59,6 +60,20 @@
       <noscript><p class="lead">Sohbeti görmek için JavaScript gerekir. <a href="nextgen.html">NextGen'e doğrudan git.</a></p></noscript>
     </section>
 
+    <!-- KAM kim -->
+    <section class="section wrap" id="kam">
+      <header class="sec-head">
+        <h2>KAM kim?</h2>
+        <p>QUAGEN'in yapay zekâ öğretmeni. Bir insan değil; ama dersin her adımında yanında olan, sabırlı ve dürüst bir anlatıcı.</p>
+      </header>
+      <div class="kam-ozellik">
+        <article class="cam"><h3>Konuyu konuşarak anlatır</h3><p>Sayfalarca yazı yerine mesaj mesaj ilerler. Anlattığı satır yanda parlar, kod çalışır, sonucu birlikte görürsünüz.</p></article>
+        <article class="cam"><h3>Cevabı vermez, yolu gösterir</h3><p>Görevde takıldığında hatanı teşhis eder ve doğru yere baktıran bir ipucu verir. Çözümü sen bulursun; öğrenen de sen olursun.</p></article>
+        <article class="cam"><h3>Sana plan yapar</h3><p>Günde kaç dakikan olduğunu sorar, ona göre gerçekçi bir süre söyler. Her girişte bugün ne yapman gerektiğini sıralar.</p></article>
+        <article class="cam"><h3>Abartmaz</h3><p>“Harikasın” demek için konuşmaz. Zor olan şeye zor der, ara verdiysen bunu söyler, sonra yapılabilir bir sonraki adımı gösterir.</p></article>
+      </div>
+    </section>
+
     <!-- Bir ders nasıl geçer -->
     <section class="section wrap" id="ders">
       <header class="sec-head">
@@ -78,44 +93,46 @@
       <div class="kapi" id="kapi">
         <div class="kapi-yazi">
           <h2>Dersler NextGen'de.</h2>
-          <p>QUAGEN tanışma, Kütüphane ve Pratik içindir. Derslik ayrı bir dünya: üç dil, doksan ders, 270 görev ve senin için tutulan plan orada.</p>
+          <p>QUAGEN tanışma ve bilgi içindir. Yapılan her şey NextGen'de: dersler, Pratik, Kütüphane, tekrar kartların ve senin için tutulan plan.</p>
           <a href="nextgen.html" class="btn btn-marker btn-lg js-warp">NextGen'e git</a>
         </div>
-        <ul class="kapi-diller" aria-label="Diller">
-          <li><b>Python</b><span>20 ders</span></li>
-          <li><b>C</b><span>20 ders</span></li>
-          <li><b>JavaScript</b><span>50 ders</span></li>
+        <ul class="kapi-diller" aria-label="NextGen'de neler var">
+          <li><b>Dersler</b><span>Python, C, JavaScript</span></li>
+          <li><b>Pratik</b><span>günde beş dakika</span></li>
+          <li><b>Kütüphane</b><span>sor, örneğini gör</span></li>
+          <li><b>Tekrar ve İçgörüler</b><span>unutma, kendini tanı</span></li>
         </ul>
       </div>
     </section>
 
-    <!-- Pratik ve Kütüphane -->
-    <section class="section wrap araclar" id="araclar">
+    <!-- Bilim -->
+    <section class="section wrap" id="bilim">
       <header class="sec-head">
-        <h2>Ders dışında iki yardımcı.</h2>
+        <h2>Neden böyle öğretiyoruz?</h2>
+        <p>Tekrar okumak ve video izlemek “öğreniyorum” hissi verir ama kalıcı olmaz. QUAGEN'deki her adım, işe yaradığı ölçülmüş bir yönteme dayanır.</p>
       </header>
-      <div class="arac-grid">
-        <article class="arac arac-rehber cam">
-          <h3>Kütüphane: ne yapmak istediğini yaz.</h3>
-          <p>Fonksiyonun adını bilmen gerekmez. Kendi cümlenle sor; doğru yapıyı ve çalışan örneğini gösterir.</p>
-          <form class="rd" id="rd" role="search">
-            <input id="rd-girdi" type="search" value="listeyi büyükten küçüğe sıralamak" aria-label="Kütüphane'ye sor" autocomplete="off" spellcheck="false" />
-          </form>
-          <div class="rd-sonuc" id="rd-sonuc" aria-live="polite"></div>
-          <a href="rehber.html" class="btn btn-ink">Kütüphaneyi aç</a>
-        </article>
-        <article class="arac arac-pratik cam">
-          <h3>Pratik: günde beş dakika.</h3>
-          <p>Çıktıyı tahmin et, satırları sırala, hatayı bul. Yanlışların bir deftere düşer ve unutmadan önce yeniden sorulur.</p>
-          <div class="pd" aria-hidden="true">
-            <div class="pd-ust"><span class="pd-bar"><i></i></span><span class="pd-can">♥ 5</span></div>
-            <p class="pd-etiket">Çıktıyı tahmin et <span class="pd-kombo">5 kombo</span></p>
-            <pre class="pd-kod"><code>print("3" + "4", 3 + 4)</code></pre>
-            <div class="pd-sec"><span>7 7</span><span class="ok">34 7</span><span>34 34</span><span>Hata</span></div>
-          </div>
-          <a href="pratik.html" class="btn btn-line">Pratiğe başla</a>
-        </article>
+      <div class="bilim">
+        <article class="cam"><h3>Hafızadan çağırmak</h3><p>Bilgiyi tekrar okumak yerine hatırlamaya çalışmak, bir hafta sonra akılda kalanı belirgin biçimde artırır.</p><p class="b-site">Her ders kartlarla biter.</p><p class="b-kaynak">Roediger ve Karpicke, 2006</p></article>
+        <article class="cam"><h3>Aralıklı tekrar</h3><p>Aynı çalışma süresi günlere yayılınca unutma azalır. Her kart, tam unutmaya başlayacağın gün yeniden sorulur.</p><p class="b-site">Tekrar bölümü bunu senin yerine planlar.</p><p class="b-kaynak">Cepeda ve diğerleri, 2006</p></article>
+        <article class="cam"><h3>Çözümlü örnek</h3><p>Yeni başlayan biri için adım adım çözülmüş bir örneği incelemek, sıfırdan problem çözmekten daha verimlidir.</p><p class="b-site">KAM önce anlatır; her görevin başında benzer bir çözüm var.</p><p class="b-kaynak">Sweller, 1988</p></article>
+        <article class="cam"><h3>Karışık pratik</h3><p>Konuları karıştırarak çalışmak, hangi yöntemin ne zaman kullanılacağını seçme becerisini geliştirir.</p><p class="b-site">Karma antrenman eski görevleri karışık getirir.</p><p class="b-kaynak">Rohrer ve Taylor, 2007</p></article>
+        <article class="cam"><h3>Önce tahmin</h3><p>Yanlış bile olsa önceden tahmin yürütmek, ardından gelen açıklamayı daha kalıcı yapar.</p><p class="b-site">Her ders bir tahmin sorusuyla başlar.</p><p class="b-kaynak">Kornell, Hays ve Bjork, 2009</p></article>
+        <article class="cam"><h3>Kendini doğru tanımak</h3><p>İnsanlar bildiklerini olduğundan fazla sanmaya yatkındır; bu da yanlış konuya çalışmaya yol açar.</p><p class="b-site">Testten önce “geçer mi?” diye sorar, isabetini ölçeriz.</p><p class="b-kaynak">Dunlosky ve Rawson, 2012</p></article>
       </div>
+    </section>
+
+    <!-- QUAGEN hakkında -->
+    <section class="section wrap" id="hakkinda">
+      <header class="sec-head">
+        <h2>QUAGEN nedir?</h2>
+        <p>Türkçe, ücretsiz bir programlama okulu. Kurulum istemez; yazdığın kod tarayıcında çalışır.</p>
+      </header>
+      <dl class="rakamlar cam">
+        <div><dt>3</dt><dd>dil: Python, C ve JavaScript</dd></div>
+        <div><dt>90</dt><dd>ders, sıfırdan projeye</dd></div>
+        <div><dt>270</dt><dd>görev, her biri otomatik testli</dd></div>
+        <div><dt>0 ₺</dt><dd>dersler, Pratik ve Kütüphane ücretsiz</dd></div>
+      </dl>
     </section>
 
     <!-- SSS -->
@@ -143,8 +160,8 @@
   <footer class="foot">
     <div class="wrap foot-in">
       <span class="logo">QUAGEN</span>
-      <a href="rehber.html">Kütüphane</a>
-      <a href="pratik.html">Pratik</a>
+      <a href="#kam">KAM</a>
+      <a href="#bilim">Bilim</a>
       <span class="foot-c">© 2026 QUAGEN</span>
     </div>
   </footer>
@@ -184,5 +201,6 @@
   <script src="assets/js/python.js"></script>
   <script src="assets/js/tur.js"></script>
   <script src="assets/js/landing.js"></script>
+  <script src="assets/js/gecis.js"></script>
 </body>
 </html>

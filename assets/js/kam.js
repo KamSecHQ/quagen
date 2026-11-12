@@ -18,7 +18,7 @@
   const A = () => window.KD_APP || {};
   const DIL = KD.lang;
   const aktif = () => true;                      // karşılama, plan ve sohbet her dilde
-  const dersVar = () => DIL === "c";             // sohbetle ders: şimdilik yalnızca C
+  const dersVar = () => true;                    // sohbetle ders her dilde (elle yazılmış senaryo yoksa dersin örneğinden üretilir)
   const EK = ({ c: { ad: "C", de: "C'de", yi: "C'yi", nin: "C'nin" }, py: { ad: "Python", de: "Python'da", yi: "Python'ı", nin: "Python'ın" }, js: { ad: "JavaScript", de: "JavaScript'te", yi: "JavaScript'i", nin: "JavaScript'in" } })[DIL] || { ad: "Bu dil", de: "Bu dilde", yi: "Bu dili", nin: "Bu dilin" };
   const durum = () => (S.state.kam = S.state.kam || {});
   const GUN = 864e5;
@@ -84,8 +84,8 @@
   }
   const sureMetni = (gun) => (gun <= 10 ? gun + " gün" : gun <= 45 ? "yaklaşık " + Math.round(gun / 7) + " hafta" : "yaklaşık " + Math.round(gun / 30) + " ay");
   function planMetni(pl) {
-    const temel = pl.temelFaz > 0 ? `${EK.ad} temellerini (kalan ${pl.temelFaz} faz) **${sureMetni(pl.temelGun)}** içinde, ` : "";
-    return `Günde **${pl.dk} dakika** ile ${temel}${EK.nin} tamamını (kalan ${pl.kalanFaz} faz) **${sureMetni(pl.tumGun)}** içinde bitirirsin. Bu, her gün çalıştığın varsayımıyla; hafta sonları boş geçerse süre uzar, sorun değil.`;
+    const temel = pl.temelFaz > 0 ? `${EK.ad} temellerini (kalan ${pl.temelFaz} ders) **${sureMetni(pl.temelGun)}** içinde, ` : "";
+    return `Günde **${pl.dk} dakika** ile ${temel}${EK.nin} tamamını (kalan ${pl.kalanFaz} ders) **${sureMetni(pl.tumGun)}** içinde bitirirsin. Bu, her gün çalıştığın varsayımıyla; hafta sonları boş geçerse süre uzar, sorun değil.`;
   }
   const selamSaat = () => { const h = new Date().getHours(); return h < 5 ? "Geç oldu" : h < 12 ? "Günaydın" : h < 18 ? "Selam" : "İyi akşamlar"; };
   const adimAdi = (k) => ({ tahmin: "tahmin sorusu", incele: "konuyu ben anlatacağım", kodla: "görevler", hatirla: "tekrar kartları" })[k] || k;
@@ -351,6 +351,9 @@
   let dersNo = 0;
   function ders(p, stage) {
     const benim = ++dersNo;
+    const exDil = (p.example && p.example.lang) || DIL;
+    const DOSYA = { c: "main.c", py: "main.py", js: "main.js", html: "index.html", jsx: "App.jsx", sql: "sorgu.sql" };
+    const vurguDili = A().hlLang ? A().hlLang(exDil) : exDil;
     const senaryo = (window.KAM_DERSLER || {})[p.id] || otomatikSenaryo(p);
     const ph = S.phase(p.id);
     stage.innerHTML = `
@@ -364,7 +367,7 @@
           <form class="kam-form" id="kd-sor"><input placeholder="Anlamadığın yeri KAM'e sor…" autocomplete="off" maxlength="300" /><button class="btn sm">Sor</button></form>
         </section>
         <section class="kam-sahne" aria-label="Örnek kod">
-          <header class="sahne-bas"><span class="file">main.c</span><span class="sahne-durum" id="kd-durum">KAM yazıyor…</span><button class="btn sm" id="kd-calistir">▷ Çalıştır</button></header>
+          <header class="sahne-bas"><span class="file">${esc(DOSYA[exDil] || "kod")}</span><span class="sahne-durum" id="kd-durum">KAM yazıyor…</span><button class="btn sm" id="kd-calistir">▷ Çalıştır</button></header>
           <pre class="sahne-kod" id="kd-kod"><code><span class="sahne-bos">Kod burada belirecek. KAM anlattıkça değişecek.</span></code></pre>
           <div class="sahne-cikti" id="kd-cikti" hidden></div>
         </section>
@@ -377,7 +380,7 @@
     function kodYaz(yeni) {
       const eski = kod.split("\n");
       kod = yeni;
-      const satirlar = KD.hlDoc ? KD.hlDoc(yeni, "c") : yeni.split("\n").map(esc);
+      const satirlar = KD.hlDoc ? KD.hlDoc(yeni, vurguDili) : yeni.split("\n").map(esc);
       const ham = yeni.split("\n");
       let n = 0;
       kodEl.innerHTML = satirlar.map((l, i) => { const degisti = ham[i] !== eski[i]; return `<span class="sk ${degisti ? "yeni" : ""}" data-l="${i + 1}" style="--n:${degisti ? n++ : 0}"><b class="sn">${i + 1}</b>${l || " "}</span>`; }).join("");
@@ -397,14 +400,13 @@
       if (stdin !== undefined) sonStdin = stdin || "";
       vurgula([]);
       ciktiEl.hidden = false;
-      ciktiEl.innerHTML = `<p class="sahne-etiket">Çıktı</p><div class="log muted">Derleniyor…</div>`;
+      ciktiEl.innerHTML = `<p class="sahne-etiket">Çıktı${sonStdin ? ` <span>girdi: ${esc(sonStdin.trim())}</span>` : ""}</p><div class="preview kd-onizle" hidden></div><div class="console kd-konsol"></div>`;
       durumEl.textContent = "çalışıyor";
-      const r = await KD.runC(kod, { stdin: sonStdin });
+      const konsol = $(".kd-konsol", ciktiEl), onizle = $(".kd-onizle", ciktiEl);
+      if (A().runSnippet) await A().runSnippet(Object.assign({}, p.example, { lang: exDil, code: kod, stdin: sonStdin, setup: p.example.setup, db: p.example.db }), konsol, onizle);
+      else { const r = await KD.runC(kod, { stdin: sonStdin }); konsol.innerHTML = (r.logs || []).map((l) => `<div class="log ${l.level}">${esc(l.text)}</div>`).join("") + (r.error ? `<div class="log error">${esc(r.error)}</div>` : ""); }
       if (!yasiyor()) return;
-      const satir = (r.logs || []).map((l, i) => `<div class="log ${l.level}" style="--i:${i}">${esc(l.text)}</div>`);
-      if (r.error) satir.push(`<div class="log error">${esc(r.error)}</div>`);
-      ciktiEl.innerHTML = `<p class="sahne-etiket">Çıktı${sonStdin ? ` <span>girdi: ${esc(sonStdin.trim())}</span>` : ""}</p>${satir.join("") || '<div class="log muted">Program çıktı üretmedi.</div>'}`;
-      durumEl.textContent = r.error ? "hata" : "çalıştı";
+      durumEl.textContent = $(".log.error", konsol) ? "hata" : "çalıştı";
       if (!sc.hizli) await bekle(500);
     }
 
@@ -454,15 +456,18 @@
   /* ------------------------------------------------------------------ tur: NextGen'i gezdirir, sonunda katılmaya çağırır */
   const TUR_ANAHTAR = "kam-tur-nextgen";
   const uyeDegil = () => !KD.hesapYok && KD.hesap && !KD.hesap.kullanici;
-  function tur(bitince) {
-    if (!window.KAM_TUR || window.KAM_TUR.goruldu(TUR_ANAHTAR)) { if (bitince) bitince(); return false; }
+  function tur(bitince, zorla) {
+    if (!window.KAM_TUR || (!zorla && window.KAM_TUR.goruldu(TUR_ANAHTAR))) { if (bitince) bitince(); return false; }
     const adimlar = [
-      { sec: ".kam-kart", baslik: "Her girişinde buradayım.", metin: "Bugün ne yapman gerektiğini burada söylerim. Satıra tıklaman yeter." },
-      { sec: "#tracks", baslik: "Derslerin", metin: "Dersler sırayla açılır. Bir dersin üç görevinden ikisini geçince sonraki açılır." },
-      { sec: '#side-main a[href="#tekrar"]', baslik: "Tekrar", metin: "Öğrendiklerin kısa kartlarla geri gelir; tam unutmaya başlayacağın gün." },
-      { sec: "#btn-search", baslik: "Arama", metin: "Bir dersi ya da görevi adıyla bulursun." },
-      { sec: ".bar .dunya", baslik: "İki dünya", metin: "Burası **NextGen**, dersliğin. Kütüphane ve Pratik **QUAGEN**'de; buradan geçersin." },
-      { sec: "#kam-fab", baslik: "Takıldığında bana yaz.", metin: "Hangi sayfada olursan ol bu düğme burada durur." }
+      { sec: ".kam-kart", baslik: "Bugünün planı", metin: "Her girişte önce buraya bak. Sıradaki dersini ve bekleyen kartlarını senin yerine ben sıralarım; satıra tıklayıp başlarsın." },
+      { sec: "#tracks", baslik: "Dersler nasıl açılır?", metin: "Her ders dört adım: kısa bir tahmin, benim anlatımım, üç görev ve kartlar. Üç görevden **ikisini** geçince sonraki ders açılır; kilitli görünenler bu yüzden kilitli." },
+      { sec: '#side-main a[data-id="tekrar"]', baslik: "Tekrar nasıl çalışır?", metin: "Geçtiğin her dersin kartları buraya düşer. Bir kartı kolay hatırlarsan günler sonra, zorlanırsan ertesi gün yeniden sorulur. Yanındaki sayı **bugün** bekleyen kartlardır; günde üç beş dakika yeter." },
+      { sec: '#side-main a[data-id="karma"]', baslik: "Karma antrenman ne işe yarar?", metin: "Eski derslerden karışık görevler getirir ve hangi konudan geldiğini söylemez. Hangi yöntemi kullanacağına sen karar verirsin; sınavda da gerçek işte de olan budur. Zayıf olduğun konular daha sık gelir." },
+      { sec: '#side-main a[data-id="pratik"]', baslik: "Pratik", metin: "Vaktin azken: çıktıyı tahmin et, karışık satırları sırala, hatayı bul. Yanlışların bir deftere yazılır ve unutmadan önce yeniden karşına çıkar." },
+      { sec: '#side-main a[data-id="kutuphane"]', baslik: "Kütüphane", metin: "Bir şeyin nasıl yazıldığını unuttuğunda kendi cümlenle sorarsın: “listeyi nasıl sıralarım?”. Doğru yapıyı ve çalışan örneğini gösterir." },
+      { sec: '#side-main a[data-id="icgoruler"]', baslik: "İçgörüler ne gösterir?", metin: "Her konuda ne kadar sağlam olduğunun haritası. Ayrıca “bu testi geçerim” dediğinde ne sıklıkla haklı çıktığını ölçer; kendini olduğundan iyi ya da kötü sanıyorsan burada görürsün." },
+      { sec: "#btn-settings", baslik: "Yönetim", metin: "Hesabın, günlük süren ve hedefin, tema, yedekleme ve benimle ilgili ayarlar burada." },
+      { sec: "#kam-fab", baslik: "Takıldığında bana yaz.", metin: "Hangi sayfada olursan ol bu düğme burada durur. “Döngü nedir?” diye de sorabilirsin, “bugün ne yapayım?” diye de." }
     ];
     if (uyeDegil()) adimlar.push({ sec: "#acct", baslik: "Şimdi aramıza katıl.", metin: "Sonra derslere geçelim. Kayıt ücretsiz; ilerlemen hesabında saklanır ve başka cihazda kaldığın yerden devam edersin.", dugme: "Aramıza katıl", git: "hesap.html?sonra=" + encodeURIComponent("nextgen.html?dil=" + DIL) + "#kayit", ikinci: { ad: "Kayıtsız devam et" } });
     return window.KAM_TUR.baslat(adimlar, { anahtar: TUR_ANAHTAR, bitince: (neden) => { if (neden !== "git" && bitince) bitince(); } });

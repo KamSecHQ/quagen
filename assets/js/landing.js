@@ -17,7 +17,7 @@
   });
   /* Açılış koreografisi ve kaydırdıkça beliren bölümler */
   requestAnimationFrame(() => document.body.classList.add("ready"));
-  const bolumler = document.querySelectorAll(".section .sec-head, .adimlar > li, .faq-liste, .tracks, .cta-in, .arac");
+  const bolumler = document.querySelectorAll(".section .sec-head, .adimlar > li, .faq-liste, .cta-in, .kam-ozellik > article, .bilim > article, .rakamlar, .kapi");
   bolumler.forEach((el) => el.classList.add("rv"));
   if (!reduced && "IntersectionObserver" in window) {
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
@@ -311,12 +311,13 @@
   const TUR_ANAHTAR = "kam-tur-quagen";
   function turBaslat() {
     const adimlar = [
-      { sec: "#kam-dev", baslik: "Ben KAM.", metin: "Bu sitenin yapay zekâ öğretmeniyim. Önce sana etrafı göstereyim; bir dakika sürmez." },
-      { sec: "#dunya", baslik: "İki ayrı dünya var.", metin: "**QUAGEN** şu an bulunduğun yer: tanışma, Kütüphane ve Pratik burada. **NextGen** ise dersliğin; dersler yalnızca orada açılır. Buradan birinden diğerine geçersin." },
-      { sec: "#sahne", baslik: "Burada benimle konuşursun.", metin: "Solda yazışırız, sağda kod aynı anda değişir. Tur bitince sana kısa bir örnek göstereceğim." },
-      { sec: "#nav-kutuphane", baslik: "Kütüphane", metin: "Bir şeyin nasıl yapıldığını unuttuğunda kendi cümlenle sorarsın: “listeyi nasıl sıralarım?” gibi. Çalışan örneğiyle cevap verir." },
-      { sec: "#nav-pratik", baslik: "Pratik", metin: "Günde beş dakikalık kısa alıştırmalar. Otobüste, molada; ders dışında elini sıcak tutar." },
-      { sec: "#kapi", baslik: "NextGen'in kapısı", metin: "Dersler burada başlar. Hangi dili seçeceğini bilmiyorsan sohbetimizde bana sor." }
+      { sec: "#kam-dev", baslik: "Ben KAM.", metin: "QUAGEN'in yapay zekâ öğretmeniyim. Konuları ben anlatırım, takıldığında bana yazarsın. Önce burada neyin ne olduğunu göstereyim." },
+      { sec: "#dunya", baslik: "İki ayrı dünya var.", metin: "**QUAGEN** şu an bulunduğun yer: beni, öğretme yöntemimizi ve siteyi tanırsın. **NextGen** ise işin yapıldığı yer: dersler, Pratik ve Kütüphane orada. Bu anahtarla geçersin." },
+      { sec: "#sahne", baslik: "Burada benimle konuşursun.", metin: "Solda yazışırız, sağda kod aynı anda değişir. Derslerin hepsi bu şekilde geçer. Tanıtım bitince sana burada kısa bir örnek göstereceğim." },
+      { sec: "#kam .kam-ozellik", baslik: "Benden ne beklemelisin?", metin: "Konuyu anlatırım, görevde ipucu veririm, sana plan yaparım. Cevabı hazır vermem; çünkü öğrenmeni istiyorum." },
+      { sec: "#ders .adimlar", baslik: "Bir ders dört adımdır.", metin: "Tahmin edersin, ben anlatırım, sen yazarsın, sonra kartlarla hatırlarsın. Her derste aynı sıra." },
+      { sec: "#bilim .bilim", baslik: "Bunların bir nedeni var.", metin: "Her adım, işe yaradığı ölçülmüş bir öğrenme yöntemine dayanıyor. Merak edersen kaynaklarıyla burada yazıyor." },
+      { sec: "#kapi", baslik: "NextGen'in kapısı", metin: "Hazır olduğunda buradan geçersin. Hangi dili seçeceğini bilmiyorsan sohbetimizde bana sor." }
     ];
     if (hesapVar() && !uye) adimlar.push({ sec: "#nav-login", baslik: "Şimdi aramıza katıl.", metin: "Sonra derslere geçelim. Kayıt ücretsiz; ilerlemen hesabında saklanır ve hiçbir cihazda kaybolmaz.", dugme: "Aramıza katıl", git: "hesap.html?sonra=nextgen.html#kayit", ikinci: { ad: "Şimdi değil" } });
     const basladi = window.KAM_TUR.baslat(adimlar, { anahtar: TUR_ANAHTAR, bitince: (neden) => { if (neden !== "git") { scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" }); setTimeout(() => karsila().catch(() => {}), 500); } } });

@@ -7,7 +7,7 @@
   const view = $("#view");
   const UNLOCK = 0.66;
   const KAM_VAR = !!window.KAM;                              // karşılama, plan ve ipuçları her dilde KAM'den
-  const KAMLI = KAM_VAR && window.KAM.dersVar();             // konuyu sohbetle anlatma: şimdilik C
+  const KAMLI = KAM_VAR;                                     // konuyu her dilde KAM sohbetle anlatır
   const STEPS = [["tahmin", "Tahmin et"], ["incele", KAMLI ? "KAM anlatıyor" : "İncele"], ["kodla", "Kodla"], ["hatirla", "Hatırla"]];
   const MENTOR_AD = KAM_VAR ? "KAM" : "Mentor";
   const ALL_CARDS = C.flatMap((p) => p.cards.map((c) => Object.assign({ phase: p }, c)));
@@ -171,22 +171,41 @@
       : `<a href="${x.h}">${esc(x.t)}</a><span class="sep" aria-hidden="true">/</span>`).join("");
   }
 
+  const IK_PRATIK = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 2s5 4.5 5 10a5 5 0 0 1-10 0c0-2 1-3.5 1-3.5S9 11 10.5 11C10.5 7 12 2 12 2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+  const IK_KITAP = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3Z M9 9h6M9 13h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
   function renderSide(active) {
     const due = KD.srs.due(ALL_CARDS).length;
-    $("#side-main").innerHTML = [
-      ["panel", I.home, "Panel", ""],
-      ["tekrar", I.cards, "Tekrar", `<span class="count" id="due-badge" ${due ? "" : "hidden"}>${due}</span>`],
-      ["karma", I.shuffle, "Karma antrenman", ""],
-      ["icgoruler", I.chart, "İçgörüler", ""],
-      ["profil", I.user, "Profil", ""],
-      ["sertifika", I.award, "Sertifikalar", ""]
-    ].map(([id, ic, t, extra]) => `<a href="#${id}" class="side-link ${active === id ? "on" : ""}">${ic}<span>${t}</span>${extra}</a>`).join("");
+    const bugun = S.state.daily[S.day()] || 0, hedef = prefs().goal || 50, oran = Math.min(1, bugun / hedef), st = S.state.streak;
+    const GRUPLAR = [
+      ["Çalış", [
+        ["#panel", "panel", I.home, "Panel", "Bugünün planı", ""],
+        ["#tekrar", "tekrar", I.cards, "Tekrar", due ? "Bugün " + due + " kart bekliyor" : "Bugünlük kart yok", `<span class="count" id="due-badge" ${due ? "" : "hidden"}>${due}</span>`],
+        ["#karma", "karma", I.shuffle, "Karma antrenman", "Eski görevleri yeniden yaz", ""],
+        ["pratik.html?dil=" + LANG, "pratik", IK_PRATIK, "Pratik", "Günde beş dakika", ""]
+      ]],
+      ["Keşfet", [
+        ["rehber.html", "kutuphane", IK_KITAP, "Kütüphane", "Nasıl yazılır? Sor, bul", ""]
+      ]],
+      ["Gelişimin", [
+        ["#icgoruler", "icgoruler", I.chart, "İçgörüler", "Güçlü ve zayıf konuların", ""],
+        ["#profil", "profil", I.user, "Profil", "Tüm dillerdeki ilerlemen", ""],
+        ["#sertifika", "sertifika", I.award, "Sertifikalar", "Bitirdiğin parkurlar", ""]
+      ]]
+    ];
+    $("#side-main").innerHTML = `
+      <a class="side-ozet" href="#panel" aria-label="Bugünkü durum">
+        <span class="so-halka" style="--o:${oran}"><b>${Math.round(oran * 100)}</b></span>
+        <span class="so-yazi"><b>${esc(prefs().name || "Bugün")}</b><small>${bugun} / ${hedef} XP${st.count ? " · " + st.count + " gün seri" : ""}</small></span>
+      </a>` + GRUPLAR.map(([ad, ogeler]) => `
+      <div class="side-grup"><p class="side-grup-ad">${ad}</p>
+        ${ogeler.map(([h, id, ic, t, alt, extra], k) => `<a href="${h}" class="side-link ${active === id ? "on" : ""}" data-id="${id}" style="--k:${k}"><span class="sl-ik">${ic}</span><span class="sl-yazi"><b>${t}</b><small>${alt}</small></span>${extra}</a>`).join("")}
+      </div>`).join("");
 
     const openTrack = active && active.startsWith("p") ? trackOf(C.find((p) => p.id === active) || C[0]) : null;
     $("#tracks").innerHTML = TRACKS.map((t) => {
       const pr = trackProgress(t.id), open = trackUnlocked(t.id);
       return `<details class="trk" ${openTrack === t.id || (!openTrack && t.id === trackOf(lastOpen())) ? "open" : ""}>
-        <summary><span class="trk-name">${esc(t.title)}</span><span class="trk-num">${pr.done}/${pr.phases}</span></summary>
+        <summary><span class="trk-name">${esc(t.title)}</span><span class="trk-num">${pr.done}/${pr.phases}</span><span class="trk-bar" aria-hidden="true"><i style="width:${pr.phases ? (pr.done / pr.phases) * 100 : 0}%"></i></span></summary>
         <ol>${phasesOf(t.id).map((p) => {
           const ok = unlocked(p), m = mastery(p);
           return `<li><a href="#${p.id}" class="ph ${ok ? "" : "locked"} ${m === 1 ? "done" : ""} ${p.id === active ? "on" : ""}" ${ok ? "" : `aria-disabled="true" title="${esc(lockReason(p))}"`}>
@@ -428,7 +447,7 @@
           </div>
         </section>
       </div>`;
-    $$("[data-act=settings]", view).forEach((b) => (b.onclick = openSettings));
+    $$("[data-act=settings]", view).forEach((b) => (b.onclick = () => openSettings("plan")));
   }
 
   /* ---------- Ders görünümü ---------- */
@@ -501,7 +520,7 @@
 
   /* 2 — İncele */
   function stepExample(p, stage) {
-    if (KAMLI) return window.KAM.ders(p, stage);
+    if (KAMLI && p.example && p.example.code) return window.KAM.ders(p, stage);
     const ex = p.example; let i = 0;
     stage.innerHTML = `
       <div class="panel">
@@ -1162,7 +1181,7 @@
       }).join("")}</div>
       <section class="pf-editor" id="pf-editor"></section>`;
     $$("[data-lang]", view).forEach((b) => (b.onclick = () => switchLang(b.dataset.lang)));
-    $$("[data-act=settings]", view).forEach((b) => (b.onclick = openSettings));
+    $$("[data-act=settings]", view).forEach((b) => (b.onclick = () => openSettings("plan")));
     sayaclar(view);
     renderPortfolioEditor($("#pf-editor"));
   }
@@ -1259,42 +1278,86 @@
         </footer>
       </article>`;
     $("#print").onclick = () => window.print();
-    $$("[data-act=settings]", view).forEach((b) => (b.onclick = openSettings));
+    $$("[data-act=settings]", view).forEach((b) => (b.onclick = () => openSettings("plan")));
   }
 
   /* ---------- Ayarlar ---------- */
-  function openSettings() {
-    const d = $("#dlg"), pr = prefs();
+  function openSettings(sekme) {
+    const d = $("#dlg"), pr = prefs(), kam = (S.state.kam = S.state.kam || {});
+    const u = KD.hesap && KD.hesap.kullanici;
+    const SEKMELER = [["hesap", "Hesap", I.user], ["plan", "Öğrenme planı", I.flame], ["gorunum", "Görünüm", I.sun], ["kam", "KAM", I.spark || I.award], ["veri", "Veriler", I.cards]];
+    const acik = SEKMELER.some((x) => x[0] === sekme) ? sekme : "hesap";
+    const biten = C.filter((p) => mastery(p) === 1).length;
+    d.classList.add("genis");
     d.innerHTML = `
-      <form method="dialog" class="settings">
-        <header><h2>Ayarlar</h2><button class="icon-btn" value="close" aria-label="Kapat">${I.x}</button></header>
-        <label>Adın <span class="muted small">Selamlamada ve sertifikada görünür.</span>
-          <input name="name" value="${esc(pr.name)}" maxlength="60" autocomplete="name" /></label>
-        <fieldset><legend>Günlük hedef</legend>
-          <div class="seg">${[20, 50, 100, 150].map((g) => `<label><input type="radio" name="goal" value="${g}" ${pr.goal === g ? "checked" : ""}/><span>${g} XP</span></label>`).join("")}</div>
-          <p class="muted small">50 XP yaklaşık bir görev ve bir tekrar turudur.</p>
-        </fieldset>
-        <fieldset><legend>Tema</legend>
-          <div class="seg">${[["system", "Sistem"], ["light", "Açık"], ["dark", "Koyu"]].map(([v, l]) => `<label><input type="radio" name="theme" value="${v}" ${pr.theme === v ? "checked" : ""}/><span>${l}</span></label>`).join("")}</div>
-        </fieldset>
-        <fieldset><legend>Editör yazı boyutu</legend>
-          <div class="seg">${[13, 14, 15, 16].map((f) => `<label><input type="radio" name="font" value="${f}" ${pr.font === f ? "checked" : ""}/><span>${f}</span></label>`).join("")}</div>
-        </fieldset>
-        <fieldset><legend>İlerleme</legend>
-          <p class="muted small">İlerlemen bu tarayıcıda saklanır. Başka bir cihaza taşımak için dışa aktar.</p>
-          <div class="row">
-            <button type="button" class="btn" id="exp">Dışa aktar</button>
-            <label class="btn" for="imp-file">İçe aktar</label><input type="file" id="imp-file" accept="application/json" hidden />
-            <span class="spacer"></span>
-            <button type="button" class="btn danger" id="wipe">İlerlemeyi sil</button>
+      <form method="dialog" class="settings yonetim">
+        <header><div><h2>Yönetim</h2><p class="muted small">Hesabın, planın, görünüm ve verilerin tek yerde.</p></div><button class="icon-btn" value="close" aria-label="Kapat">${I.x}</button></header>
+        <div class="yn">
+          <nav class="yn-sekme" role="tablist" aria-label="Bölümler">${SEKMELER.map(([id, ad, ic]) => `<button type="button" role="tab" data-s="${id}" aria-selected="${id === acik}">${ic}<span>${ad}</span></button>`).join("")}</nav>
+          <div class="yn-govde">
+            <section data-b="hesap" ${acik === "hesap" ? "" : "hidden"}>
+              <label>Adın <span class="muted small">KAM sana böyle seslenir; sertifikada da bu yazar.</span>
+                <input name="name" value="${esc(pr.name)}" maxlength="60" autocomplete="name" /></label>
+              <div class="yn-kutu">${KD.hesapYok ? `<b>Hesaplar bu sürümde kapalı</b><p class="muted small">İlerlemen bu tarayıcıda saklanıyor.</p>`
+                : u ? `<b>@${esc(u.kullaniciAdi)} olarak giriş yaptın</b><p class="muted small">İlerlemen hesabına kaydediliyor; başka cihazda giriş yapınca kaldığın yerden devam edersin.</p><div class="row"><a class="btn" href="#profil" data-kapat>Profilim</a><button type="button" class="btn" id="yn-cikis">Çıkış yap</button></div>`
+                : `<b>Henüz hesabın yok</b><p class="muted small">Kayıt olursan ilerlemen hesabında saklanır ve hiçbir cihazda kaybolmaz.</p><div class="row"><a class="btn primary" href="hesap.html?sonra=${encodeURIComponent("nextgen.html?dil=" + LANG)}#kayit">Kayıt ol</a><a class="btn" href="hesap.html?sonra=${encodeURIComponent("nextgen.html?dil=" + LANG)}">Giriş yap</a></div>`}</div>
+              <fieldset><legend>Öğrendiğin dil</legend>
+                <div class="seg">${KD.LANGS.map((l) => `<label><input type="radio" name="dil" value="${l.id}" ${l.id === LANG ? "checked" : ""}/><span>${esc(l.ad)}</span></label>`).join("")}</div>
+                <p class="muted small">Her dilin ilerlemesi ayrı tutulur; değiştirince kaldığın yerden açılır.</p>
+              </fieldset>
+            </section>
+            <section data-b="plan" ${acik === "plan" ? "" : "hidden"}>
+              <div class="yn-ozet"><div><b>${biten}/${C.length}</b><small>ders bitti</small></div><div><b>${S.state.streak.count}</b><small>gün seri</small></div><div><b>${S.state.xp.toLocaleString("tr-TR")}</b><small>toplam XP</small></div></div>
+              <fieldset><legend>Günde ayırdığın süre</legend>
+                <div class="seg">${[10, 15, 30, 60].map((g) => `<label><input type="radio" name="dk" value="${g}" ${(kam.dk || 30) === g ? "checked" : ""}/><span>${g} dk</span></label>`).join("")}</div>
+                <p class="muted small" id="yn-plan"></p>
+              </fieldset>
+              <fieldset><legend>Günlük XP hedefi</legend>
+                <div class="seg">${[20, 50, 100, 150].map((g) => `<label><input type="radio" name="goal" value="${g}" ${pr.goal === g ? "checked" : ""}/><span>${g} XP</span></label>`).join("")}</div>
+                <p class="muted small">50 XP yaklaşık bir görev ve bir tekrar turudur.</p>
+              </fieldset>
+            </section>
+            <section data-b="gorunum" ${acik === "gorunum" ? "" : "hidden"}>
+              <fieldset><legend>Tema</legend>
+                <div class="seg">${[["system", "Sistem"], ["light", "Açık"], ["dark", "Koyu"]].map(([v, l]) => `<label><input type="radio" name="theme" value="${v}" ${pr.theme === v ? "checked" : ""}/><span>${l}</span></label>`).join("")}</div>
+              </fieldset>
+              <fieldset><legend>Editör yazı boyutu</legend>
+                <div class="seg">${[13, 14, 15, 16, 18].map((f) => `<label><input type="radio" name="font" value="${f}" ${pr.font === f ? "checked" : ""}/><span>${f}</span></label>`).join("")}</div>
+                <pre class="code yn-onizle"><code>printf("Merhaba, ${esc(pr.name || "dünya")}!\\n");</code></pre>
+              </fieldset>
+              <fieldset><legend>Kısayollar</legend>
+                <ul class="yn-kisayol"><li><kbd>Ctrl</kbd><kbd>K</kbd><span>Ders, görev ya da komut ara</span></li><li><kbd>Ctrl</kbd><kbd>Enter</kbd><span>Testleri çalıştır</span></li><li><kbd>Esc</kbd><span>Açık pencereyi kapat</span></li></ul>
+              </fieldset>
+            </section>
+            <section data-b="kam" ${acik === "kam" ? "" : "hidden"}>
+              <div class="yn-kutu"><b>KAM seni nasıl tanıyor?</b><p class="muted small">${kam.tanisti ? `Günde ${kam.dk || 30} dakika ayırdığını söyledin${kam.baslangic ? "; " + esc(kam.baslangic) + " tarihinde başladın" : ""}.` : "Henüz tanışmadınız."}</p>
+                <div class="row"><button type="button" class="btn" id="yn-tanis">Tanışmayı yeniden yap</button><button type="button" class="btn" id="yn-tur">Tanıtımı yeniden izle</button></div></div>
+              <div class="yn-kutu"><b>Yapay zekâ</b><p class="muted small">${aiOn ? "Çevrimiçi: serbest sorularını yapay zekâ cevaplıyor." : "Şu an kapalı. KAM hazırlanmış anlatımlar ve Kütüphane bilgisiyle cevap veriyor; dersler ve ipuçları bundan etkilenmez."}</p></div>
+            </section>
+            <section data-b="veri" ${acik === "veri" ? "" : "hidden"}>
+              <div class="yn-kutu"><b>Yedek</b><p class="muted small">İlerlemeni bir dosyaya indirip başka bir tarayıcıda geri yükleyebilirsin.</p>
+                <div class="row"><button type="button" class="btn" id="exp">Dışa aktar</button><label class="btn" for="imp-file">İçe aktar</label><input type="file" id="imp-file" accept="application/json" hidden /></div></div>
+              <div class="yn-kutu tehlike"><b>İlerlemeyi sil</b><p class="muted small">Bu dildeki tüm ilerleme, XP, kartlar ve rozetler silinir. Geri alınamaz.</p>
+                <div class="row"><button type="button" class="btn danger" id="wipe">İlerlemeyi sil</button></div></div>
+            </section>
           </div>
-        </fieldset>
+        </div>
       </form>`;
+    const sekmeAc = (id) => { $$(".yn-sekme button", d).forEach((x) => x.setAttribute("aria-selected", x.dataset.s === id)); $$(".yn-govde section", d).forEach((x) => (x.hidden = x.dataset.b !== id)); };
+    $$(".yn-sekme button", d).forEach((x) => (x.onclick = () => sekmeAc(x.dataset.s)));
+    const planYaz = () => { const el = $("#yn-plan", d); if (el && window.KAM) el.innerHTML = md(window.KAM.planMetni(window.KAM.planHesapla(kam.dk || 30, C.length - biten))); };
+    planYaz();
+    $$("[data-kapat]", d).forEach((x) => (x.onclick = () => d.close()));
+    if ($("#yn-cikis", d)) $("#yn-cikis", d).onclick = async () => { try { await KD.hesap.cikis(); } catch (_) {} d.close(); renderAccount(); };
+    $("#yn-tanis", d).onclick = () => { d.close(); pr.onboarded = false; S.save(); if (window.KAM) window.KAM.tanis(); };
+    $("#yn-tur", d).onclick = () => { d.close(); location.hash = "#panel"; setTimeout(() => window.KAM && window.KAM.tur(null, true), 400); };
     const f = $("form", d);
     f.oninput = () => {
       const fd = new FormData(f);
       Object.assign(S.state.prefs, { name: (fd.get("name") || "").trim(), goal: +fd.get("goal"), theme: fd.get("theme"), font: +fd.get("font") });
-      S.save(); applyPrefs();
+      kam.dk = +fd.get("dk") || kam.dk;
+      S.save(); applyPrefs(); planYaz();
+      if (fd.get("dil") && fd.get("dil") !== LANG) switchLang(fd.get("dil"));
     };
     $("#exp", d).onclick = () => {
       const blob = new Blob([JSON.stringify(S.state, null, 2)], { type: "application/json" });
@@ -1310,7 +1373,7 @@
       } catch (_) { toast("Dosya okunamadı. QUAGEN'den dışa aktarılmış bir JSON dosyası seç.", "warn"); }
     };
     $("#wipe", d).onclick = () => { if (confirm("Tüm ilerleme, XP, kartlar ve rozetler silinecek. Bu geri alınamaz. Devam edilsin mi?")) { S.reset(); location.hash = "#panel"; location.reload(); } };
-    d.onclose = () => route();
+    d.onclose = () => { d.classList.remove("genis"); route(); };
     d.showModal();
   }
 
@@ -1429,7 +1492,7 @@
   $("#scrim").onclick = closeSide;
   $("#btn-search").onclick = openPalette;
   $("#btn-theme").onclick = toggleTheme;
-  $("#btn-settings").onclick = openSettings;
+  $("#btn-settings").onclick = () => openSettings();
   addEventListener("keydown", (e) => {
     const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) || document.activeElement.closest?.(".CodeMirror");
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); $("#palette").hidden ? openPalette() : closePalette(); }
@@ -1443,7 +1506,7 @@
     const el = $("#ai-status"); el.textContent = on ? "Yapay zekâ mentor çevrimiçi" : "Mentor yerel modda"; el.classList.toggle("on", on);
     const mm = $("#m-mode"); if (mm) mm.textContent = on ? "Yapay zekâ, Sokratik mod" : "Yerel ipucu motoru";
   });
-  window.KD_APP = { nextTarget, mastery, renderBar, due: () => KD.srs.due(ALL_CARDS).length };
+  window.KD_APP = { nextTarget, mastery, renderBar, runSnippet, hlLang, openSettings: (sekme) => openSettings(sekme), due: () => KD.srs.due(ALL_CARDS).length };
   route();
   checkBadges();
   if (!prefs().onboarded) setTimeout(KAM_VAR ? window.KAM.tanis : openOnboarding, document.documentElement.classList.contains("entering") ? 1800 : 300);
