@@ -3,7 +3,7 @@
  *   const k = KD_KABUK.olustur({ dosyalar: { "/home/ogrenci/not.txt": "merhaba", "/etc/gizli": { icerik: "x", mod: "600", sahip: "root" } } });
  *   k.calistir("ls -la | grep not")  →  { cikti: "…", hata: false }
  * Desteklenen: pwd ls cd cat head tail echo grep find wc sort uniq cut tr base64 xxd rev whoami id hostname
- *              history clear mkdir touch rm cp mv chmod file help; boru (|), > ve >> yönlendirme, ./betik çalıştırma. */
+ *              history clear mkdir touch rm cp mv chmod file help; boru (|), > ve >> yönlendirme, ./betik çalıştırma (.sh dosyaları satır satır çalışır). */
 (function (kok) {
   const KOMUTLAR = {};
   const birlestir = (cwd, p) => {
@@ -153,6 +153,7 @@
     C.yardim = C.help; C.man = (a) => (a[0] && C[a[0]] ? `${a[0]}: kısa yardım için 'help' yaz.\n` : C.help());
     Object.assign(C, KOMUTLAR);
 
+    let derinlik = 0;
     function tekKomut(sozcukler, stdin) {
       const [isim, ...arg] = sozcukler;
       if (isim.includes("/")) {       // ./betik.sh
@@ -160,7 +161,23 @@
         if (!d) throw new Error(`${isim}: Böyle bir dosya ya da dizin yok`);
         if (d.tur === "d") throw new Error(`${isim}: Bu bir dizin`);
         if (!izin(d, 1)) throw new Error(`${isim}: Erişim engellendi (çalıştırma izni yok)`);
-        return d.betik ? d.betik(K, arg, stdin) : d.icerik;
+        if (d.betik) return d.betik(K, arg, stdin);
+        /* Öğrencinin yazdığı betik: her satır sırayla çalışır, $1 ilk argümandır. */
+        if (/\.sh$/.test(isim) || d.icerik.startsWith("#!")) {
+          if (derinlik > 4) throw new Error(`${isim}: betikler iç içe çok derin çağrıldı`);
+          derinlik++;
+          try {
+            let cikti = "";
+            for (const ham of d.icerik.split("\n")) {
+              const t = ham.trim(); if (!t || t.startsWith("#")) continue;
+              const r = K.calistir(t.replace(/\$1/g, arg[0] || "")); K.gecmis.pop();
+              cikti += r.cikti;
+              if (r.hata) { const h = new Error(cikti.replace(/\n$/, "")); throw h; }
+            }
+            return cikti;
+          } finally { derinlik--; }
+        }
+        return d.icerik;
       }
       if (!C[isim]) throw new Error(`${isim}: komut bulunamadı. Komut listesi için 'help' yaz.`);
       return C[isim](arg, stdin, K);

@@ -31,6 +31,19 @@
     return l.join("\n") + "\n";
   })();
 
+
+  /* Linux yolu için sipariş tablosu: her yüklemede aynı içerik */
+  const URUNLER = ["kalem", "defter", "silgi", "kalem", "cetvel", "kalem", "defter", "kalem", "boya", "defter", "kalem"];
+  const siparis = (() => {
+    const l = ["no,sehir,urun,durum"], sehir = ["ankara", "izmir", "bursa", "adana", "konya"];
+    for (let i = 1; i <= 60; i++) l.push(`${1000 + i},${sehir[(i * 3) % 5]},${URUNLER[(i * 7) % URUNLER.length]},${i % 9 === 4 ? "iptal" : i % 5 === 0 ? "bekliyor" : "teslim"}`);
+    return l.join("\n") + "\n";
+  })();
+  const IPTAL = siparis.split("\n").filter((x) => /,iptal$/.test(x)).length;
+  const LX2_BAYRAK = `QG{kalem_${IPTAL}}`;
+  const var_ = (k, yol) => !!k.dosya(yol);
+  const metin = (k, yol) => ((k.dosya(yol) || {}).icerik || "");
+
   const LABLAR = [
     {
       id: "sg1", alan: "siber", no: 1, baslik: "Terminalde yön bulmak", seviye: "Başlangıç", sure: 15,
@@ -147,6 +160,68 @@
       ],
       kapanis: "Bir taramanın izi böyle görünür: kısa sürede, tek adresten, art arda 404. Önceki labda unutulmuş yedeği sistemin içinde bulmuştun; burada aynı hatanın dışarıdan nasıl bulunduğunu gördün."
     }
+    ,{
+      id: "lx1", alan: "linux", no: 1, baslik: "Dosya ve klasör kurmak", seviye: "Başlangıç", sure: 20,
+      ozet: "Okumayı biliyorsun; şimdi yazma sırası. Klasör aç, dosya oluştur, içine yaz, kopyala, taşı ve sil.",
+      kazanim: ["mkdir, touch", "echo ile > ve >>", "cp, mv, rm"],
+      dosyalar: {
+        "/home/ogrenci/gorev.txt": "Bir proje klasörü kurulacak. Adımları KAM anlatıyor.\n",
+        "/home/ogrenci/taslak.txt": "Eski taslak. Artık gerekmiyor ama önce proje klasörüne alınacak.\n",
+        "/home/ogrenci/denetle.sh": { icerik: "# proje klasörünü denetler\n", mod: "755", betik: (k) => {
+          const e = [];
+          if (!var_(k, "/home/ogrenci/proje")) e.push("proje klasörü yok");
+          if (metin(k, "/home/ogrenci/proje/notlar.txt").trim().split("\n").filter(Boolean).length < 2) e.push("proje/notlar.txt içinde iki satır olmalı");
+          if (!var_(k, "/home/ogrenci/proje/yedek.txt")) e.push("proje/yedek.txt yok");
+          if (var_(k, "/home/ogrenci/taslak.txt") || var_(k, "/home/ogrenci/proje/eski.txt")) e.push("taslak hâlâ duruyor");
+          return e.length ? "Eksikler:\n- " + e.join("\n- ") + "\n" : "Her şey yerinde.\nQG{kur_yaz_tasi_sil}\n";
+        } }
+      },
+      adimlar: [
+        { k: ["Önceki lablarda hep okudun. Bu labda dosya sistemini **değiştireceksin**.", "Yeni bir klasör `mkdir` ile açılır: `mkdir proje`. Sonra `ls` ile gör."], gorev: "proje adında bir klasör aç.", ipucu: "`mkdir proje`", cozum: ["mkdir proje"], gec: { durum: (k) => (k.dosya("/home/ogrenci/proje") || {}).tur === "d" } },
+        { k: ["`echo` verdiğin metni ekrana yazar. Sonuna `>` koyarsan ekrana değil, **dosyaya** yazar.", "Dene: `echo ilk not > proje/notlar.txt`. Dosya yoksa oluşur."], gorev: "proje/notlar.txt dosyasına bir satır yaz.", ipucu: "`echo ilk not > proje/notlar.txt`", cozum: ["echo ilk not > proje/notlar.txt"], gec: { durum: (k) => metin(k, "/home/ogrenci/proje/notlar.txt").trim().length > 0 } },
+        { k: ["Dikkat: tek `>` dosyayı **silip baştan** yazar. Sona eklemek için çift `>>` kullanılır.", "`echo ikinci not >> proje/notlar.txt` yaz, sonra `cat proje/notlar.txt` ile iki satırı gör."], gorev: "Aynı dosyanın sonuna ikinci bir satır ekle.", ipucu: "`echo ikinci not >> proje/notlar.txt` (iki tane >)", cozum: ["echo ikinci not >> proje/notlar.txt"], gec: { durum: (k) => metin(k, "/home/ogrenci/proje/notlar.txt").trim().split("\n").filter(Boolean).length >= 2 } },
+        { k: ["Önemli bir dosyayı değiştirmeden önce kopyası alınır. `cp kaynak hedef`: `cp proje/notlar.txt proje/yedek.txt`."], gorev: "notlar.txt dosyasının yedek.txt adında bir kopyasını al.", ipucu: "`cp proje/notlar.txt proje/yedek.txt`", cozum: ["cp proje/notlar.txt proje/yedek.txt"], gec: { durum: (k) => var_(k, "/home/ogrenci/proje/yedek.txt") } },
+        { k: ["`mv` taşır; aynı komut ad da değiştirir, çünkü ad değiştirmek “aynı yere başka adla taşımak”tır.", "Ev dizinindeki `taslak.txt` dosyasını proje klasörüne `eski.txt` adıyla taşı."], gorev: "taslak.txt dosyasını proje/eski.txt olarak taşı.", ipucu: "`mv taslak.txt proje/eski.txt`", cozum: ["mv taslak.txt proje/eski.txt"], gec: { durum: (k) => var_(k, "/home/ogrenci/proje/eski.txt") && !var_(k, "/home/ogrenci/taslak.txt") } },
+        { k: ["Son olarak silme: `rm`. Terminalde **çöp kutusu yoktur**; silinen geri gelmez. Gerçek sistemde bu komutu yazmadan önce iki kez bak.", "`rm proje/eski.txt`"], gorev: "proje/eski.txt dosyasını sil.", ipucu: "`rm proje/eski.txt`", cozum: ["rm proje/eski.txt"], gec: { durum: (k) => !var_(k, "/home/ogrenci/proje/eski.txt") && var_(k, "/home/ogrenci/proje") } },
+        { k: ["Ev dizininde `denetle.sh` adında bir betik var; kurduğun yapıyı denetler. `./denetle.sh` ile çalıştır. Eksik varsa söyler, yoksa bayrağı verir."], gorev: "Denetleme betiğini çalıştır ve bayrağı gönder.", ipucu: "`./denetle.sh` yaz. Eksik sayarsa önceki adımlara bak.", cozum: ["./denetle.sh", "bayrak QG{kur_yaz_tasi_sil}"], gec: { bayrak: "QG{kur_yaz_tasi_sil}" } }
+      ],
+      kapanis: "Bir çalışma alanını baştan kurabiliyorsun: `mkdir`, `echo >`, `>>`, `cp`, `mv`, `rm`. `>` ile `>>` farkını aklında tut; en çok veri kaybettiren hata budur."
+    },
+    {
+      id: "lx2", alan: "linux", no: 2, baslik: "Büyük dosyayı okumadan okumak", seviye: "Başlangıç", sure: 25,
+      ozet: "Altmış satırlık bir sipariş tablosu var. Tek tek okumadan kaç satır olduğunu, kaçının iptal edildiğini ve en çok hangi ürünün satıldığını bul.",
+      kazanim: ["wc -l, head, tail", "grep -c ile sayma", "cut, sort, uniq -c zinciri"],
+      dosyalar: { "/home/ogrenci/siparis.csv": siparis, "/home/ogrenci/gorev.txt": "siparis.csv: no,sehir,urun,durum\nBayrak biçimi: QG{enCokSatanUrun_iptalSayisi}  örnek: QG{silgi_3}\n" },
+      adimlar: [
+        { k: ["Gerçek dosyalar binlerce satır olur; `cat` ile açarsan ekran akar gider. Önce **boyutuna** bakılır.", "`wc -l siparis.csv` satır sayısını verir."], gorev: "Dosyada kaç satır olduğunu öğren.", ipucu: "`wc -l siparis.csv`", cozum: ["wc -l siparis.csv"], gec: { cikti: "^\\s*61\\b" } },
+        { k: ["61 satır: biri başlık, 60'ı sipariş. Başlığı ve ilk kayıtları görmek için `head`: `head -n 3 siparis.csv`."], gorev: "Dosyanın ilk üç satırına bak.", ipucu: "`head -n 3 siparis.csv`", cozum: ["head -n 3 siparis.csv"], gec: { komut: "^head\\b.*siparis\\.csv" } },
+        { k: ["Sütunlar virgülle ayrılmış: no, şehir, ürün, durum. Son kayıtlar için `tail`: `tail -n 2 siparis.csv`."], gorev: "Son iki satıra bak.", ipucu: "`tail -n 2 siparis.csv`", cozum: ["tail -n 2 siparis.csv"], gec: { komut: "^tail\\b.*siparis\\.csv" } },
+        { k: ["Kaç sipariş iptal edilmiş? `grep iptal siparis.csv` hepsini listeler; saymak için `-c` eklenir.", "`grep -c iptal siparis.csv`. Çıkan sayıyı aklında tut."], gorev: "İptal edilen siparişleri say.", ipucu: "`grep -c iptal siparis.csv`", cozum: ["grep -c iptal siparis.csv"], gec: { cikti: "^" + IPTAL + "$" } },
+        { k: ["Şimdi yalnızca ürün sütununu alalım. `cut -d, -f3` “virgülle böl, üçüncü parçayı ver” demek.", "`cut -d, -f3 siparis.csv | head -n 5`"], gorev: "Üçüncü sütunu (ürün) ayır.", ipucu: "`cut -d, -f3 siparis.csv`", cozum: ["cut -d, -f3 siparis.csv"], gec: { komut: "^cut\\b.*-f ?3" } },
+        { k: ["Aynı ürünleri saymak için üç komut zincirlenir: önce `sort` aynıları yan yana getirir, `uniq -c` her birini sayar, son `sort -n` sayıya göre dizer.", "`cut -d, -f3 siparis.csv | sort | uniq -c | sort -n` yaz. En alttaki en çok satandır."], gorev: "Her üründen kaç tane satıldığını say.", ipucu: "`cut -d, -f3 siparis.csv | sort | uniq -c | sort -n`", cozum: ["cut -d, -f3 siparis.csv | sort | uniq -c | sort -n"], gec: { cikti: "\\d+ kalem" } },
+        { k: ["İki şeyi de biliyorsun: en çok satan ürün ve iptal sayısı. `gorev.txt` bayrağın biçimini söylüyor. Bayrağı kendin kur ve gönder."], gorev: "Bayrağı QG{urun_iptalSayisi} biçiminde gönder.", ipucu: "`cat gorev.txt` ile biçime bak. Ürün: sayımın en altındaki. Sayı: grep -c sonucu.", cozum: ["bayrak " + LX2_BAYRAK], gec: { bayrak: LX2_BAYRAK } }
+      ],
+      kapanis: "Bir dosyayı açmadan özetleyebiliyorsun: `wc` boyutu, `head` ve `tail` uçları, `grep -c` sayıyı, `cut | sort | uniq -c` dağılımı verir. Kayıt incelemede de aynı zincir kullanılır."
+    },
+    {
+      id: "lx3", alan: "linux", no: 3, baslik: "İlk betiğin", seviye: "Başlangıç", sure: 20,
+      ozet: "Aynı komutları her gün elle yazmak yerine bir dosyaya koyup tek adımda çalıştır. Betik yaz, çalıştırma izni ver, çalıştır.",
+      kazanim: ["betik dosyası (.sh)", "chmod +x", "./ ile çalıştırma"],
+      dosyalar: {
+        "/home/ogrenci/liste.txt": "elma\narmut\nkiraz\nmuz\n",
+        "/home/ogrenci/.kasa/bayrak.txt": "QG{yaz_izin_ver_calistir}\n",
+        "/home/ogrenci/anahtar.sh": { icerik: "# kasayı açar\ncat .kasa/bayrak.txt\n", mod: "644" }
+      },
+      adimlar: [
+        { k: ["**Betik**, içinde komutlar yazan düz bir metin dosyasıdır. Çalıştırınca satırlar sırayla işlenir.", "İlk betiğini `echo` ile yaz: `echo 'echo Merhaba' > selam.sh`. Tek tırnak, içteki komutun şimdi değil, betik çalışınca işlemesini sağlar."], gorev: "İçinde tek komut olan selam.sh dosyasını oluştur.", ipucu: "`echo 'echo Merhaba' > selam.sh`", cozum: ["echo 'echo Merhaba' > selam.sh"], gec: { durum: (k) => /echo\s+Merhaba/.test(metin(k, "/home/ogrenci/selam.sh")) } },
+        { k: ["Çalıştırmak için başına `./` konur: `./selam.sh`. Dene; hata vereceğini biliyorum, o hatayı görmeni istiyorum."], gorev: "Betiği çalıştırmayı dene.", ipucu: "`./selam.sh`", cozum: ["./selam.sh"], gec: { komut: "^\\./selam\\.sh$", hataOlsa: true } },
+        { k: ["“Çalıştırma izni yok.” Linux, bir dosyayı sen izin vermeden program gibi çalıştırmaz. İnternetten inen bir dosyanın kendiliğinden çalışmamasının sebebi de budur.", "İzni `chmod +x selam.sh` ile ver."], gorev: "Betiğe çalıştırma izni ver.", ipucu: "`chmod +x selam.sh`", cozum: ["chmod +x selam.sh"], gec: { komut: "^chmod\\s+(\\+x|7[0-7][0-7])\\s+selam\\.sh$" } },
+        { k: ["Şimdi yeniden çalıştır: `./selam.sh`."], gorev: "Betiği çalıştır.", ipucu: "`./selam.sh`", cozum: ["./selam.sh"], gec: { cikti: "^Merhaba$" } },
+        { k: ["Betiğe ikinci bir komut ekleyelim. `>>` sona ekliyordu: `echo 'wc -l liste.txt' >> selam.sh`. Sonra yeniden çalıştır; iki komutun çıktısı art arda gelir."], gorev: "Betiğe liste.txt satırlarını sayan komutu ekle ve çalıştır.", ipucu: "`echo 'wc -l liste.txt' >> selam.sh`, sonra `./selam.sh`", cozum: ["echo 'wc -l liste.txt' >> selam.sh", "./selam.sh"], gec: { cikti: "Merhaba\\n\\s*4\\b" } },
+        { k: ["Dizinde hazır bir betik daha var: `anahtar.sh`. Önce `cat anahtar.sh` ile **ne yaptığını oku**. Tanımadığın bir betiği okumadan çalıştırmak, güvenlikte yapılan en yaygın hatalardan biridir.", "Zararsız olduğunu gördüysen izin ver, çalıştır, bayrağı gönder."], gorev: "anahtar.sh betiğini oku, çalıştır ve bayrağı gönder.", ipucu: "`cat anahtar.sh`, `chmod +x anahtar.sh`, `./anahtar.sh`", cozum: ["cat anahtar.sh", "chmod +x anahtar.sh", "./anahtar.sh", "bayrak QG{yaz_izin_ver_calistir}"], gec: { bayrak: "QG{yaz_izin_ver_calistir}" } }
+      ],
+      kapanis: "Betik yazmanın üç adımı: komutları dosyaya koy, `chmod +x` ile izin ver, `./ad.sh` ile çalıştır. Başkasının betiğini çalıştırmadan önce mutlaka oku."
+    }
   ];
 
   /* Öğrenme alanları (yol haritaları). durum: "hazir" | "yakinda" */
@@ -155,7 +230,7 @@
     { id: "c", ad: "C", tur: "dil", durum: "hazir", ozet: "Bilgisayarın içini anlamak isteyenlere. İşaretçiler, bellek, yapılar.", olcu: "20 ders · 60 görev" },
     { id: "js", ad: "JavaScript ve Web", tur: "dil", durum: "hazir", ozet: "Dilin temeli, ardından web sayfaları, React, algoritmalar ve sunucu tarafı.", olcu: "50 ders · 150 görev" },
     { id: "siber", ad: "Siber Güvenlik", tur: "lab", durum: "hazir", ozet: "Sıfırdan: terminal, kayıt inceleme, kodlamalar, izinler, dosya arama, web günlükleri. Her konu tarayıcıdaki bir lab makinesinde.", olcu: "6 lab hazır · devamı geliyor" },
-    { id: "linux", ad: "Linux ve Komut Satırı", tur: "lab", durum: "yakinda", ozet: "Dosya sistemi, süreçler, betik yazma. Siber güvenlik lablarının devamı için temel.", olcu: "hazırlanıyor" },
+    { id: "linux", ad: "Linux ve Komut Satırı", tur: "lab", durum: "hazir", ozet: "Dosya kurmak, büyük dosyaları özetlemek, betik yazmak. Siber güvenlik lablarının dayandığı temel.", olcu: "3 lab hazır · devamı geliyor" },
     { id: "ag", ad: "Ağ Temelleri", tur: "lab", durum: "yakinda", ozet: "IP, port, DNS, HTTP. Bir isteğin tarayıcıdan sunucuya yolculuğu.", olcu: "hazırlanıyor" },
     { id: "veri", ad: "Veri Analizi", tur: "dil", durum: "yakinda", ozet: "Python ile tabloları okumak, temizlemek, özetlemek ve grafiğe dökmek.", olcu: "hazırlanıyor" },
     { id: "vt", ad: "Veritabanları ve SQL", tur: "lab", durum: "yakinda", ozet: "Tablolar, sorgular, birleştirmeler. Şu an Backend parkurunun içinde; ayrı bir yol olacak.", olcu: "hazırlanıyor" }

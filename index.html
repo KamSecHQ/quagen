@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="tr">
+<html lang="tr" class="q3d">
 <head>
   <script>window.QUAGEN_STATIK = true; window.QUAGEN_BULUT = {"url":"https://lalqdppmjirelxngliim.supabase.co","anahtar":"sb_publishable_4_QRTlzAS4J74myS9klBng_SNF8kN42"};</script>
   <script src="assets/js/bulut.js"></script>
@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="assets/css/landing.css" />
   <link rel="stylesheet" href="assets/css/kam.css" />
   <link rel="stylesheet" href="assets/css/cam.css" />
+  <link rel="stylesheet" href="assets/css/quagen3d.css?v=1" />
   <script>(function () { var t = "dark"; try { if (JSON.parse(localStorage.getItem("kd-profile") || "{}").theme === "light") t = "light"; } catch (e) {} document.documentElement.dataset.theme = t; })();</script>
   <link rel="prefetch" href="nextgen.html" />
 </head>
@@ -39,14 +40,18 @@
     <!-- Açılış: KAM kendini tanıtır, konuşurken kod sahnesi canlı değişir -->
     <section class="hero wrap" aria-labelledby="hero-h">
       <div class="hero-ust">
-        <span class="kam-av dev" id="kam-dev" aria-hidden="true"><b></b><b></b></span>
-        <div>
-          <h1 class="hero-h" id="hero-h">Selam, ben KAM.</h1>
+        <div class="hero-yazi">
+          <h1 class="hero-h" id="hero-h"><span>Selam,</span><span class="q-ben">ben KAM.</span></h1>
           <p class="lead">Kod yazmayı sana ben öğreteceğim. Konuşarak anlatırım, kod yanımızda değişir, sonra klavye sana geçer.</p>
+          <div class="hero-git">
+            <a href="nextgen.html" class="btn btn-marker btn-lg js-warp">Derse başla</a>
+            <a href="#sahne" class="btn btn-line btn-lg">KAM'i dinle</a>
+          </div>
         </div>
+        <div class="hero-kure"><span class="kam-av dev" id="kam-dev" aria-hidden="true"><b></b><b></b></span></div>
       </div>
 
-      <div class="sahne cam" id="sahne">
+      <div class="sahne-3b"><div class="sahne cam" id="sahne">
         <section class="s-sohbet" aria-label="KAM ile sohbet">
           <div class="kam-akis" id="h-akis" aria-live="polite"></div>
           <div class="kam-cevap" id="h-cevap" data-odak="yok"></div>
@@ -56,7 +61,7 @@
           <pre class="sahne-kod" id="h-kod"><code><span class="sahne-bos">KAM anlatmaya başlayınca kod burada belirecek.</span></code></pre>
           <div class="sahne-cikti" id="h-cikti" hidden></div>
         </section>
-      </div>
+      </div></div>
       <noscript><p class="lead">Sohbeti görmek için JavaScript gerekir. <a href="nextgen.html">NextGen'e doğrudan git.</a></p></noscript>
     </section>
 
@@ -83,8 +88,8 @@
       <ol class="adimlar">
         <li class="cam"><span class="adim-n">1</span><h3>Tahmin edersin</h3><p>Kısa bir kodun ne yazacağını tahmin edersin. Yanılmak serbest; aklında bir soru oluşması yeter.</p></li>
         <li class="cam"><span class="adim-n">2</span><h3>KAM anlatır</h3><p>Mesaj mesaj, senin hızında. Anlattığı satır yanda parlar, kod çalışır, çıktıyı görürsün.</p></li>
-        <li class="cam"><span class="adim-n">3</span><h3>Yoklanır, alıştırırsın</h3><p>On seçmeli soru, ardından yeni satırları önce bakarak, sonra bir parçası eksikken, en son bakmadan yazarsın.</p></li>
-        <li class="cam"><span class="adim-n">4</span><h3>Sen yazarsın</h3><p>Üç görev: önce hazır kodu değiştirir, sonra sıfırdan yazar, en son bir hatayı düzeltirsin. Testler anında sonuç verir.</p></li>
+        <li class="cam"><span class="adim-n">3</span><h3>Yoklanır, alıştırırsın</h3><p>On kısa soru. Sonra yeni satırları önce bakarak, sonra bir parçası eksikken, en son bakmadan yazarsın.</p></li>
+        <li class="cam"><span class="adim-n">4</span><h3>Sen yazarsın</h3><p>Yedi küçük görev, sırayla. Hepsi yalnızca KAM'in o derste anlattığını ister; kodun çalışır, sonucu hemen görürsün.</p></li>
         <li class="cam"><span class="adim-n">5</span><h3>Unutmazsın</h3><p>Kısa kartlar, tam unutmaya başlayacağın gün geri gelir. Günde birkaç dakika yeter.</p></li>
       </ol>
     </section>
@@ -202,6 +207,7 @@
   <script src="assets/js/python.js"></script>
   <script src="assets/js/tur.js"></script>
   <script src="assets/js/landing.js"></script>
+  <script src="assets/js/quagen3d.js?v=1"></script>
   <script src="assets/js/gecis.js"></script>
 </body>
 </html>

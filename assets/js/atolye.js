@@ -41,8 +41,8 @@
     const { LABLAR } = L(), d = labDurum();
     view.innerHTML = `<div class="page at-sayfa">
       <header class="at-bas"><h1>Lablar</h1><p class="muted">Her lab, tarayıcında açılan sahte bir Linux makinesi. Hiçbir şeyi bozamazsın. KAM solda anlatır, sen sağdaki terminale yazarsın; sonunda bir bayrak bulursun.</p></header>
-      <h2 class="at-ara">Siber Güvenlik · sıfırdan</h2>
-      <ol class="lab-liste">${LABLAR.map((l, i) => {
+      ${L().ALANLAR.filter((al) => al.tur === "lab" && LABLAR.some((l) => l.alan === al.id)).map((al) => `<h2 class="at-ara" id="alan-${al.id}">${esc(al.ad)} · ${LABLAR.filter((l) => l.alan === al.id && (d[l.id] || {}).bitti).length} / ${LABLAR.filter((l) => l.alan === al.id).length}</h2>
+      <ol class="lab-liste">${LABLAR.filter((l) => l.alan === al.id).map((l, i) => {
         const x = d[l.id] || {}, oran = x.bitti ? 1 : (x.adim || 0) / l.adimlar.length;
         return `<li style="--i:${i}"><a href="#lab/${l.id}" class="lab-kart ${x.bitti ? "bitti" : ""}">
           <span class="lab-no">${x.bitti ? "✓" : l.no}</span>
@@ -50,7 +50,7 @@
             <span class="lab-etiket">${l.kazanim.map((k) => `<i>${esc(k)}</i>`).join("")}</span></span>
           <span class="lab-yan"><span>${esc(l.seviye)} · ${l.sure} dk</span><span class="lab-cubuk"><i style="width:${oran * 100}%"></i></span><b>${x.bitti ? "Yeniden çöz" : x.adim ? "Devam et" : "Başla"}</b></span>
         </a></li>`;
-      }).join("")}</ol>
+      }).join("")}</ol>`).join("")}
       <p class="muted small at-not">Bu lablar gerçek bir sisteme bağlanmaz; komutlar tarayıcıdaki bir benzetimde çalışır. Burada öğrendiklerini yalnızca kendi sistemlerinde ya da izin verilen alıştırma ortamlarında kullan.</p>
     </div>`;
   }
@@ -67,7 +67,7 @@
     for (let i = 0; i < d.adim; i++) lab.adimlar[i].cozum.forEach((c) => { if (!/^bayrak\s/.test(c)) kabuk.calistir(c); });
     kabuk.gecmis.length = 0;
     view.innerHTML = `<div class="page lab-sayfa">
-      <header class="lab-ust"><a class="btn sm ghost" href="#lab">‹ Lablar</a><div><p class="muted small">Siber Güvenlik · Lab ${lab.no}</p><h1>${esc(lab.baslik)}</h1></div><span class="lab-sayac" id="lab-sayac"></span></header>
+      <header class="lab-ust"><a class="btn sm ghost" href="#lab">‹ Lablar</a><div><p class="muted small">${esc((L().ALANLAR.find((x) => x.id === lab.alan) || {}).ad || "Lab")} · Lab ${lab.no}</p><h1>${esc(lab.baslik)}</h1></div><span class="lab-sayac" id="lab-sayac"></span></header>
       <div class="kam-ders lab-duzen">
         <section class="kam-sohbet" aria-label="KAM anlatıyor">
           <header class="kam-bas">${YUZ}<div><b>KAM</b><small>${esc(lab.seviye)} · yaklaşık ${lab.sure} dakika</small></div><button class="btn sm ghost" id="lab-ipucu">İpucu</button></header>

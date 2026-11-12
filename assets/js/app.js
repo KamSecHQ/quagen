@@ -191,7 +191,7 @@
         ["pratik.html?dil=" + LANG, "pratik", IK_PRATIK, "Pratik", "Günde beş dakika", ""]
       ]],
       ["Atölye", [
-        ["#lab", "lab", IK_LAB, "Lablar", "Siber güvenlik: sanal makine", ""],
+        ["#lab", "lab", IK_LAB, "Lablar", "Güvenlik ve Linux: sanal makine", ""],
         ["#projeler", "projeler", IK_PROJE, "Projeler", "Basitten zora 25 fikir", ""],
         ["#terminal", "terminal", IK_TERM, "Terminal", "Serbest çalışma alanı", ""]
       ]],
@@ -1412,7 +1412,7 @@
       { g: "Git", t: "İçgörüler", sub: "Beceri haritası, hafıza ve kalibrasyon", h: "#icgoruler" },
       { g: "Git", t: "Sertifikalar", h: "#sertifika" },
       { g: "Git", t: "Günlük pratik", sub: "5 dakikalık oyunlaştırılmış alıştırma", run: () => (location.href = "pratik.html?dil=" + LANG) },
-      { g: "Git", t: "Lablar", sub: "Siber güvenlik: sanal makinede adım adım", h: "#lab" },
+      { g: "Git", t: "Lablar", sub: "Güvenlik ve Linux: sanal makinede adım adım", h: "#lab" },
       { g: "Git", t: "Projeler", sub: "Basitten zora 25 proje fikri", h: "#projeler" },
       { g: "Git", t: "Terminal", sub: "Serbest çalışma alanı", h: "#terminal" },
       { g: "Git", t: "Yol haritaları", sub: "Diller ve alanlar", h: "#yollar" },
