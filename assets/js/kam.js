@@ -24,6 +24,23 @@
   const GUN = 864e5;
   const AVATAR = '<span class="kam-av" aria-hidden="true"><b></b><b></b><i></i></span>';
 
+  /* Bir mesajı cümlelerinden kısa balonlara böler (en çok ~120 karakter). Kod parçalarının (`...`) içi bölünmez;
+     satır sonu içeren (liste gibi) mesajlara dokunulmaz. */
+  function bol(metin, enCok = 120) {
+    metin = String(metin);
+    if (metin.length <= enCok || /\n/.test(metin)) return [metin];
+    const kodlar = [];
+    const korunan = metin.replace(/`[^`]*`|“[^”]*”/g, (m) => { kodlar.push(m); return "\u0001" + (kodlar.length - 1) + "\u0002"; });
+    const cumleler = korunan.split(/(?<=[.!?…])\s+(?=[A-ZÇĞİÖŞÜ\u0001“"(*])/).map((c) => c.trim()).filter(Boolean);
+    const balonlar = [];
+    for (const c of cumleler) {
+      const son = balonlar[balonlar.length - 1];
+      if (son !== undefined && (son.length < 38 || c.length < 28) && son.length + c.length + 1 <= enCok) balonlar[balonlar.length - 1] = son + " " + c;
+      else balonlar.push(c);
+    }
+    return balonlar.map((b) => b.replace(/\u0001(\d+)\u0002/g, (_, i) => kodlar[+i]));
+  }
+
   /* ------------------------------------------------------------------ sohbet akışı */
   function sohbet(akis, cevapAlani) {
     let hizli = false;
@@ -31,13 +48,19 @@
     const balon = (html, kim) => { const d = document.createElement("div"); d.className = "kam-msg " + kim; d.innerHTML = html; akis.append(d); kaydir(); return d; };
     return {
       set hizli(v) { hizli = v; }, get hizli() { return hizli; },
+      /* Uzun mesaj tek paragraf olarak gelmez: kısa balonlara bölünür, her biri ayrı yazılır */
       async kam(metin, ekHtml = "") {
-        if (!hizli && !reduced()) {
-          const y = balon('<span class="kam-yaziyor"><i></i><i></i><i></i></span>', "k");
-          await bekle(Math.min(1500, 420 + metin.length * 11));
-          y.remove();
+        const parcalar = bol(metin);
+        let son = null;
+        for (let i = 0; i < parcalar.length; i++) {
+          if (!hizli && !reduced()) {
+            const y = balon('<span class="kam-yaziyor"><i></i><i></i><i></i></span>', "k");
+            await bekle(Math.min(1300, (i ? 260 : 420) + parcalar[i].length * 11));
+            y.remove();
+          }
+          son = balon(md(parcalar[i]).replace(/\n/g, "<br>") + (i === parcalar.length - 1 ? ekHtml : ""), "k" + (i ? " devam" : ""));
         }
-        return balon(md(metin).replace(/\n/g, "<br>") + ekHtml, "k");
+        return son;
       },
       sen(metin) { return balon(esc(metin), "s"); },
       /* Hazır cevaplar: seçilen balona dönüşür. Hızlı modda ilki seçilir. */
@@ -491,5 +514,5 @@
   }
   if (document.readyState === "loading") addEventListener("DOMContentLoaded", kur); else setTimeout(kur, 0);
 
-  window.KAM = { aktif, dersVar, tur, sohbet, ders, tanis, karsila, ac: cekmeceAc, planHesapla, planMetni, karsilamaMetni, otomatikSenaryo, ilerleme };
+  window.KAM = { aktif, dersVar, tur, sohbet, bol, ders, tanis, karsila, ac: cekmeceAc, planHesapla, planMetni, karsilamaMetni, otomatikSenaryo, ilerleme };
 })();

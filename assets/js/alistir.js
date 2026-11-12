@@ -202,7 +202,9 @@
      hafızada o satıra özel görev cümlesi ve kullanılacak adlar, değerler. */
   function uret(p, mufredat) {
     const L = satirlar(p, 4, mufredat).slice(0, 4), sira = [];
-    const kopya = (i) => ({ tur: "kopya", i, satir: L[i].satir, aciklama: L[i].aciklama });
+    /* Açıklama tek cümle: okumak değil yazmak için buradayız */
+    const tekCumle = (s) => { s = String(s || "").trim(); const m = s.match(/^.*?[.!?](?=\s|$)/); const t = m && m[0].length >= 18 ? m[0] : s; return t.length > 110 ? t.slice(0, 109).replace(/\s+\S*$/, "") + "…" : t; };
+    const kopya = (i) => ({ tur: "kopya", i, satir: L[i].satir, aciklama: tekCumle(L[i].aciklama) });
     const bosluk = (i) => { const b = boslukSec(L[i].satir, i); return b ? Object.assign({ tur: "bosluk", i, satir: L[i].satir }, b) : null; };
     const hafiza = (i) => ({ tur: "hafiza", i, satir: L[i].satir, gorev: niyet(L[i].satir), parcalar: karisikParcalar(L[i].satir) });
     if (!L.length) return { satirlar: L, sira };

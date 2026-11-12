@@ -11,7 +11,9 @@
   function rasgele(tohum) { let t = tohum >>> 0; return () => { t = (t + 0x6d2b79f5) >>> 0; let r = Math.imul(t ^ (t >>> 15), 1 | t); r = (r + Math.imul(r ^ (r >>> 7), 61 | r)) ^ r; return ((r ^ (r >>> 14)) >>> 0) / 4294967296; }; }
   const tohumOf = (s) => { let h = 2166136261; for (const c of String(s)) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return h >>> 0; };
   const karistir = (l, r) => { const a = l.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-  const kisalt = (s, n = 150) => (s.length > n ? s.slice(0, n - 1).replace(/\s+\S*$/, "") + "…" : s);
+  /* Şıklar ve sorular kısa olmalı: yalnızca ilk cümle, o da uzunsa kelime sınırında kesilir */
+  const kisalt = (s, n = 78) => { s = String(s).trim(); const ilk = (s.match(/^.*?[.!?](?=\s|$)/) || [s])[0].trim(); const t = ilk.length >= 18 ? ilk : s; return t.length > n ? t.slice(0, n - 1).replace(/\s+\S*$/, "").replace(/[,;:]$/, "") + "…" : t; };
+  const uzun = (s, n = 200) => { s = String(s).trim(); return s.length > n ? s.slice(0, n - 1).replace(/\s+\S*$/, "") + "…" : s; };
 
   /* Bir satırı küçük ama gerçek bir yazım hatasıyla bozar; bozamazsa null */
   function boz(satir, r) {
@@ -61,11 +63,11 @@
     /* 1. Anlam: bu satır ne yapar? */
     const digerBenim = (c) => ciftler.filter((x) => x !== c).map((x) => kisalt(x.aciklama));
     const anlamIcin = karistir(ciftler, r).sort((a, b) => b.dar - a.dar).slice(0, 3);
-    anlamIcin.forEach((c) => ekle("anlam", "Aşağıdaki satır için hangisi doğrudur?", c.satirlar.slice(0, 2).join("\n"), sik5([kisalt(c.aciklama)], [...digerBenim(c), ...digerAciklama.map((x) => kisalt(x))]), kisalt(c.aciklama, 220)));
+    anlamIcin.forEach((c) => ekle("anlam", "Bu satır ne yapar?", c.satirlar.slice(0, 2).join("\n"), sik5([kisalt(c.aciklama)], [...digerBenim(c), ...digerAciklama.map((x) => kisalt(x))]), uzun(c.aciklama)));
     /* 2. Satır: şu işi hangi satır yapar? */
     /* Aynı satır hem "ne yapar" hem "hangi satır" olarak sorulmasın: önce kullanılmamış açıklamalar */
     const satirIcin = [...karistir(ciftler.filter((c) => !anlamIcin.includes(c)), r), ...karistir(anlamIcin.filter((c) => c.dar), r)].slice(0, 2);
-    satirIcin.forEach((c) => ekle("satir", "Şu işi hangi satır yapar?\n" + kisalt(c.aciklama, 200), "", sik5([c.satir], [...benimSatirlar.filter((s) => !c.satirlar.includes(s)), ...digerSatir]), "Doğru satır: `" + c.satir + "`", true));
+    satirIcin.forEach((c) => ekle("satir", "Hangi satır?\n" + kisalt(c.aciklama, 96), "", sik5([c.satir], [...benimSatirlar.filter((s) => !c.satirlar.includes(s)), ...digerSatir]), "Doğru satır: `" + c.satir + "`", true));
     /* 3. Boşluk: hangi sözcük gelir? Çeldiriciler tartışmasız yanlıştır: doğru sözcüğün yanlış yazımları
           (büyük harf, eksik harf) ve başka işe yarayan sözcükler. Aynı türden geçerli bir seçenek (int yerine double) konmaz. */
     const kategori = (x) => (/^%/.test(x) ? "bicim" : al.SOZLUK.get(x) || "");
@@ -78,11 +80,11 @@
       const baska = karistir(sozcukHavuzu.filter((x) => x !== b.bos && kategori(x) !== kategori(b.bos) && /^[A-Za-z%]/.test(x)), r);
       const sec = sik5([b.bos], [...yanlisYazim.slice(0, 2), ...baska.slice(0, 2), yanlisYazim[2], ...baska.slice(2)].filter((x) => x && x !== b.bos), true);
       if (!sec) continue;
-      ekle("bosluk", "Boş bırakılan yere hangisi gelmeli?\nBüyük-küçük harfe dikkat et.", b.on + "_____" + b.son, sec, "Satırın tamamı: `" + s + "`", true); bs++;
+      ekle("bosluk", "Boşluğa ne gelir?", b.on + "_____" + b.son, sec, "Satırın tamamı: `" + s + "`", true); bs++;
     }
     /* 4. Kartlar: dersin kavram soruları */
     const digerKart = yakin.flatMap((q) => (q.cards || []).map((c) => kisalt(c.a)));
-    (p.cards || []).forEach((c) => ekle("kart", c.q, "", sik5([kisalt(c.a)], [...(p.cards || []).filter((x) => x !== c).map((x) => kisalt(x.a)), ...digerKart]), kisalt(c.a, 240)));
+    (p.cards || []).forEach((c) => ekle("kart", kisalt(c.q, 110), "", sik5([kisalt(c.a)], [...(p.cards || []).filter((x) => x !== c).map((x) => kisalt(x.a)), ...digerKart]), uzun(c.a, 240)));
     /* 5. Çoklu: hangileri hatasız yazılmış? */
     const coklu = (tohumEk) => {
       const rr = rasgele(tohumOf(p.id + tohumEk)), kaynak = karistir(benimSatirlar.filter((s) => s.length <= 60), rr);
@@ -93,15 +95,16 @@
       const kullan = bozuklar.slice(0, 5 - dogrular.length);
       const sec = karistir([...dogrular.map((t) => ({ t, d: true })), ...kullan.map((x) => ({ t: x.b, d: false }))], rr);
       if (new Set(sec.map((x) => x.t)).size < 5) return;
-      ekle("hatasiz", `Aşağıdaki satırlardan hangileri hatasız yazılmış?\nBirden fazla doğru şık var: ${dogrular.length} tanesini işaretle.`, "", sec, "Hatalı olanlar: " + kullan.map((x) => "`" + x.b + "` (" + NEDEN(x.s, x.b) + ")").join("; "), true);
+      ekle("hatasiz", `Hangileri hatasız?\nBirden fazla doğru şık var: ${dogrular.length} tanesini işaretle.`, "", sec, "Hatalı olanlar: " + kullan.map((x) => "`" + x.b + "` (" + NEDEN(x.s, x.b) + ")").join("; "), true);
     };
     coklu("a"); coklu("b"); coklu("c");
     /* 6. Çoklu: hangileri bu dersin örneğinde geçer? */
     { const d = karistir(benimSatirlar, r).slice(0, 2), sec = sik5(d, digerSatir.filter((s) => !benimSatirlar.includes(s)));
-      if (sec && d.length === 2) ekle("gecer", "Aşağıdaki satırlardan hangileri bu dersin konusuna aittir (KAM'in az önce anlattığı örnekte geçti)?\nBirden fazla doğru şık var: 2 tanesini işaretle.", "", sec, "Bu derste geçenler: " + d.map((x) => "`" + x + "`").join(" ve "), true); }
+      if (sec && d.length === 2) ekle("gecer", "Hangileri bu derste geçti?\nBirden fazla doğru şık var: 2 tanesini işaretle.", "", sec, "Bu derste geçenler: " + d.map((x) => "`" + x + "`").join(" ve "), true); }
     /* Tahmin sorusu (5 şıklıysa) en başa */
     /* Sıra: önce anlam, sonra tanıma, sonra çoklu; türler karışık ama kolaydan zora */
-    const sira = ["anlam", "kart", "satir", "bosluk", "anlam", "kart", "hatasiz", "satir", "bosluk", "anlam", "kart", "gecer", "hatasiz"];
+    /* Okuması az, koda bakması çok sorular önce; düz metinli olanlar (anlam, kart) en çok dört tane */
+    const sira = ["bosluk", "satir", "hatasiz", "kart", "bosluk", "anlam", "gecer", "satir", "kart", "hatasiz", "anlam", "hatasiz", "kart", "anlam"];
     const kalan = sorular.slice(), secilen = [];
     for (const t of sira) { if (secilen.length >= adet) break; const i = kalan.findIndex((s) => s.tur === t); if (i >= 0) secilen.push(kalan.splice(i, 1)[0]); }
     while (secilen.length < adet && kalan.length) secilen.push(kalan.shift());

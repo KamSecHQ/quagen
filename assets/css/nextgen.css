@@ -987,3 +987,14 @@ html, body { overflow-x: clip; }
 .yn-kisayol span { margin-left: 8px; color: var(--graphite); }
 @media (max-width: 720px) { .yn { grid-template-columns: 1fr; } .yn-sekme { grid-auto-flow: column; overflow-x: auto; padding-bottom: 4px; } .yn-sekme button { white-space: nowrap; } .yn-ozet b { font-size: 21px; } }
 .side-link > span.sl-ik:not(.count) { flex: none; }
+
+/* v11 — adım çubuğu: altı adım her genişlikte sığar. Dar alanda yalnızca açık adımın adı yazar, diğerleri numara olur. */
+.steps { display: flex; overflow: visible; }
+.step { flex: 1 1 0; min-width: 0; padding: 0 8px; }
+.step-l { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 1500px) {
+  .step { flex: 0 0 auto; padding: 0 10px; }
+  .step.on { flex: 1 1 auto; }
+  .step:not(.on) .step-l { display: none; }
+}
+@media (max-width: 860px) { .steps { display: flex; justify-content: space-between; } .step { padding: 0 6px; } }

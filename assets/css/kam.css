@@ -256,3 +256,11 @@ body:has(.kam-ders) .kam-fab { display: none; }   /* derste soru alanı sohbetin
 .tests li[hidden] { display: none; }
 .sub small { font-weight: 500; font-size: 12.5px; margin-left: 6px; }
 @media (max-width: 900px) { .kg { grid-template-columns: 1fr; } .kg-no { width: 34px; height: 34px; border-radius: 11px; } .kg-iki { grid-template-columns: 1fr; } .ileri-not { flex-direction: column; align-items: flex-start; } }
+
+/* Kısa balonlar: aynı mesajın devamı öncekine yakın durur */
+.kam-msg.devam { margin-top: -3px; border-top-left-radius: 8px; }
+.kam-msg { line-height: 1.5; }
+/* Sorular: kısa soru, kısa şık */
+.sr-soru { font-size: clamp(20px, 2.1vw, 26px); }
+.sr-not { font-size: 14px; }
+.sr-metin { font-size: 15.5px; }
