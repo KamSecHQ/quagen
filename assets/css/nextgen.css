@@ -988,13 +988,21 @@ html, body { overflow-x: clip; }
 @media (max-width: 720px) { .yn { grid-template-columns: 1fr; } .yn-sekme { grid-auto-flow: column; overflow-x: auto; padding-bottom: 4px; } .yn-sekme button { white-space: nowrap; } .yn-ozet b { font-size: 21px; } }
 .side-link > span.sl-ik:not(.count) { flex: none; }
 
-/* v11 — adım çubuğu: altı adım her genişlikte sığar. Dar alanda yalnızca açık adımın adı yazar, diğerleri numara olur. */
-.steps { display: flex; overflow: visible; }
-.step { flex: 1 1 0; min-width: 0; padding: 0 8px; }
-.step-l { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-@media (max-width: 1500px) {
-  .step { flex: 0 0 auto; padding: 0 10px; }
-  .step.on { flex: 1 1 auto; }
-  .step:not(.on) .step-l { display: none; }
+/* v12 — adım çubuğu: altı adımın adı her genişlikte yazılı ve eşit büyüklükte. Yer daralınca üçerli iki sıra olur; hiçbir adım numaraya küçülmez. */
+.steps { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); justify-content: stretch; overflow: visible; }
+.step { min-width: 0; padding: 0 8px; }
+.step .step-l { display: inline; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 1320px) {
+  .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .step { height: 42px; }
+  .step:nth-child(4)::before { display: none; }
 }
-@media (max-width: 860px) { .steps { display: flex; justify-content: space-between; } .step { padding: 0 6px; } }
+@media (max-width: 560px) {
+  .steps { gap: 4px; padding: 4px; }
+  .step { gap: 6px; padding: 0 4px; font-size: 13px; }
+  .step-n { width: 22px; height: 22px; font-size: 12px; }
+  .step .step-l { white-space: normal; line-height: 1.1; }
+}
+
+/* Geniş ekranda çubuk içerik sütunundan taşmasın: en çok 1280 piksel, ortalı. */
+.main > .steps { width: auto; max-width: 1280px; margin-inline: auto; }
