@@ -19,6 +19,7 @@
   });
   /* Açılış koreografisi ve kaydırdıkça beliren bölümler */
   requestAnimationFrame(() => document.body.classList.add("ready"));
+  setTimeout(() => document.body.classList.add("ready"), 80); /* kare gelmese de (arka plan sekmesi) içerik görünür olsun */
   const bolumler = document.querySelectorAll(".section .sec-head, .adimlar > li, .faq-liste, .cta-in, .kam-ozellik > article, .bilim > article, .kapi, .programlar > *, .kiyas");
   bolumler.forEach((el) => el.classList.add("rv"));
   if (!reduced && "IntersectionObserver" in window) {

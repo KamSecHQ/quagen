@@ -3,7 +3,7 @@
  *   const k = KD_KABUK.olustur({ dosyalar: { "/home/ogrenci/not.txt": "merhaba", "/etc/gizli": { icerik: "x", mod: "600", sahip: "root" } } });
  *   k.calistir("ls -la | grep not")  →  { cikti: "…", hata: false }
  * Desteklenen: pwd ls cd cat head tail echo grep find wc sort uniq cut tr base64 xxd rev whoami id hostname
- *              history clear mkdir touch rm cp mv chmod file help; boru (|), > ve >> yönlendirme, ./betik çalıştırma (.sh dosyaları satır satır çalışır). */
+ *              history clear mkdir touch rm cp mv chmod file help; ağ verilmişse ip ping nslookup nc curl; boru (|), > ve >> yönlendirme, ./betik çalıştırma (.sh dosyaları satır satır çalışır). */
 (function (kok) {
   const KOMUTLAR = {};
   const birlestir = (cwd, p) => {
@@ -148,11 +148,54 @@
         return "";
       },
       sudo: () => { throw new Error(`sudo: ${kullanici} sudoers dosyasında değil. Bu lab yönetici yetkisi gerektirmez.`); },
-      help: () => "Kullanabileceğin komutlar:\n  Gezinme : pwd  ls [-l -a]  cd  find\n  Okuma   : cat  head  tail  wc  file\n  Arama   : grep [-i -n -c -v -r]  sort  uniq [-c]  cut -d -f\n  Dönüşüm : base64 [-d]  xxd [-r -p]  tr  rev  echo\n  Dosya   : mkdir  touch  cp  mv  rm  chmod\n  Diğer   : whoami  id  hostname  history  clear\nBoru (|) ve > yönlendirme çalışır. Örnek: cat kayit.log | grep Hata | wc -l\n"
+      /* ---- Ağ komutları: yalnızca ayar.ag verilmiş makinelerde çalışır (benzetim, gerçek ağa çıkmaz) ---- */
+      ip: (a) => { const g = agGerek("ip"); if (a[0] && !/^a(ddr)?$/.test(a[0])) throw new Error("ip: yalnızca 'ip addr' destekleniyor"); return `1: lo: <LOOPBACK,UP>\n    inet 127.0.0.1/8\n2: eth0: <BROADCAST,UP>\n    inet ${g.ben}/24  ağ geçidi ${g.gecit || "-"}\n`; },
+      nslookup: (a) => { agGerek("nslookup"); if (!a[0]) throw new Error("nslookup: kullanım: nslookup alanadı"); const adr = adCoz(a[0]); if (!adr) throw new Error(`nslookup: ${a[0]}: böyle bir ad yok (NXDOMAIN)`); return `Sunucu:  ${ag.dnsSunucu || "192.168.1.1"}\n\nAd:      ${a[0]}\nAdres:   ${adr}\n`; },
+      ping: (a) => {
+        agGerek("ping"); let n = 4; const kalan = [];
+        for (let i = 0; i < a.length; i++) { if (a[i] === "-c") n = Math.max(1, Math.min(10, +a[++i] || 4)); else kalan.push(a[i]); }
+        if (!kalan[0]) throw new Error("ping: kullanım: ping [-c adet] adres");
+        const adr = adCoz(kalan[0]); if (!adr) throw new Error(`ping: ${kalan[0]}: ad çözülemedi`);
+        const m = ag.makineler[adr], acik = m && !m.sessiz; let c = `PING ${kalan[0]} (${adr})\n`;
+        for (let i = 1; i <= n; i++) c += acik ? `${adr} adresinden yanıt: sıra=${i} ttl=64 süre=${((m.ms || 10) + ((i * 7) % 5) / 10).toFixed(1)} ms\n` : `sıra=${i} için zaman aşımı\n`;
+        return c + `\n--- ${kalan[0]} ping özeti ---\n${n} paket gönderildi, ${acik ? n : 0} alındı, %${acik ? 0 : 100} kayıp\n`;
+      },
+      nc: (a) => {
+        agGerek("nc"); const kalan = a.filter((x) => !x.startsWith("-"));
+        if (kalan.length < 2 || !/^\d+$/.test(kalan[1])) throw new Error("nc: kullanım: nc -zv adres port");
+        const adr = adCoz(kalan[0]); if (!adr) throw new Error(`nc: ${kalan[0]}: ad çözülemedi`);
+        const m = ag.makineler[adr]; if (!m) throw new Error(`nc: ${kalan[0]} (${adr}) ${kalan[1]}: zaman aşımı, makine yanıt vermiyor`);
+        const hizmet = (m.portlar || {})[kalan[1]]; if (!hizmet) throw new Error(`nc: ${kalan[0]} (${adr}) ${kalan[1]}: bağlantı reddedildi (port kapalı)`);
+        return `${kalan[0]} (${adr}) ${kalan[1]} portu açık [${hizmet}]\n`;
+      },
+      curl: (a) => {
+        agGerek("curl"); const baslikIste = a.includes("-I") || a.includes("--head"), adres = a.find((x) => !x.startsWith("-"));
+        if (!adres) throw new Error("curl: kullanım: curl [-I] http://adres/yol");
+        const e = adres.match(/^(?:(https?):\/\/)?([^/:]+)(?::(\d+))?(\/.*)?$/); if (!e) throw new Error(`curl: (3) adres anlaşılamadı: ${adres}`);
+        const port = e[3] || (e[1] === "https" ? "443" : "80"), yol = e[4] || "/", adr = adCoz(e[2]);
+        if (!adr) throw new Error(`curl: (6) ad çözülemedi: ${e[2]}`);
+        const m = ag.makineler[adr]; if (!m) throw new Error(`curl: (28) ${e[2]}: zaman aşımı`);
+        const site = (m.web || {})[port]; if (!(m.portlar || {})[port] || !site) throw new Error(`curl: (7) ${e[2]} ${port} portuna bağlanılamadı`);
+        const s = site[yol] || site[yol.replace(/\/$/, "") || "/"] || { kod: 404, govde: "404 Bulunamadı\n" };
+        const kod = s.kod || 200, ad = { 200: "OK", 301: "Kalıcı Olarak Taşındı", 403: "Yasak", 404: "Bulunamadı" }[kod] || "", govde = s.govde || "";
+        if (!baslikIste) return govde;
+        return `HTTP/1.1 ${kod} ${ad}\nServer: ${m.sunucu || "nginx"}\nContent-Type: ${s.tur || "text/html; charset=utf-8"}\nContent-Length: ${govde.length}\n${Object.entries(s.basliklar || {}).map(([k, v]) => `${k}: ${v}\n`).join("")}`;
+      },
+      help: () => (ag ? "Ağ      : ip addr  ping [-c]  nslookup  nc -zv  curl [-I]\n" : "") + "Kullanabileceğin komutlar:\n  Gezinme : pwd  ls [-l -a]  cd  find\n  Okuma   : cat  head  tail  wc  file\n  Arama   : grep [-i -n -c -v -r]  sort  uniq [-c]  cut -d -f\n  Dönüşüm : base64 [-d]  xxd [-r -p]  tr  rev  echo\n  Dosya   : mkdir  touch  cp  mv  rm  chmod\n  Diğer   : whoami  id  hostname  history  clear\nBoru (|) ve > yönlendirme çalışır. Örnek: cat kayit.log | grep Hata | wc -l\n"
     };
     C.yardim = C.help; C.man = (a) => (a[0] && C[a[0]] ? `${a[0]}: kısa yardım için 'help' yaz.\n` : C.help());
     Object.assign(C, KOMUTLAR);
 
+    const ag = ayar.ag || null;
+    const agGerek = (komut) => { if (!ag) throw new Error(`${komut}: bu makine bir ağa bağlı değil`); return ag; };
+    /* Ad çözme sırası gerçek sistemdeki gibi: önce /etc/hosts, sonra DNS. IP verilirse olduğu gibi döner. */
+    const adCoz = (ad) => {
+      if (/^\d+\.\d+\.\d+\.\d+$/.test(ad)) return ad;
+      if (ad === "localhost") return "127.0.0.1";
+      const h = fs.get("/etc/hosts");
+      if (h) for (const satir of h.icerik.split("\n")) { const p = satir.split("#")[0].trim().split(/\s+/); if (p.length > 1 && p.slice(1).includes(ad)) return p[0]; }
+      return (ag.dns || {})[ad] || null;
+    };
     let derinlik = 0;
     function tekKomut(sozcukler, stdin) {
       const [isim, ...arg] = sozcukler;

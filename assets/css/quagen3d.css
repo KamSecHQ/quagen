@@ -199,3 +199,4 @@ html.q3d { background: radial-gradient(120% 80% at 80% -10%, var(--q-bg-2), tran
 }
 @media (max-width: 620px) { .q3d .programlar { grid-template-columns: 1fr; } .q3d .program { min-height: 0; } }
 @media (prefers-reduced-motion: reduce) { .q3d .q-etiket li { animation: none; } }
+.q3d .program-not { margin-top: 20px; color: var(--graphite); font-size: 15px; }

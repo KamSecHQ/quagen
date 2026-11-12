@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>QUAGEN — Ücretsiz yazılım okulu</title>
-  <meta name="description" content="QUAGEN, Türkçe ve ücretsiz bir yazılım okulu. Python, C, JavaScript, siber güvenlik ve Linux; videosuz, yapay zekâ öğretmen KAM ile, tarayıcında." />
+  <meta name="description" content="QUAGEN, Türkçe ve ücretsiz bir yazılım okulu. Python, C, JavaScript, siber güvenlik, Linux ve ağ; videosuz, yapay zekâ öğretmen KAM ile, tarayıcında." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="assets/css/landing.css" />
   <link rel="stylesheet" href="assets/css/kam.css" />
   <link rel="stylesheet" href="assets/css/cam.css" />
-  <link rel="stylesheet" href="assets/css/quagen3d.css?v=2" />
+  <link rel="stylesheet" href="assets/css/quagen3d.css?v=3" />
   <script>(function () { var t = "dark"; try { if (JSON.parse(localStorage.getItem("kd-profile") || "{}").theme === "light") t = "light"; } catch (e) {} document.documentElement.dataset.theme = t; })();</script>
   <link rel="prefetch" href="nextgen.html" />
 </head>
@@ -55,13 +55,13 @@
         <div class="hero-kure">
           <span class="kam-av dev" id="kam-dev" aria-hidden="true"><b></b><b></b></span>
           <ul class="q-etiket" aria-hidden="true">
-            <li>Python</li><li>C</li><li>JavaScript</li><li>Siber Güvenlik</li><li>Linux</li>
+            <li>Python</li><li>C</li><li>JavaScript</li><li>Siber Güvenlik</li><li>Ağ ve Linux</li>
           </ul>
         </div>
       </div>
       <dl class="rakamlar cam" id="hakkinda">
         <div><dt>90</dt><dd>ders, sıfırdan projeye</dd></div>
-        <div><dt>10</dt><dd>lab, tarayıcıdaki sanal makinede</dd></div>
+        <div><dt>14</dt><dd>lab, tarayıcıdaki sanal makinede</dd></div>
         <div><dt>25</dt><dd>proje fikri, basitten zora</dd></div>
         <div><dt>0 ₺</dt><dd>derslerin ve labların tamamı</dd></div>
       </dl>
@@ -70,7 +70,7 @@
     <!-- Programlar -->
     <section class="section wrap" id="programlar">
       <header class="sec-head">
-        <h2>Beş program, hepsi sıfırdan.</h2>
+        <h2>Altı program, hepsi sıfırdan.</h2>
         <p>Birini seç, ilk dersine bugün başla. Her programın ilerlemesi ayrı tutulur; istediğin an diğerine geçersin.</p>
       </header>
       <div class="programlar">
@@ -79,8 +79,9 @@
         <a class="cam program" href="nextgen.html?dil=c#panel"><span class="p-tur">Dil</span><h3>C</h3><p>Bilgisayarın içini anlamak isteyenlere: işaretçiler, bellek, yapılar.</p><span class="p-olcu">20 ders · 60 görev</span><b>Programa git</b></a>
         <a class="cam program" href="nextgen.html#lab"><span class="p-tur">Lab</span><h3>Siber Güvenlik</h3><p>Kayıt inceleme, kodlamalar, izinler, web günlükleri. Her konuda bir bayrak bulursun.</p><span class="p-olcu">6 lab</span><b>Lablara git</b></a>
         <a class="cam program" href="nextgen.html#lab"><span class="p-tur">Lab</span><h3>Linux ve Komut Satırı</h3><p>Dosya kurmak, büyük dosyayı özetlemek, metin dönüştürmek, betik yazmak.</p><span class="p-olcu">4 lab</span><b>Lablara git</b></a>
-        <div class="cam program yakinda"><span class="p-tur">Hazırlanıyor</span><h3>Sırada</h3><p>Ağ Temelleri, Veri Analizi, Veritabanları ve SQL.</p><span class="p-olcu">Açıldığında bu sayfada görünür</span></div>
+        <a class="cam program" href="nextgen.html#lab"><span class="p-tur">Lab</span><h3>Ağ Temelleri</h3><p>IP adresi, DNS, portlar, HTTP. Bir isteğin yolculuğunu komut satırından izlersin.</p><span class="p-olcu">4 lab</span><b>Lablara git</b></a>
       </div>
+      <p class="program-not">Sırada: Web Güvenliği, Veri Analizi, Veritabanları ve SQL.</p>
     </section>
 
     <!-- KAM: öğretmen ve canlı örnek -->
@@ -166,7 +167,7 @@
           <a href="nextgen.html" class="btn btn-marker btn-lg js-warp">NextGen'e git</a>
         </div>
         <ul class="kapi-diller" aria-label="NextGen'de neler var">
-          <li><b>Dersler ve lablar</b><span>beş program</span></li>
+          <li><b>Dersler ve lablar</b><span>altı program</span></li>
           <li><b>Pratik</b><span>günde beş dakika</span></li>
           <li><b>Kütüphane</b><span>sor, örneğini gör</span></li>
           <li><b>Tekrar ve İçgörüler</b><span>unutma, kendini tanı</span></li>

@@ -62,7 +62,7 @@
     if (!lab) return lablar(view);
     const benim = ++labNo, d = (labDurum()[id] = labDurum()[id] || { adim: 0 });
     if (d.bitti) d.adim = 0;                       // bitmiş lab yeniden çözülür
-    let kabuk = window.KD_KABUK.olustur({ dosyalar: lab.dosyalar });
+    let kabuk = window.KD_KABUK.olustur({ dosyalar: lab.dosyalar, ag: lab.ag });
     /* Kaldığı yerden devam: geçilmiş adımların çözümleri sessizce yeniden uygulanır */
     for (let i = 0; i < d.adim; i++) lab.adimlar[i].cozum.forEach((c) => { if (!/^bayrak\s/.test(c)) kabuk.calistir(c); });
     kabuk.gecmis.length = 0;

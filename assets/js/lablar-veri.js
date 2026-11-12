@@ -44,6 +44,33 @@
   const var_ = (k, yol) => !!k.dosya(yol);
   const metin = (k, yol) => ((k.dosya(yol) || {}).icerik || "");
 
+
+  /* Ağ Temelleri labları aynı küçük ağı paylaşır: bir ev ağı, bir okul sunucusu, bir arşiv makinesi. */
+  const AG = {
+    ben: "192.168.1.25", gecit: "192.168.1.1", dnsSunucu: "192.168.1.1",
+    dns: { "okul.lab": "10.0.0.10", "arsiv.lab": "10.0.0.42", "posta.lab": "10.0.0.25", "yazici.lab": "192.168.1.60" },
+    makineler: {
+      "192.168.1.1": { ms: 1, portlar: { 53: "dns", 80: "http" }, web: { 80: { "/": { govde: "Ağ geçidi yönetim sayfası\n" } } } },
+      "192.168.1.60": { sessiz: true },
+      "10.0.0.25": { ms: 21, portlar: { 25: "smtp" } },
+      "10.0.0.42": { ms: 18, portlar: { 22: "ssh" } },
+      "10.0.0.10": {
+        ms: 12, sunucu: "nginx/1.24", portlar: { 22: "ssh", 80: "http", 8080: "http-alt" },
+        web: {
+          80: {
+            "/": { govde: "<h1>Okul Lab</h1>\n<p>Duyurular icin /duyuru.html sayfasina bakin.</p>\n" },
+            "/duyuru.html": { govde: "<h1>Duyurular</h1>\n<p>Sinav takvimi yakinda.</p>\n" },
+            "/robots.txt": { tur: "text/plain", govde: "User-agent: *\nDisallow: /yonetim\nDisallow: /yedek/\n" },
+            "/yonetim": { kod: 403, govde: "403 Yasak: bu sayfa icin yetkin yok.\n" },
+            "/yedek/notlar.txt": { tur: "text/plain", govde: "Yedek notlari\nBu dosya herkese acik kalmis.\nQG{robots_gizlemez_isaret_eder}\n" },
+            "/eski": { kod: 301, govde: "", basliklar: { Location: "/duyuru.html" } }
+          },
+          8080: { "/": { tur: "text/plain", govde: "Deneme sunucusu. Kapatilmasi unutulmus.\nQG{acik_port_acik_kapi}\n" } }
+        }
+      }
+    }
+  };
+
   const LABLAR = [
     {
       id: "sg1", alan: "siber", no: 1, baslik: "Terminalde yön bulmak", seviye: "Başlangıç", sure: 15,
@@ -240,6 +267,69 @@
       ],
       kapanis: "Küçük komutları boruyla uç uca ekleyerek büyük bir iş yaptın: `tr` dönüştürdü, `sort` sıraladı, `uniq` eledi, `>` sakladı. Linux'un çalışma biçimi budur: her komut tek iş yapar, hattı sen kurarsın."
     }
+    ,{
+      id: "ag1", alan: "ag", no: 1, baslik: "Adresin ve komşuların", seviye: "Başlangıç", sure: 15, ag: AG,
+      ozet: "Ağdaki her makinenin bir adresi var. Kendi adresini bul, komşuna seslen, yanıt vermeyen bir makineyi tanı.",
+      kazanim: ["IP adresi", "ip addr", "ping ve zaman aşımı", "ağ geçidi"],
+      dosyalar: { "/home/ogrenci/gorev.txt": "Bayrak biçimi: QG{kendi_IP_adresin}  örnek: QG{10.1.2.3}\n" },
+      adimlar: [
+        { k: ["Bir ağda makineler birbirini **IP adresi** ile bulur: noktalarla ayrılmış dört sayı. Posta adresi gibidir; adres yoksa paket teslim edilemez.", "Kendi adresine bak: `ip addr`."], gorev: "Bu makinenin IP adresini öğren.", ipucu: "`ip addr` yaz; `eth0` altındaki `inet` satırına bak.", cozum: ["ip addr"], gec: { cikti: "192\\.168\\.1\\.25" } },
+        { k: ["`eth0` ağ kartın, adresin `192.168.1.25`. Aynı satırda bir de **ağ geçidi** yazıyor: `192.168.1.1`. Ev ağından dışarı çıkan her paket önce ona gider; evdeki modem budur.", "Ona ulaşabiliyor muyuz? `ping 192.168.1.1`"], gorev: "Ağ geçidine ping at.", ipucu: "`ping 192.168.1.1`", cozum: ["ping 192.168.1.1"], gec: { cikti: "192\\.168\\.1\\.1 adresinden yanıt" } },
+        { k: ["`ping` küçük bir paket yollar ve yanıtı bekler. “%0 kayıp” makinenin ayakta olduğunu, `süre` de paketin gidip gelme süresini söyler.", "Şimdi yanıt vermeyen birine bakalım: `ping -c 2 192.168.1.60`. `-c 2` yalnızca iki paket yolla demek."], gorev: "192.168.1.60 adresine iki paket yolla.", ipucu: "`ping -c 2 192.168.1.60`", cozum: ["ping -c 2 192.168.1.60"], gec: { cikti: "%100 kayıp" } },
+        { k: ["“Zaman aşımı, %100 kayıp.” Bu üç şeyden biri demektir: makine kapalı, adres yanlış ya da makine ping'e bilerek yanıt vermiyor. Ping'in sessizliği tek başına “makine yok” anlamına gelmez; bunu aklında tut.", "Uzaktaki bir makineyi dene: `ping -c 2 10.0.0.10`. Süreye dikkat et."], gorev: "10.0.0.10 adresine ping at.", ipucu: "`ping -c 2 10.0.0.10`", cozum: ["ping -c 2 10.0.0.10"], gec: { cikti: "10\\.0\\.0\\.10 adresinden yanıt" } },
+        { k: ["Ağ geçidi 1 ms'de, uzaktaki makine 12 ms'de yanıt verdi; paket daha uzun yol gitti.", "`gorev.txt` bayrağın biçimini söylüyor. Kendi adresinle bayrağı kur ve gönder."], gorev: "Bayrağı kendi IP adresinle gönder.", ipucu: "`cat gorev.txt`. Adresin ilk adımda gördüğün `inet` değeri.", cozum: ["bayrak QG{192.168.1.25}"], gec: { bayrak: "QG{192.168.1.25}" } }
+      ],
+      kapanis: "Üç şey öğrendin: her makinenin bir IP adresi var, dışarıya giden yol ağ geçidinden geçer, `ping` bir makinenin yanıt verip vermediğini söyler. Bir bağlantı sorununda ilk bakılan da budur."
+    },
+    {
+      id: "ag2", alan: "ag", no: 2, baslik: "İsimden adrese: DNS", seviye: "Başlangıç", sure: 20, ag: AG,
+      ozet: "İnsanlar isim hatırlar, makineler sayı ister. Bir ismin hangi adrese çıktığını sor, olmayan bir ismin ne döndürdüğünü gör, hosts dosyasının önceliğini fark et.",
+      kazanim: ["nslookup", "NXDOMAIN", "/etc/hosts önceliği", "DNS zehirlenmesi fikri"],
+      dosyalar: {
+        "/etc/hosts": { icerik: "127.0.0.1 localhost\n10.0.0.42 depo.lab\n", sahip: "root", mod: "644" },
+        "/home/ogrenci/gorev.txt": "Bayrak biçimi: QG{arsiv.lab adresi}  örnek: QG{10.1.2.3}\n"
+      },
+      adimlar: [
+        { k: ["Tarayıcıya sayı değil isim yazarsın. İsmi adrese çeviren sisteme **DNS** denir; internetin telefon rehberidir.", "Rehbere sor: `nslookup okul.lab`."], gorev: "okul.lab isminin adresini öğren.", ipucu: "`nslookup okul.lab`", cozum: ["nslookup okul.lab"], gec: { cikti: "10\\.0\\.0\\.10" } },
+        { k: ["En üstteki `Sunucu` satırı soruyu kimin yanıtladığını gösterir: ağ geçidin. `Adres` satırı yanıtın kendisi.", "Rehberde olmayan bir isim sor: `nslookup olmayan.lab`."], gorev: "Var olmayan bir ismi sorgula.", ipucu: "`nslookup olmayan.lab`", cozum: ["nslookup olmayan.lab"], gec: { komut: "^nslookup\\s+\\S+", hataOlsa: true } },
+        { k: ["`NXDOMAIN`: “böyle bir alan adı yok.” Adres çubuğuna yanlış yazdığında tarayıcının verdiği hatanın altında bu yanıt vardır.", "`ping` gibi komutlar ismi kendileri çözer. `ping -c 1 okul.lab` yaz; ilk satırda parantez içindeki adrese bak."], gorev: "okul.lab'e ismiyle ping at.", ipucu: "`ping -c 1 okul.lab`", cozum: ["ping -c 1 okul.lab"], gec: { cikti: "PING okul\\.lab \\(10\\.0\\.0\\.10\\)" } },
+        { k: ["DNS'e sorulmadan **önce** bakılan bir dosya var: `/etc/hosts`. Oku: `cat /etc/hosts`."], gorev: "hosts dosyasını oku.", ipucu: "`cat /etc/hosts`", cozum: ["cat /etc/hosts"], gec: { cikti: "depo\\.lab" } },
+        { k: ["`depo.lab` rehberde yok ama bu dosyada yazıyor; o yüzden çalışır. Dene: `ping -c 1 depo.lab`.", "Bu dosyayı değiştirebilen biri, bir ismi istediği adrese yönlendirebilir. Zararlı yazılımların banka sitesini sahte adrese çevirmek için dokunduğu yer burasıdır; dosyanın sahibi bu yüzden `root`."], gorev: "depo.lab'e ping at.", ipucu: "`ping -c 1 depo.lab`", cozum: ["ping -c 1 depo.lab"], gec: { cikti: "PING depo\\.lab \\(10\\.0\\.0\\.42\\)" } },
+        { k: ["Son görev: `arsiv.lab` hangi adrese çıkıyor? Bul, `gorev.txt` içindeki biçimle bayrağı gönder."], gorev: "arsiv.lab adresini bul ve bayrağı gönder.", ipucu: "`nslookup arsiv.lab`, sonra `cat gorev.txt`.", cozum: ["nslookup arsiv.lab", "bayrak QG{10.0.0.42}"], gec: { bayrak: "QG{10.0.0.42}" } }
+      ],
+      kapanis: "İsim önce `/etc/hosts` dosyasında, sonra DNS'te aranır. `depo.lab` ile `arsiv.lab` aynı adrese çıktı: bir makinenin birden çok ismi olabilir. Bir site açılmıyorsa `nslookup`, sorunun isimde mi yoksa makinede mi olduğunu ayırır."
+    },
+    {
+      id: "ag3", alan: "ag", no: 3, baslik: "Kapılar: portlar", seviye: "Başlangıç", sure: 20, ag: AG,
+      ozet: "Adres binayı gösterir, port daireyi. Bir sunucuda hangi kapıların açık olduğunu tek tek yokla ve kapatılması unutulmuş olanı bul.",
+      kazanim: ["port kavramı", "nc -zv ile yoklama", "bilinen portlar: 22, 80", "gereksiz açık port riski"],
+      dosyalar: { "/home/ogrenci/portlar.txt": "Sık görülen portlar\n22    ssh    uzaktan komut satırı\n25    smtp   e-posta gönderimi\n53    dns    isim çözme\n80    http   web\n443   https  şifreli web\n8080  http-alt  deneme amaçlı web sunucuları\n" },
+      adimlar: [
+        { k: ["Bir makinede aynı anda birçok hizmet çalışır: web, e-posta, uzaktan bağlantı. Hangisine gittiğini **port numarası** belirler. IP binanın adresiyse port daire numarasıdır.", "Sık görülenlere bak: `cat portlar.txt`."], gorev: "portlar.txt dosyasını oku.", ipucu: "`cat portlar.txt`", cozum: ["cat portlar.txt"], gec: { cikti: "8080" } },
+        { k: ["Bir kapının açık olup olmadığını `nc -zv` ile yoklarız: bağlanmayı dener, veri yollamaz.", "`nc -zv okul.lab 80`"], gorev: "okul.lab üzerinde 80 numaralı portu yokla.", ipucu: "`nc -zv okul.lab 80`", cozum: ["nc -zv okul.lab 80"], gec: { cikti: "80 portu açık" } },
+        { k: ["Açık, arkasında bir web sunucusu var. Şimdi kimsenin dinlemediği bir kapı: `nc -zv okul.lab 23`."], gorev: "23 numaralı portu yokla.", ipucu: "`nc -zv okul.lab 23`", cozum: ["nc -zv okul.lab 23"], gec: { komut: "^nc\\b.*\\b23$", hataOlsa: true } },
+        { k: ["“Bağlantı reddedildi”: makine ayakta ama o kapının arkasında kimse yok. Zaman aşımından farklıdır; orada hiç yanıt gelmez.", "Uzaktan yönetim kapısına bak: `nc -zv okul.lab 22`."], gorev: "22 numaralı portu yokla.", ipucu: "`nc -zv okul.lab 22`", cozum: ["nc -zv okul.lab 22"], gec: { cikti: "22 portu açık" } },
+        { k: ["Yöneticiler deneme için açtıkları sunucuları kapatmayı unutur. `portlar.txt` içindeki son satırı yokla: `nc -zv okul.lab 8080`."], gorev: "8080 numaralı portu yokla.", ipucu: "`nc -zv okul.lab 8080`", cozum: ["nc -zv okul.lab 8080"], gec: { cikti: "8080 portu açık" } },
+        { k: ["Açık. Adresin sonuna `:8080` ekleyerek o kapıdaki web sunucusuna gidilir: `curl http://okul.lab:8080/`. İçindeki bayrağı gönder."], gorev: "8080 portundaki sayfayı oku ve bayrağı gönder.", ipucu: "`curl http://okul.lab:8080/`", cozum: ["curl http://okul.lab:8080/", "bayrak QG{acik_port_acik_kapi}"], gec: { bayrak: "QG{acik_port_acik_kapi}" } }
+      ],
+      kapanis: "Her açık port, dışarıya açılan bir kapıdır. Güvenlikte ilk kural, kullanılmayan kapıyı kapatmaktır. Burada yaptığın yoklamayı yalnızca kendi makinende ya da izin verilen alıştırma ortamlarında yap; başkasının sunucusunu izinsiz taramak birçok ülkede suçtur."
+    },
+    {
+      id: "ag4", alan: "ag", no: 4, baslik: "Bir isteğin yolculuğu: HTTP", seviye: "Başlangıç", sure: 25, ag: AG,
+      ozet: "Tarayıcının perde arkasında yaptığını elle yap: sayfa iste, yanıtın başlıklarını oku, durum kodlarını tanı ve gizlendiği sanılan bir dosyayı bul.",
+      kazanim: ["curl ile istek", "durum kodları: 200, 301, 403, 404", "yanıt başlıkları", "robots.txt"],
+      dosyalar: { "/home/ogrenci/kodlar.txt": "200  tamam\n301  başka adrese taşındı\n403  var ama sana yasak\n404  böyle bir sayfa yok\n" },
+      adimlar: [
+        { k: ["Tarayıcı bir sayfa açarken sunucuya “bana şu sayfayı ver” der; buna **HTTP isteği** denir. `curl` aynı isteği komut satırından yapar ve gelen metni olduğu gibi gösterir.", "`curl http://okul.lab/`"], gorev: "okul.lab ana sayfasını iste.", ipucu: "`curl http://okul.lab/`", cozum: ["curl http://okul.lab/"], gec: { cikti: "Okul Lab" } },
+        { k: ["Tarayıcının süsleyip gösterdiği şey bu HTML metnidir. Sunucu sayfayla birlikte, sayfa hakkında bilgi de yollar: **başlıklar**. Yalnızca onları görmek için `-I`:", "`curl -I http://okul.lab/`"], gorev: "Ana sayfanın yanıt başlıklarını gör.", ipucu: "`curl -I http://okul.lab/` (büyük i)", cozum: ["curl -I http://okul.lab/"], gec: { cikti: "HTTP/1\\.1 200" } },
+        { k: ["İlk satırdaki `200` **durum kodu**: istek başarılı. `Server` satırı hangi yazılımın çalıştığını söylüyor; saldırganlar bu satırdan sürüm öğrenip bilinen açıkları arar, bu yüzden çoğu yerde gizlenir.", "Olmayan bir sayfa iste: `curl -I http://okul.lab/yok.html`."], gorev: "Var olmayan bir sayfanın durum kodunu gör.", ipucu: "`curl -I http://okul.lab/yok.html`", cozum: ["curl -I http://okul.lab/yok.html"], gec: { cikti: "HTTP/1\\.1 404" } },
+        { k: ["`404`: sayfa yok. Kodların anlamı `kodlar.txt` içinde. Bir tane daha: `curl -I http://okul.lab/eski`."], gorev: "/eski adresinin durum kodunu gör.", ipucu: "`curl -I http://okul.lab/eski`", cozum: ["curl -I http://okul.lab/eski"], gec: { cikti: "Location: /duyuru\\.html" } },
+        { k: ["`301` ve bir `Location` başlığı: “aradığın şey taşındı, şuraya git.” Tarayıcı bunu sana sormadan izler.", "Sitelerin çoğunda arama motorlarına yön veren bir dosya bulunur: `curl http://okul.lab/robots.txt`."], gorev: "robots.txt dosyasını oku.", ipucu: "`curl http://okul.lab/robots.txt`", cozum: ["curl http://okul.lab/robots.txt"], gec: { cikti: "Disallow: /yedek/" } },
+        { k: ["`Disallow` satırları arama motoruna “buraya girme” der. Ama bu bir rica, kilit değil; üstelik gizlenmek istenen yerlerin listesini herkese vermiş olur.", "İlkini dene: `curl -I http://okul.lab/yonetim`."], gorev: "/yonetim adresinin durum kodunu gör.", ipucu: "`curl -I http://okul.lab/yonetim`", cozum: ["curl -I http://okul.lab/yonetim"], gec: { cikti: "HTTP/1\\.1 403" } },
+        { k: ["`403`: sayfa var ama sunucu seni içeri almıyor. Doğru korunan bir sayfa böyle davranır.", "İkinci satırdaki klasör korunmuş mu? İçinde `notlar.txt` adında bir dosya olduğunu duydun. İste, bayrağı gönder."], gorev: "/yedek/notlar.txt dosyasını oku ve bayrağı gönder.", ipucu: "`curl http://okul.lab/yedek/notlar.txt`", cozum: ["curl http://okul.lab/yedek/notlar.txt", "bayrak QG{robots_gizlemez_isaret_eder}"], gec: { bayrak: "QG{robots_gizlemez_isaret_eder}" } }
+      ],
+      kapanis: "Bir web isteğinin parçalarını gördün: adres, durum kodu, başlıklar, gövde. `robots.txt` bir güvenlik önlemi değildir; bir dosyayı korumanın yolu ona erişimi kapatmaktır (`403`), adını saklamak değil."
+    }
   ];
 
   /* Öğrenme alanları (yol haritaları). durum: "hazir" | "yakinda" */
@@ -249,7 +339,7 @@
     { id: "js", ad: "JavaScript ve Web", tur: "dil", durum: "hazir", ozet: "Dilin temeli, ardından web sayfaları, React, algoritmalar ve sunucu tarafı.", olcu: "50 ders · 150 görev" },
     { id: "siber", ad: "Siber Güvenlik", tur: "lab", durum: "hazir", ozet: "Sıfırdan: terminal, kayıt inceleme, kodlamalar, izinler, dosya arama, web günlükleri. Her konu tarayıcıdaki bir lab makinesinde.", olcu: "6 lab hazır · devamı geliyor" },
     { id: "linux", ad: "Linux ve Komut Satırı", tur: "lab", durum: "hazir", ozet: "Dosya kurmak, büyük dosyaları özetlemek, metin dönüştürmek, betik yazmak. Siber güvenlik lablarının dayandığı temel.", olcu: "4 lab hazır · devamı geliyor" },
-    { id: "ag", ad: "Ağ Temelleri", tur: "lab", durum: "yakinda", ozet: "IP, port, DNS, HTTP. Bir isteğin tarayıcıdan sunucuya yolculuğu.", olcu: "hazırlanıyor" },
+    { id: "ag", ad: "Ağ Temelleri", tur: "lab", durum: "hazir", ozet: "IP adresi, DNS, portlar, HTTP. Bir isteğin tarayıcıdan sunucuya yolculuğunu komut satırından izle.", olcu: "4 lab hazır · devamı geliyor" },
     { id: "veri", ad: "Veri Analizi", tur: "dil", durum: "yakinda", ozet: "Python ile tabloları okumak, temizlemek, özetlemek ve grafiğe dökmek.", olcu: "hazırlanıyor" },
     { id: "vt", ad: "Veritabanları ve SQL", tur: "lab", durum: "yakinda", ozet: "Tablolar, sorgular, birleştirmeler. Şu an Backend parkurunun içinde; ayrı bir yol olacak.", olcu: "hazırlanıyor" }
   ];
