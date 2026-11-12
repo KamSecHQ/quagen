@@ -27,11 +27,11 @@
     bolumler.forEach((el) => io.observe(el));
   } else bolumler.forEach((el) => el.classList.add("in"));
   addEventListener("scroll", () => nav.classList.toggle("scrolled", scrollY > 8), { passive: true });
-  /* Tema: QUAGEN varsayılan olarak koyu; seçim tüm sayfalarda geçerli */
+  /* Tema: QUAGEN varsayılan olarak açık. Seçim yalnızca QUAGEN için saklanır; NextGen'in teması ayrıdır. */
   if ($("#tema")) $("#tema").onclick = () => {
     const yeni = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = yeni;
-    try { const p = JSON.parse(localStorage.getItem("kd-profile") || "{}"); p.theme = yeni; localStorage.setItem("kd-profile", JSON.stringify(p)); } catch (_) {}
+    try { localStorage.setItem("quagen-tema", yeni); } catch (_) {}
   };
 
   /* ---------- Kütüphane önizlemesi: niyet araması canlı çalışır ---------- */
