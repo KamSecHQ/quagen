@@ -7,17 +7,19 @@
   const nav = $("#nav");
   /* Hesap: giriş yapılmışsa menüde avatar */
   if (window.KD && KD.hesapYok && $("#nav-login")) $("#nav-login").hidden = true;
+  if (window.KD && KD.hesapYok) document.querySelectorAll(".js-basla").forEach((el) => (el.href = "nextgen.html"));
   let uye = null, uyeBilindi = !(window.KD && KD.hesap) || (window.KD && KD.hesapYok);
   const hesapVar = () => window.KD && KD.hesap && !KD.hesapYok;
   if (window.KD && KD.hesap) KD.hesap.ben().catch(() => null).then((u) => {
     uye = u || null; uyeBilindi = true;
+    if (u) document.querySelectorAll(".js-basla").forEach((el) => { el.href = "nextgen.html"; el.textContent = "Derse devam et"; });
     const l = $("#nav-login"); if (!l || !u) return;
     const bas = String(u.ad || u.kullaniciAdi).trim().split(/\s+/).map((x) => x[0]).slice(0, 2).join("").toLocaleUpperCase("tr");
     l.outerHTML = `<a class="nav-user" href="nextgen.html#profil" title="Profilim"><span class="nav-av">${esc(bas)}</span><span class="nav-un">${esc(u.ad || "@" + u.kullaniciAdi)}</span></a>`;
   });
   /* Açılış koreografisi ve kaydırdıkça beliren bölümler */
   requestAnimationFrame(() => document.body.classList.add("ready"));
-  const bolumler = document.querySelectorAll(".section .sec-head, .adimlar > li, .faq-liste, .cta-in, .kam-ozellik > article, .bilim > article, .rakamlar, .kapi");
+  const bolumler = document.querySelectorAll(".section .sec-head, .adimlar > li, .faq-liste, .cta-in, .kam-ozellik > article, .bilim > article, .kapi, .programlar > *, .kiyas");
   bolumler.forEach((el) => el.classList.add("rv"));
   if (!reduced && "IntersectionObserver" in window) {
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
@@ -320,12 +322,17 @@
       { sec: "#kapi", baslik: "NextGen'in kapısı", metin: "Hazır olduğunda buradan geçersin. Hangi dili seçeceğini bilmiyorsan sohbetimizde bana sor." }
     ];
     if (hesapVar() && !uye) adimlar.push({ sec: "#nav-login", baslik: "Şimdi aramıza katıl.", metin: "Sonra derslere geçelim. Kayıt ücretsiz; ilerlemen hesabında saklanır ve hiçbir cihazda kaybolmaz.", dugme: "Aramıza katıl", git: "hesap.html?sonra=nextgen.html#kayit", ikinci: { ad: "Şimdi değil" } });
-    const basladi = window.KAM_TUR.baslat(adimlar, { anahtar: TUR_ANAHTAR, bitince: (neden) => { if (neden !== "git") { scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" }); setTimeout(() => karsila().catch(() => {}), 500); } } });
+    const basladi = window.KAM_TUR.baslat(adimlar, { anahtar: TUR_ANAHTAR, bitince: (neden) => { if (neden !== "git") { const h = $("#sahne"); if (h) h.scrollIntoView({ block: "center", behavior: reduced ? "auto" : "smooth" }); } } });
     if (!basladi) return;
   }
+  /* Sohbet, KAM bölümü ekrana gelince başlar; tur yalnızca düğmeyle açılır. */
   if (hAkis) {
-    const ilkZiyaret = window.KAM_TUR && !window.KAM_TUR.goruldu(TUR_ANAHTAR);
-    if (!ilkZiyaret) setTimeout(() => karsila().catch(() => {}), reduced ? 0 : 900);
-    else { const dene = (n) => (uyeBilindi || n > 12 ? turBaslat() : setTimeout(() => dene(n + 1), 150)); setTimeout(() => dene(0), reduced ? 100 : 1300); }
+    let basladi = false;
+    const baslat = () => { if (basladi) return; basladi = true; karsila().catch(() => {}); };
+    const sahneEl = $("#sahne");
+    if (reduced || !("IntersectionObserver" in window) || !sahneEl) setTimeout(baslat, 300);
+    else { const g = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { g.disconnect(); setTimeout(baslat, 350); } }), { threshold: 0.35 }); g.observe(sahneEl); }
+    const turDugme = $("#tur-ac");
+    if (turDugme) { if (!window.KAM_TUR) turDugme.hidden = true; else turDugme.addEventListener("click", () => { try { localStorage.removeItem(TUR_ANAHTAR); } catch (_) {} turBaslat(); }); }
   }
 })();

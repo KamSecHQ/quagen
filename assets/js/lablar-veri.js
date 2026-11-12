@@ -222,6 +222,24 @@
       ],
       kapanis: "Betik yazmanın üç adımı: komutları dosyaya koy, `chmod +x` ile izin ver, `./ad.sh` ile çalıştır. Başkasının betiğini çalıştırmadan önce mutlaka oku."
     }
+    ,{
+      id: "lx4", alan: "linux", no: 4, baslik: "Metni boru hattında dönüştürmek", seviye: "Başlangıç", sure: 20,
+      ozet: "Elle tutulmuş dağınık bir isim listesi var: büyük küçük harf karışık, aynı kişi iki kez yazılmış. Komutları uç uca ekleyip temiz bir liste üret.",
+      kazanim: ["tr ile harf dönüştürme", "sort ve uniq", "boru hattı kurmak", "sonucu dosyaya yazmak", "rev"],
+      dosyalar: {
+        "/home/ogrenci/isimler.txt": "DENIZ\nEce\nMERT\nece\nCan\nDENIZ\nmert\nOkan\n",
+        "/home/ogrenci/sifre.txt": [..."QG{boru_ile_donustur}"].reverse().join("") + "\n"
+      },
+      adimlar: [
+        { k: ["Önce elimizdekine bakalım: `cat isimler.txt`. Sekiz satır var ama kaç **farklı** kişi olduğunu söylemek zor."], gorev: "isimler.txt dosyasını oku.", ipucu: "`cat isimler.txt`", cozum: ["cat isimler.txt"], gec: { cikti: "DENIZ" } },
+        { k: ["`DENIZ` ile `deniz` bilgisayar için farklı metinlerdir. Önce hepsini küçük harfe çevirelim. `tr` bir harf kümesini başkasına çevirir.", "`cat isimler.txt | tr 'A-Z' 'a-z'` yaz. Dik çizgi (boru), soldaki komutun çıktısını sağdakine verir."], gorev: "Bütün isimleri küçük harfe çevir.", ipucu: "`cat isimler.txt | tr 'A-Z' 'a-z'`", cozum: ["cat isimler.txt | tr 'A-Z' 'a-z'"], gec: { cikti: "^deniz\\nece\\nmert\\nece" } },
+        { k: ["Şimdi aynı isimler birebir aynı yazılıyor ama dağınık duruyorlar. Hattın sonuna bir boru daha ekle: `| sort`. Yukarı ok tuşu önceki komutu geri getirir."], gorev: "Küçük harfe çevrilmiş listeyi sırala.", ipucu: "`cat isimler.txt | tr 'A-Z' 'a-z' | sort`", cozum: ["cat isimler.txt | tr 'A-Z' 'a-z' | sort"], gec: { cikti: "^can\\ndeniz\\ndeniz" } },
+        { k: ["Aynılar artık alt alta. `uniq` art arda gelen aynı satırlardan yalnızca birini bırakır; bu yüzden hep `sort`'tan **sonra** gelir.", "Hattı bir halka daha uzat: `| uniq`."], gorev: "Yinelenen isimleri ele.", ipucu: "`cat isimler.txt | tr 'A-Z' 'a-z' | sort | uniq`", cozum: ["cat isimler.txt | tr 'A-Z' 'a-z' | sort | uniq"], gec: { cikti: "^can\\ndeniz\\nece\\nmert\\nokan\\n$" } },
+        { k: ["Beş kişi. Bu sonuç şu an yalnızca ekranda; saklamak için hattın sonuna `> temiz.txt` ekle. Sonra `wc -l temiz.txt` ile say."], gorev: "Temiz listeyi temiz.txt dosyasına yaz.", ipucu: "`cat isimler.txt | tr 'A-Z' 'a-z' | sort | uniq > temiz.txt`", cozum: ["cat isimler.txt | tr 'A-Z' 'a-z' | sort | uniq > temiz.txt"], gec: { durum: (k) => metin(k, "/home/ogrenci/temiz.txt") === "can\ndeniz\nece\nmert\nokan\n" } },
+        { k: ["Son bir dönüştürme: `sifre.txt` içindeki bayrak **tersten** yazılmış. `rev` her satırı ters çevirir.", "`rev sifre.txt` ile oku ve bayrağı gönder. Tersten yazmak bir şifreleme değildir; tek komutla çözülür."], gorev: "Ters yazılmış bayrağı çevir ve gönder.", ipucu: "`rev sifre.txt`", cozum: ["rev sifre.txt", "bayrak QG{boru_ile_donustur}"], gec: { bayrak: "QG{boru_ile_donustur}" } }
+      ],
+      kapanis: "Küçük komutları boruyla uç uca ekleyerek büyük bir iş yaptın: `tr` dönüştürdü, `sort` sıraladı, `uniq` eledi, `>` sakladı. Linux'un çalışma biçimi budur: her komut tek iş yapar, hattı sen kurarsın."
+    }
   ];
 
   /* Öğrenme alanları (yol haritaları). durum: "hazir" | "yakinda" */
@@ -230,7 +248,7 @@
     { id: "c", ad: "C", tur: "dil", durum: "hazir", ozet: "Bilgisayarın içini anlamak isteyenlere. İşaretçiler, bellek, yapılar.", olcu: "20 ders · 60 görev" },
     { id: "js", ad: "JavaScript ve Web", tur: "dil", durum: "hazir", ozet: "Dilin temeli, ardından web sayfaları, React, algoritmalar ve sunucu tarafı.", olcu: "50 ders · 150 görev" },
     { id: "siber", ad: "Siber Güvenlik", tur: "lab", durum: "hazir", ozet: "Sıfırdan: terminal, kayıt inceleme, kodlamalar, izinler, dosya arama, web günlükleri. Her konu tarayıcıdaki bir lab makinesinde.", olcu: "6 lab hazır · devamı geliyor" },
-    { id: "linux", ad: "Linux ve Komut Satırı", tur: "lab", durum: "hazir", ozet: "Dosya kurmak, büyük dosyaları özetlemek, betik yazmak. Siber güvenlik lablarının dayandığı temel.", olcu: "3 lab hazır · devamı geliyor" },
+    { id: "linux", ad: "Linux ve Komut Satırı", tur: "lab", durum: "hazir", ozet: "Dosya kurmak, büyük dosyaları özetlemek, metin dönüştürmek, betik yazmak. Siber güvenlik lablarının dayandığı temel.", olcu: "4 lab hazır · devamı geliyor" },
     { id: "ag", ad: "Ağ Temelleri", tur: "lab", durum: "yakinda", ozet: "IP, port, DNS, HTTP. Bir isteğin tarayıcıdan sunucuya yolculuğu.", olcu: "hazırlanıyor" },
     { id: "veri", ad: "Veri Analizi", tur: "dil", durum: "yakinda", ozet: "Python ile tabloları okumak, temizlemek, özetlemek ve grafiğe dökmek.", olcu: "hazırlanıyor" },
     { id: "vt", ad: "Veritabanları ve SQL", tur: "lab", durum: "yakinda", ozet: "Tablolar, sorgular, birleştirmeler. Şu an Backend parkurunun içinde; ayrı bir yol olacak.", olcu: "hazırlanıyor" }

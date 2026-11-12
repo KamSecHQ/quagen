@@ -23,7 +23,8 @@
   /* Kaydırma durakları: hangi bölümde hangi biçim, ekranın neresinde, ne büyüklükte, hangi eğimle */
   const DURAK = [
     { sec: ".hero-kure", bicim: "kure", x: 0, y: 0, boy: 1, egX: 0.25, bagli: true },
-    { sec: "#kam", bicim: "halka", x: 0.3, y: -0.05, boy: 1.25, egX: 1.05 },
+    { sec: "#programlar", bicim: "halka", x: 0.3, y: -0.05, boy: 1.25, egX: 1.05 },
+    { sec: "#kam", bicim: "kure", x: -0.38, y: 0.1, boy: 0.7, egX: 0.3 },
     { sec: "#ders", bicim: "sarmal", x: -0.36, y: 0, boy: 0.95, egX: 0.15 },
     { sec: "#nextgen", bicim: "tunel", x: 0.22, y: 0, boy: 1.15, egX: 0, sabit: true },
     { sec: "#bilim", bicim: "dalga", x: 0, y: 0.1, boy: 1.2, egX: 0.5, sabit: true },
@@ -92,9 +93,10 @@
         if (px < -4 || px > W + 4 || py < -4 || py > H + 4) continue;
         const yakin = Math.max(0, Math.min(1, (1.3 - z2) / 2.6)), en = (0.9 + yakin * 2.3) * (sicak[i] ? 1.5 : 1);
         const alfa = (0.26 + yakin * 0.74) * (acik ? 0.75 : 1);
-        if (sicak[i]) ctx.fillStyle = acik ? `rgba(214,120,20,${alfa})` : `rgba(255,216,77,${alfa})`;
-        else if (acik) ctx.fillStyle = `rgba(${70 + ton[i] * 40 | 0},${50 + ton[i] * 30 | 0},${170 + ton[i] * 50 | 0},${alfa})`;
-        else ctx.fillStyle = `rgba(${130 + ton[i] * 60 | 0},${170 + yakin * 60 | 0},255,${alfa})`;
+        /* Sıcak bir toz bulutu; aralarında KAM'in mavisinden seyrek noktalar */
+        if (sicak[i]) ctx.fillStyle = acik ? `rgba(40,90,210,${alfa})` : `rgba(120,175,255,${alfa})`;
+        else if (acik) ctx.fillStyle = `rgba(${170 + ton[i] * 50 | 0},${70 + ton[i] * 40 | 0},${40 + ton[i] * 30 | 0},${alfa})`;
+        else ctx.fillStyle = `rgba(255,${130 + yakin * 70 + ton[i] * 25 | 0},${90 + ton[i] * 90 | 0},${alfa})`;
         ctx.fillRect(px - en / 2, py - en / 2, en, en);
       }
       if (!azHareket && gorunur) requestAnimationFrame(ciz);
@@ -105,7 +107,7 @@
   })();
 
   /* ---------- Levhalar imlece doğru eğilir ---------- */
-  const levhalar = document.querySelectorAll(".kam-ozellik article, .bilim article, .adimlar li, .rakamlar, .cta-in, .kapi");
+  const levhalar = document.querySelectorAll(".kam-ozellik article, .bilim article, .adimlar li, .rakamlar, .cta-in, .kapi, .programlar > .program");
   levhalar.forEach((el) => {
     el.classList.add("q-egim");
     if (!inceImlec || azHareket) return;
