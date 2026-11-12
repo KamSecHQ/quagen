@@ -315,7 +315,7 @@
       { sec: "#dunya", baslik: "İki ayrı dünya var.", metin: "**QUAGEN** şu an bulunduğun yer: beni, öğretme yöntemimizi ve siteyi tanırsın. **NextGen** ise işin yapıldığı yer: dersler, Pratik ve Kütüphane orada. Bu anahtarla geçersin." },
       { sec: "#sahne", baslik: "Burada benimle konuşursun.", metin: "Solda yazışırız, sağda kod aynı anda değişir. Derslerin hepsi bu şekilde geçer. Tanıtım bitince sana burada kısa bir örnek göstereceğim." },
       { sec: "#kam .kam-ozellik", baslik: "Benden ne beklemelisin?", metin: "Konuyu anlatırım, görevde ipucu veririm, sana plan yaparım. Cevabı hazır vermem; çünkü öğrenmeni istiyorum." },
-      { sec: "#ders .adimlar", baslik: "Bir ders dört adımdır.", metin: "Tahmin edersin, ben anlatırım, sen yazarsın, sonra kartlarla hatırlarsın. Her derste aynı sıra." },
+      { sec: "#ders .adimlar", baslik: "Bir ders beş adımdır.", metin: "Tahmin edersin, ben anlatırım, satırları birkaç kez yazarak aklına yerleştirirsin, görevleri çözersin, sonra kartlarla hatırlarsın. Her derste aynı sıra." },
       { sec: "#bilim .bilim", baslik: "Bunların bir nedeni var.", metin: "Her adım, işe yaradığı ölçülmüş bir öğrenme yöntemine dayanıyor. Merak edersen kaynaklarıyla burada yazıyor." },
       { sec: "#kapi", baslik: "NextGen'in kapısı", metin: "Hazır olduğunda buradan geçersin. Hangi dili seçeceğini bilmiyorsan sohbetimizde bana sor." }
     ];

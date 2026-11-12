@@ -126,3 +126,37 @@ body:has(.kam-ders) .kam-fab { display: none; }   /* derste soru alanı sohbetin
 .kam-kart-ad span { display: none; }
 .kam-kart-metin { font-size: clamp(20px, 2.1vw, 27px); font-weight: 700; font-stretch: 86%; letter-spacing: -0.02em; line-height: 1.22; max-width: 40ch; }
 @media (max-width: 900px) { .kam-kart .kam-av { font-size: 52px; } .kam-kart { padding: 16px; gap: 12px; } }
+
+/* ---------- Alıştır adımı: küçük, sade tekrarlar ---------- */
+.al { max-width: 820px; margin: 0 auto; border-radius: 26px; background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow); overflow: hidden; transition: box-shadow 0.3s; }
+.al.tamam { box-shadow: var(--glass-shadow), 0 0 0 3px var(--pass); }
+.al-ust { display: flex; align-items: center; gap: 14px; padding: 20px 24px 16px; }
+.al-ust .kam-av { font-size: 50px; }
+.al-kam { flex: 1; min-width: 0; }
+.al-kam b { display: block; font-size: 24px; font-weight: 800; font-stretch: 84%; letter-spacing: -0.02em; line-height: 1.1; }
+.al-kam p { margin-top: 3px; color: var(--ink-2, var(--graphite)); font-size: 15.5px; line-height: 1.45; }
+.al-sayac { flex: none; padding: 5px 12px; border-radius: 999px; background: var(--glass-strong); border: 1px solid var(--glass-edge); font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
+.al-cubuk { height: 4px; background: var(--glass-edge); }
+.al-cubuk i { display: block; height: 100%; width: 0; background: var(--marker); transition: width 0.45s var(--ease); }
+.al-govde { display: grid; gap: 14px; padding: 22px 24px 20px; animation: kam-gel 0.3s var(--ease) both; }
+.al-aciklama { max-width: 64ch; color: var(--ink-2, var(--graphite)); font-size: 15px; line-height: 1.5; }
+.al-kod { margin: 0; padding: 18px 20px; border-radius: 16px; background: var(--code-bg); border: 1px solid var(--glass-edge); font: 500 clamp(16px, 1.7vw, 20px)/1.6 var(--mono); white-space: pre-wrap; word-break: break-word; }
+.al-kod.iskelet { letter-spacing: 0.06em; color: var(--graphite); background: repeating-linear-gradient(135deg, var(--code-bg) 0 12px, color-mix(in srgb, var(--ink) 4%, var(--code-bg)) 12px 24px); }
+.al-kod.ozet { font-size: 15px; }
+.al-bos { display: inline-block; padding: 0 4px; border-radius: 6px; background: var(--marker); color: transparent; }
+.al-form { display: flex; gap: 10px; }
+.al-girdi { flex: 1; min-width: 0; height: 54px; padding: 0 16px; border-radius: 14px; border: 2px solid var(--glass-edge); background: var(--surface); color: var(--ink); font: 500 clamp(16px, 1.6vw, 19px) var(--mono); transition: border-color 0.2s, box-shadow 0.2s; }
+.al-girdi:focus { outline: 0; border-color: var(--ink); box-shadow: 0 0 0 5px var(--marker-wash); }
+.al-girdi:disabled { border-color: var(--pass); background: var(--pass-wash); }
+.al-girdi.salla { animation: al-salla 0.35s; border-color: var(--fail); }
+@keyframes al-salla { 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(3px); } }
+.al-form .btn { height: 54px; padding: 0 20px; border-radius: 14px; font-size: 15.5px; }
+.al-geri { min-height: 24px; font-size: 14.5px; font-weight: 600; }
+.al-geri.dogru { color: var(--pass); }
+.al-geri.yanlis { color: var(--fail); }
+.al-geri.uyari { color: var(--warn); }
+.al-geri code { padding: 1px 6px; border-radius: 5px; background: var(--sunken); font-family: var(--mono); color: var(--ink); }
+.al-alt { display: flex; align-items: center; gap: 10px; }
+.al-alt .vurgulu { background: var(--marker); color: var(--marker-ink); }
+@media (max-width: 640px) { .al-ust { padding: 16px; } .al-govde { padding: 16px; } .al-form { flex-direction: column; } .al-kam b { font-size: 20px; } .al-ust .kam-av { font-size: 40px; } }
+@media (prefers-reduced-motion: reduce) { .al-girdi.salla, .al-govde { animation: none; } }

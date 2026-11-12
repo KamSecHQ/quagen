@@ -8,7 +8,7 @@
   const UNLOCK = 0.66;
   const KAM_VAR = !!window.KAM;                              // karşılama, plan ve ipuçları her dilde KAM'den
   const KAMLI = KAM_VAR;                                     // konuyu her dilde KAM sohbetle anlatır
-  const STEPS = [["tahmin", "Tahmin et"], ["incele", KAMLI ? "KAM anlatıyor" : "İncele"], ["kodla", "Kodla"], ["hatirla", "Hatırla"]];
+  const STEPS = [["tahmin", "Tahmin et"], ["incele", KAMLI ? "KAM anlatıyor" : "İncele"], ["alistir", "Alıştır"], ["kodla", "Kodla"], ["hatirla", "Hatırla"]];
   const MENTOR_AD = KAM_VAR ? "KAM" : "Mentor";
   const ALL_CARDS = C.flatMap((p) => p.cards.map((c) => Object.assign({ phase: p }, c)));
   const ALL_CH = C.flatMap((p) => p.challenges.map((c) => Object.assign({ phase: p }, c)));
@@ -78,7 +78,7 @@
     return `${T(T(trackOf(p)).req).title} parkurunu bitirince açılır.`;
   };
   /* Seviye sınavını geçenler için çözümlü örnek varsayılan adım değil (uzmanlık tersine dönmesi, Kalyuga 2003) */
-  const defaultStep = (p) => { const ph = S.phase(p.id); if (placed(trackOf(p))) return "kodla"; return ph.predict === null ? "tahmin" : !ph.viewed ? "incele" : "kodla"; };
+  const defaultStep = (p) => { const ph = S.phase(p.id); if (placed(trackOf(p))) return "kodla"; return ph.predict === null ? "tahmin" : !ph.viewed ? "incele" : !ph.drill && !Object.keys(ph.passed).length ? "alistir" : "kodla"; };
   const skillPct = (p) => { const v = KD.bkt.get(p.id); return v == null ? null : Math.round(v * 100); };
   /* Sıradaki en mantıklı hedef: açık ve bitmemiş ilk ders */
   function nextTarget() {
@@ -173,6 +173,10 @@
 
   const IK_PRATIK = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 2s5 4.5 5 10a5 5 0 0 1-10 0c0-2 1-3.5 1-3.5S9 11 10.5 11C10.5 7 12 2 12 2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
   const IK_KITAP = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3Z M9 9h6M9 13h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+  const IK_LAB = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3M7.5 15h9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const IK_PROJE = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 7l8-4 8 4-8 4-8-4Zm0 5l8 4 8-4M4 17l8 4 8-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const IK_TERM = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 5h16v14H4zM7.5 9.5l3 2.5-3 2.5M12.5 15h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const IK_YOL = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 20V9a3 3 0 0 1 3-3h8M14 3l3 3-3 3M6 20h.01M12 14h.01M18 14v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   function renderSide(active) {
     const due = KD.srs.due(ALL_CARDS).length;
     const bugun = S.state.daily[S.day()] || 0, hedef = prefs().goal || 50, oran = Math.min(1, bugun / hedef), st = S.state.streak;
@@ -183,7 +187,13 @@
         ["#karma", "karma", I.shuffle, "Karma antrenman", "Eski görevleri yeniden yaz", ""],
         ["pratik.html?dil=" + LANG, "pratik", IK_PRATIK, "Pratik", "Günde beş dakika", ""]
       ]],
+      ["Atölye", [
+        ["#lab", "lab", IK_LAB, "Lablar", "Siber güvenlik: sanal makine", ""],
+        ["#projeler", "projeler", IK_PROJE, "Projeler", "Basitten zora 25 fikir", ""],
+        ["#terminal", "terminal", IK_TERM, "Terminal", "Serbest çalışma alanı", ""]
+      ]],
       ["Keşfet", [
+        ["#yollar", "yollar", IK_YOL, "Yol haritaları", "Diller ve alanlar", ""],
         ["rehber.html", "kutuphane", IK_KITAP, "Kütüphane", "Nasıl yazılır? Sor, bul", ""]
       ]],
       ["Gelişimin", [
@@ -330,6 +340,8 @@
     if (a === "icgoruler") return renderInsights();
     if (a === "seviye") return LANG === "js" ? renderPlacement() : renderDashboard();
     if (a === "profil") return renderProfile();
+    const ek = window.KD_SAYFALAR && window.KD_SAYFALAR[a];
+    if (ek) { document.title = ek.ad + " · QUAGEN NextGen"; renderSide(a); renderBar(); renderCrumbs([{ t: "Panel", h: "#panel" }, ...(b ? [{ t: ek.ad, h: "#" + a }, { t: a === "lab" ? "Lab" : "Çalışma" }] : [{ t: ek.ad }])]); return ek.ciz(view, b, c); }
     const p = C.find((x) => x.id === a);
     if (!p) return renderDashboard();
     if (!unlocked(p)) {
@@ -456,10 +468,10 @@
     const t = T(trackOf(p));
     renderCrumbs([{ t: "Panel", h: "#panel" }, { t: t.short, h: "#" + phasesOf(t.id)[0].id }, { t: `Ders ${p.no}: ${p.short}` }]);
     const ph = S.phase(p.id), m = mastery(p);
-    const done = { tahmin: ph.predict !== null, incele: ph.viewed, kodla: m === 1, hatirla: p.cards.every((c) => S.state.cards[c.id]?.reps > 0) };
+    const done = { tahmin: ph.predict !== null, incele: ph.viewed, alistir: !!ph.drill, kodla: m === 1, hatirla: p.cards.every((c) => S.state.cards[c.id]?.reps > 0) };
     const list = phasesOf(t.id), nextP = list[list.indexOf(p) + 1];
     view.innerHTML = `
-      <header class="ph-head ${step === "kodla" || (KAMLI && step === "incele") ? "compact" : ""}">
+      <header class="ph-head ${step === "kodla" || step === "alistir" || (KAMLI && step === "incele") ? "compact" : ""}">
         <div class="ph-title">
           <p class="ph-label">Ders ${p.no} <span>${esc(t.title)}</span></p>
           <h1>${esc(p.title)}</h1>
@@ -478,7 +490,7 @@
       </nav>
       <section class="stage" id="stage"></section>`;
     const stage = $("#stage");
-    ({ tahmin: stepPredict, incele: stepExample, kodla: stepCode, hatirla: stepRecall })[step](p, stage, chId);
+    ({ tahmin: stepPredict, incele: stepExample, alistir: (pp, st) => window.KD_ALISTIR.baslat(pp, st, { bitince: () => renderSide(pp.id) }), kodla: stepCode, hatirla: stepRecall })[step](p, stage, chId);
     view.focus({ preventScroll: true });
   }
 
@@ -559,7 +571,7 @@
       if (i < ex.steps.length - 1) { i++; paint(); return; }
       const ph = S.phase(p.id);
       if (!ph.viewed) { ph.viewed = true; S.addXP(10); }
-      location.hash = `#${p.id}/kodla`;
+      location.hash = `#${p.id}/alistir`;
     };
     $("#wprev").onclick = () => { if (i > 0) { i--; paint(); } };
     $("#wnext").onclick = next;
@@ -1506,7 +1518,7 @@
     const el = $("#ai-status"); el.textContent = on ? "Yapay zekâ mentor çevrimiçi" : "Mentor yerel modda"; el.classList.toggle("on", on);
     const mm = $("#m-mode"); if (mm) mm.textContent = on ? "Yapay zekâ, Sokratik mod" : "Yerel ipucu motoru";
   });
-  window.KD_APP = { nextTarget, mastery, renderBar, runSnippet, hlLang, openSettings: (sekme) => openSettings(sekme), due: () => KD.srs.due(ALL_CARDS).length };
+  window.KD_APP = { nextTarget, mastery, renderBar, runSnippet, hlLang, makeEditor, toast, celebrate, openSettings: (sekme) => openSettings(sekme), due: () => KD.srs.due(ALL_CARDS).length };
   route();
   checkBadges();
   if (!prefs().onboarded) setTimeout(KAM_VAR ? window.KAM.tanis : openOnboarding, document.documentElement.classList.contains("entering") ? 1800 : 300);

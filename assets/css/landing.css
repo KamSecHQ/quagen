@@ -259,7 +259,7 @@ body { overflow-x: clip; }
 .s-kod .sahne-cikti .log { font-size: 15px; font-weight: 500; }
 
 /* Bir ders: dört adım */
-.adimlar { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.adimlar { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
 .adimlar li { position: relative; padding: 22px 20px 24px; border-radius: 22px; transition: transform 0.3s var(--ease), box-shadow 0.3s; }
 .adimlar li:hover { transform: translateY(-4px); }
 .adim-n { display: grid; place-items: center; width: 34px; height: 34px; margin-bottom: 44px; border-radius: 11px; background: var(--ink); color: var(--paper); font-weight: 800; font-size: 15px; }
@@ -366,3 +366,7 @@ body { overflow-x: clip; }
 .rakamlar dd { margin-top: 8px; color: var(--ink-2); font-size: 15px; max-width: 20ch; }
 @media (max-width: 900px) { .bilim { grid-template-columns: 1fr 1fr; } .rakamlar { grid-template-columns: 1fr 1fr; } .rakamlar > div:nth-child(3) { border-left: 0; } .rakamlar > div:nth-child(n+3) { border-top: 1px solid var(--glass-edge); } }
 @media (max-width: 600px) { .kam-ozellik, .bilim { grid-template-columns: 1fr; } }
+.adimlar li.rv:nth-child(5) { transition-delay: 0.28s; }
+.adimlar h3 { font-size: 22px; }
+.adimlar li:nth-child(3) .adim-n { background: var(--marker); color: var(--marker-ink); }
+@media (max-width: 1180px) and (min-width: 1041px) { .adimlar { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
