@@ -159,3 +159,21 @@ a.yol-kart:hover::after { opacity: 1; }
 }
 .term-satir input:focus, .term-satir input:focus-visible { outline: none; box-shadow: none; }
 .tw.projeli .tw-cubuk kbd { display: none; }
+
+/* Panelde Atölye şeridi */
+.at-serit { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; }
+.at-serit a { display: grid; gap: 3px; padding: 14px 16px; border-radius: 18px; background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow); color: inherit; text-decoration: none; transition: transform 0.25s var(--ease), border-color 0.2s; }
+.at-serit a:hover { transform: translateY(-3px); border-color: var(--marker); }
+.as-et { font-size: 12px; font-weight: 700; color: var(--graphite); }
+.at-serit b { font-size: 17px; font-weight: 750; font-stretch: 86%; letter-spacing: -0.015em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.at-serit small { font-size: 12.5px; color: var(--graphite); }
+@media (max-width: 720px) { .at-serit { grid-template-columns: 1fr; } }
+@media (max-width: 900px) {
+  .tw-dosyalar, .tw.projeli .tw-dosyalar { max-height: none; }
+  .tw-dosyalar ul { display: flex; gap: 6px; overflow-x: auto; padding: 8px 10px; }
+  .tw-dosyalar ul li { flex: none; }
+  .tw-dosya { width: auto; background: var(--glass-strong); }
+  .tw-yeni { grid-template-columns: auto 1fr; align-items: center; }
+  .tw-proje-link { display: none; }
+  .lab-gorev { margin: 0 10px 8px; }
+}

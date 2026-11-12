@@ -149,7 +149,7 @@
   /* ================================================================== Projeler */
   function projeler(view) {
     const { PROJELER, SEVIYELER } = PR();
-    const biten = (window.KD_CURRICULUM || []).filter((p) => (p.language || "js") === DIL && p.challenges.every((c) => S.phase(p.id).passed[c.id])).length;
+    const biten = bitenDers();
     const dosyalar = atolye().dosyalar;
     view.innerHTML = `<div class="page at-sayfa">
       <header class="at-bas"><h1>Projeler</h1><p class="muted">Dersler sana parçaları verir; proje onları birleştirmeyi öğretir. Burada testler yok, doğru cevap tek değil. Bir projeyi seç, Terminal'de aç, adım adım kur.</p>
@@ -168,13 +168,47 @@
   /* ================================================================== Terminal: serbest çalışma alanı */
   const ANAHTAR = "kd-atolye-v1";
   let _at = null;
+  /* Dosyalar ilerlemeyle birlikte saklanır: hesap açıksa başka cihazda da görünür.
+     Önceki sürümde yalnızca tarayıcıda duran dosyalar ilk açılışta buraya taşınır. */
   function atolye() {
-    if (_at) return _at;
-    try { _at = JSON.parse(localStorage.getItem(ANAHTAR) || "null"); } catch (_) { _at = null; }
-    if (!_at || !Array.isArray(_at.dosyalar)) _at = { dosyalar: [], acik: null };
+    if (_at && S.state.atolye === _at) return _at;
+    _at = S.state.atolye;
+    if (!_at || !Array.isArray(_at.dosyalar)) {
+      let eski = null;
+      try { eski = JSON.parse(localStorage.getItem(ANAHTAR) || "null"); } catch (_) {}
+      _at = S.state.atolye = eski && Array.isArray(eski.dosyalar) ? eski : { dosyalar: [], acik: null };
+      if (eski) { try { localStorage.removeItem(ANAHTAR); } catch (_) {} S.save(); }
+    }
     return _at;
   }
-  const atKaydet = () => { try { localStorage.setItem(ANAHTAR, JSON.stringify(_at)); } catch (_) {} };
+  let kayitZ = null;
+  const atKaydet = () => { clearTimeout(kayitZ); kayitZ = setTimeout(() => S.save(), 400); };
+  const bitenDers = () => (window.KD_CURRICULUM || []).filter((p) => (p.language || "js") === DIL && p.challenges.every((c) => S.phase(p.id).passed[c.id])).length;
+  /* Bitirilen derslere uygun, henüz başlanmamış en ileri proje */
+  function projeOner() {
+    const biten = bitenDers(); if (!biten || !PR()) return null;
+    const baslanan = new Set(atolye().dosyalar.map((x) => x.proje).filter(Boolean));
+    return PR().PROJELER.filter((p) => p.ders <= biten && !baslanan.has(p.id)).sort((a, b) => b.ders - a.ders || a.seviye - b.seviye)[0] || null;
+  }
+  /* Panelde Atölye şeridi: sıradaki lab, önerilen proje, Terminal */
+  function serit(view) {
+    if (!view || view.querySelector(".at-serit") || !view.querySelector(".dash, .dash-head, .kam-kart")) return;
+    const lab = L().LABLAR.find((l) => !(labDurum()[l.id] || {}).bitti), x = lab ? labDurum()[lab.id] || {} : null, pj = projeOner();
+    const el = document.createElement("section");
+    el.className = "at-serit";
+    el.innerHTML = `
+      ${lab ? `<a href="#lab/${lab.id}"><span class="as-et">Lab ${lab.no}${x.adim ? " · adım " + (x.adim + 1) + "/" + lab.adimlar.length : ""}</span><b>${esc(lab.baslik)}</b><small>${lab.sure} dk · sanal makine</small></a>` : `<a href="#lab"><span class="as-et">Lablar</span><b>Hepsini bitirdin</b><small>Yeniden çözebilirsin</small></a>`}
+      <a href="${pj ? "#terminal/" + pj.id : "#projeler"}"><span class="as-et">Proje</span><b>${pj ? esc(pj.ad) : "Proje fikirleri"}</b><small>${pj ? pj.dk + " dk · " + pj.adimlar.length + " adım" : "İlk dersi bitirince öneririm"}</small></a>
+      <a href="#terminal"><span class="as-et">Terminal</span><b>Serbest çalış</b><small>${atolye().dosyalar.length ? atolye().dosyalar.length + " dosyan var" : "Aklına geleni dene"}</small></a>`;
+    const kart = view.querySelector(".kam-kart");
+    if (kart) kart.after(el); else view.prepend(el);
+  }
+  window.KD_ATOLYE = { projeOner, serit };
+  (function kur() {
+    const view = document.getElementById("view"); if (!view) return setTimeout(kur, 60);
+    const bak = () => { if (!location.hash || location.hash === "#panel") setTimeout(() => serit(view), 30); };
+    new MutationObserver(bak).observe(view, { childList: true }); bak();
+  })();
   const UZANTI = { py: "py", c: "c", js: "js" };
   const BOS = { py: 'ad = "dünya"\nprint(f"Merhaba, {ad}!")\n', c: '#include <stdio.h>\n\nint main(void) {\n    printf("Merhaba, dünya!\\n");\n    return 0;\n}\n', js: 'const ad = "dünya";\nconsole.log(`Merhaba, ${ad}!`);\n' };
   const MOD = { py: "python", c: "text/x-csrc", js: "javascript" };

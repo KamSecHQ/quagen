@@ -160,3 +160,4 @@ body:has(.kam-ders) .kam-fab { display: none; }   /* derste soru alanı sohbetin
 .al-alt .vurgulu { background: var(--marker); color: var(--marker-ink); }
 @media (max-width: 640px) { .al-ust { padding: 16px; } .al-govde { padding: 16px; } .al-form { flex-direction: column; } .al-kam b { font-size: 20px; } .al-ust .kam-av { font-size: 40px; } }
 @media (prefers-reduced-motion: reduce) { .al-girdi.salla, .al-govde { animation: none; } }
+@media (max-width: 640px) { .al-girdi { flex: none; width: 100%; } .al-form .btn { width: 100%; } }

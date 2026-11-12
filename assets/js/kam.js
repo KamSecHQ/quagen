@@ -88,7 +88,7 @@
     return `Günde **${pl.dk} dakika** ile ${temel}${EK.nin} tamamını (kalan ${pl.kalanFaz} ders) **${sureMetni(pl.tumGun)}** içinde bitirirsin. Bu, her gün çalıştığın varsayımıyla; hafta sonları boş geçerse süre uzar, sorun değil.`;
   }
   const selamSaat = () => { const h = new Date().getHours(); return h < 5 ? "Geç oldu" : h < 12 ? "Günaydın" : h < 18 ? "Selam" : "İyi akşamlar"; };
-  const adimAdi = (k) => ({ tahmin: "tahmin sorusu", incele: "konuyu ben anlatacağım", alistir: "alıştırma", kodla: "görevler", hatirla: "tekrar kartları" })[k] || k;
+  const adimAdi = (k) => ({ tahmin: "tahmin sorusu", incele: "konuyu ben anlatacağım", alistir: "satırları yazarak alıştırma", kodla: "görevler", hatirla: "tekrar kartları" })[k] || k;
 
   /* Duruma göre gerçekçi karşılama cümlesi */
   function karsilamaMetni(d) {
@@ -107,8 +107,13 @@
     if (d.bekleyen > 0) liste.push({ metin: `${d.bekleyen} kartı tekrar et`, sure: Math.max(2, Math.round(d.bekleyen * 0.5)) + " dk", href: "#tekrar" });
     if (d.sirada) {
       const { p, step, ch } = d.sirada;
+      /* Bir önceki gün alıştırılan satırlar: ertesi gün bir kez daha, yalnızca bakmadan */
+      const dun = cFazlar().filter((x) => { const h = S.phase(x.id); return h.drill && h.drillGun && h.drillGun < S.day() && !h.drill2; }).pop();
+      if (dun) liste.push({ metin: `Ders ${dun.no} satırlarını bir kez daha yaz`, sure: "3 dk", href: `#${dun.id}/alistir` });
       liste.push({ metin: `Ders ${p.no} · ${p.short || p.title}: ${step === "kodla" && ch ? "“" + ch.title + "” görevi" : adimAdi(step)}`, sure: step === "kodla" ? "10 dk" : step === "incele" ? "10 dk" : "3 dk", href: `#${p.id}/${step}${step === "kodla" && ch ? "/" + ch.id : ""}` });
     }
+    const oneri = window.KD_ATOLYE && window.KD_ATOLYE.projeOner();
+    if (oneri) liste.push({ metin: `Proje: ${oneri.ad}`, sure: oneri.dk + " dk", href: "#terminal/" + oneri.id });
     return liste;
   }
 

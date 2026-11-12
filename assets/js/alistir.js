@@ -31,22 +31,60 @@
     return { on: satir.slice(0, m.index), bos: m[0], son: satir.slice(m.index + m[0].length) };
   }
 
-  /* Dersin örneğinden ezberlenmeye değer satırları seç */
-  function satirlar(p, enCok = 5) {
+  /* Bir satırdaki öğretici parçalar: adlar, anahtar sözcükler, biçim belirteçleri (%d), işleçler */
+  const parcalar = (t) => new Set(String(t).replace(/"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`/g, (m) => (m.match(/%\.?\d*[a-z]|\$\{|\\n/g) || []).join(" ")).match(/[A-Za-z_][A-Za-z0-9_]*|%\.?\d*[a-z]|\$\{|\\n|==|!=|<=|>=|&&|\|\||=>|\+=|-=|\+\+|--|->|[=+\-*\/%<>&\[\]{}.:#]/g) || []);
+  const dilOf = (p) => p.language || "js";
+
+  /* Dersin örneğinden en öğretici satırları seç.
+   * Bir satır şu ölçüde değerlidir: (1) içindeki yapılar bu dersin görevlerinin çözümünde kullanılıyorsa,
+   * (2) o yapı bu dilde ilk kez bu derste görülüyorsa, (3) KAM o satırı ayrıca açıklamışsa.
+   * Her derste yinelenen iskelet satırları (return 0; kapanış parantezi, #include) ilk dersten sonra elenir;
+   * aynı kalıbın yinelemeleri (art arda üç printf) yerine farklı kalıplar tercih edilir. */
+  function satirlar(p, enCok = 5, mufredat) {
     const ex = p.example; if (!ex || !ex.code) return [];
-    const kod = ex.code.split("\n"), secilen = [], gorulen = new Set();
-    const uygun = (t) => t.length >= 5 && t.length <= 64 && /[A-Za-zÇĞİÖŞÜçğıöşü]{2}/.test(t) && !/^(\/\/|#(?!include)|\/\*|\*|<!--)/.test(t);
-    const ekle = (no, aciklama) => { const t = (kod[no - 1] || "").trim(); const k = sade(t); if (!uygun(t) || gorulen.has(k)) return false; gorulen.add(k); secilen.push({ satir: t, aciklama, no }); return true; };
-    const adimlar = ex.steps || [];
-    for (const s of adimlar) { if (secilen.length >= enCok) break; for (const no of s.lines || []) if (ekle(no, s.text)) break; }       // önce her açıklamadan birer satır
-    for (const s of adimlar) for (const no of s.lines || []) { if (secilen.length >= enCok) break; ekle(no, s.text); }                    // sonra kalanlar
-    for (let no = 1; no <= kod.length && secilen.length < 3; no++) ekle(no, "");
+    const kod = ex.code.split("\n");
+    const tum = mufredat || kok.KD_CURRICULUM || [];
+    const onceki = new Set();
+    for (const q of tum) if (dilOf(q) === dilOf(p) && (q.track || "") === (p.track || "") && q.no < p.no && q.example) parcalar(q.example.code).forEach((x) => onceki.add(x));
+    const cozum = new Set(); (p.challenges || []).forEach((c) => parcalar((c.solution || "") + "\n" + (c.starter || "")).forEach((x) => cozum.add(x)));
+    const kavram = (p.concepts || []).join(" ") + " " + (p.title || "");
+    const aciklama = new Map(); (ex.steps || []).forEach((s) => (s.lines || []).forEach((no) => { if (!aciklama.has(no)) aciklama.set(no, s.text); }));
+    const iskeletSatir = /^(return 0;?|int main\s*\(.*\)\s*\{|#include\b.*|\}|\{|main\(\)|if __name__.*|<\/?(html|body|head|div)>|\);?)$/;
+    const adaylar = [];
+    kod.forEach((ham, k) => {
+      const t = ham.trim(), no = k + 1;
+      if (t.length < 5 || t.length > 96 || !/[A-Za-zÇĞİÖŞÜçğıöşü]{2}/.test(t) || /^(\/\/|#(?!include)|\/\*|\*|<!--|--)/.test(t)) return;
+      const P = parcalar(t); let puan = aciklama.has(no) ? 2 : 0;
+      for (const x of P) {
+        const gorevde = cozum.has(x), yeni = !onceki.has(x), ad = /^[A-Za-z_]/.test(x);
+        if (gorevde) puan += ad ? 2 : 1;
+        if (yeni && (gorevde || !ad || kavram.includes(x))) puan += 3;
+      }
+      const iskeletMi = t.length > 64 || (iskeletSatir.test(t) && (p.no > 1 || !/#include|main/.test(t)));
+      if (iskeletMi) puan -= 8;
+      if (t.length > 48) puan -= 1;
+      adaylar.push({ satir: t, no, puan, iskeletMi, aciklama: aciklama.get(no) || "", ilk: (t.match(/[A-Za-z_#<][A-Za-z0-9_]*/) || [""])[0], P });
+    });
+    const secilen = [], gorulen = new Set(), kapsanan = new Set();
+    let gevsek = false;                       // yeterli satır çıkmazsa iskelet satırlarına da izin verilir
+    while (secilen.length < enCok) {
+      let en = null, enPuan = -Infinity;
+      for (const a of adaylar) {
+        if (gorulen.has(sade(a.satir)) || (a.iskeletMi && !gevsek)) continue;
+        let yeniParca = 0; for (const x of a.P) if (!kapsanan.has(x)) yeniParca++;
+        const pn = a.puan - 3 * secilen.filter((s) => s.ilk === a.ilk).length + Math.min(3, yeniParca) - (yeniParca === 0 ? 4 : 0);
+        if (pn > enPuan) { en = a; enPuan = pn; }
+      }
+      if (!en || (secilen.length >= 3 && enPuan < 1)) { if (secilen.length < 3 && !gevsek) { gevsek = true; continue; } break; }
+      gorulen.add(sade(en.satir)); en.P.forEach((x) => kapsanan.add(x));
+      secilen.push({ satir: en.satir, aciklama: en.aciklama, no: en.no, puan: en.puan });
+    }
     return secilen.sort((a, b) => a.no - b.no);
   }
 
   /* Alıştırma sırası: kopya ve boşluk hemen, hafıza bir satır gecikmeli */
-  function uret(p) {
-    const L = satirlar(p), sira = [];
+  function uret(p, mufredat) {
+    const L = satirlar(p, 5, mufredat), sira = [];
     L.forEach((x, i) => {
       sira.push({ tur: "kopya", i, satir: x.satir, aciklama: x.aciklama });
       const b = boslukSec(x.satir, i); if (b) sira.push(Object.assign({ tur: "bosluk", i, satir: x.satir, aciklama: x.aciklama }, b));
@@ -61,8 +99,11 @@
     const KD = kok.KD, S = KD.store, esc = KD.esc, A = kok.KD_APP || {};
     const dil = (p.example && p.example.lang) || KD.lang;
     const vurgu = (s) => (KD.hlDoc ? KD.hlDoc(s, A.hlLang ? A.hlLang(dil) : dil).join("\n") : esc(s));
-    const { satirlar: L, sira } = uret(p);
     const ph = S.phase(p.id);
+    /* Daha önce yapıldıysa ve aradan en az bir gün geçtiyse: yalnızca "bakmadan yaz" turu (kısa tekrar) */
+    const tekrarTuru = !!ph.drill && !!ph.drillGun && ph.drillGun < S.day();
+    const tam = uret(p), L = tam.satirlar;
+    const sira = tekrarTuru ? tam.sira.filter((a) => a.tur === "hafiza") : tam.sira;
     const YUZ = '<span class="kam-av" aria-hidden="true"><b></b><b></b></span>';
     if (!sira.length) { ph.drill = true; S.save(); stage.innerHTML = `<div class="panel"><p>Bu derste alıştırma yok. <a href="#${p.id}/kodla">Görevlere geç</a></p></div>`; return; }
     let n = 0, bakildi = false, yanlis = 0, toplamBakma = 0, eklenen = 0;
@@ -135,10 +176,11 @@
     }
     function bitir() {
       const ilk = !ph.drill;
-      ph.drill = true; S.save();
+      if (tekrarTuru) ph.drill2 = true;
+      ph.drill = true; ph.drillGun = ph.drillGun || S.day(); S.save();
       if (ilk) { S.addXP(20); if (A.renderBar) A.renderBar(); }
       $("#al-cubuk").style.width = "100%";
-      $("#al-baslik").textContent = "Alıştırma bitti";
+      $("#al-baslik").textContent = tekrarTuru ? "Tekrar bitti" : "Alıştırma bitti";
       $("#al-soz").textContent = toplamBakma ? `${L.length} satırın ${Math.max(0, L.length - toplamBakma)} tanesini bakmadan yazdın. Bakmak ayıp değil; yarın bir kez daha dene, o zaman hepsi gelir.` : `${L.length} satırın hepsini bakmadan yazdın. Bunlar artık senin.`;
       $("#al-sayac").textContent = ilk ? "+20 XP" : "";
       govde.innerHTML = `<p class="al-aciklama">Bu derste aklında kalması gereken satırlar:</p>

@@ -17,6 +17,20 @@
     return l.join("\n") + "\n";
   })();
 
+  const TARAYICI = "198.51.100.200";
+  const webKayit = (() => {
+    const l = []; let sn = 0;
+    const t = () => { sn += 3; return `[12/Nov/2026:04:${String(10 + Math.floor(sn / 60)).padStart(2, "0")}:${String(sn % 60).padStart(2, "0")}]`; };
+    const satir = (ip, yol, kod, boyut) => l.push(`${ip} - - ${t()} "GET ${yol} HTTP/1.1" ${kod} ${boyut}`);
+    const normal = ["/index.html", "/hakkinda.html", "/stil.css", "/logo.png", "/iletisim.html"], ziyaretci = ["192.0.2.31", "192.0.2.87", "203.0.113.5"];
+    for (let i = 0; i < 9; i++) satir(ziyaretci[i % 3], normal[i % 5], 200, 900 + i * 37);
+    ["/admin", "/wp-login.php", "/.env", "/phpmyadmin", "/config.php", "/backup.sql", "/.git/config", "/admin.php", "/login", "/test.php", "/db.sql", "/sifre.txt"].forEach((y, i) => { satir(TARAYICI, y, 404, 153); if (i % 4 === 1) satir(ziyaretci[i % 3], normal[i % 5], 200, 1200); });
+    satir(TARAYICI, "/yedek.zip", 200, 48211);
+    satir("192.0.2.31", "/olmayan-sayfa.html", 404, 153);
+    for (let i = 0; i < 4; i++) satir(ziyaretci[i % 3], normal[(i + 2) % 5], 200, 700 + i * 51);
+    return l.join("\n") + "\n";
+  })();
+
   const LABLAR = [
     {
       id: "sg1", alan: "siber", no: 1, baslik: "Terminalde yön bulmak", seviye: "Başlangıç", sure: 15,
@@ -93,6 +107,45 @@
         { k: ["Denetim geçti ve bayrağı verdi. Gönder."], gorev: "Bayrağı gönder.", ipucu: "Betiğin yazdığı `QG{...}` metnini kutuya yaz.", cozum: ["bayrak QG{en_az_yetki}"], gec: { bayrak: "QG{en_az_yetki}" } }
       ],
       kapanis: "Buna **en az yetki ilkesi** denir: herkes yalnızca işini yapmasına yetecek kadar izne sahip olmalı. Sızıntıların önemli bir kısmı, herkese açık bırakılmış bir dosyayla başlar."
+    },
+    {
+      id: "sg5", alan: "siber", no: 5, baslik: "Kayıp dosyanın peşinde", seviye: "Başlangıç", sure: 20,
+      ozet: "Bir sistemde ne nerede durur? find ve grep -r ile koca bir dosya ağacında aradığını bul; unutulmuş bir yedekteki parolayı ortaya çıkar.",
+      kazanim: ["find -name, -type", "grep -r ile içerik arama", "unutulmuş yedekler neden tehlikeli"],
+      dosyalar: {
+        "/home/ogrenci/notlar.txt": "Sunucuda eski bir yedek kalmış olabilir. Bulup raporla.\n",
+        "/home/ogrenci/belgeler/liste.txt": "süt\nekmek\n",
+        "/var/www/html/index.html": "<h1>Şirket sitesi</h1>\n",
+        "/var/www/html/stil.css": "body { margin: 0; }\n",
+        "/var/backups/site.bak": "# site yedeği 2024\ndb_kullanici=site\ndb_parola=Yaz2024!\ndb_sunucu=localhost\n",
+        "/opt/arac/ayar.conf": "dil=tr\ntema=koyu\n",
+        "/etc/hosts": "127.0.0.1 localhost\n",
+        "/tmp/.onbellek/bayrak": "QG{yedekler_de_gizli_tutulur}\n",
+        "/tmp/gecici.log": "geçici dosya\n"
+      },
+      adimlar: [
+        { k: ["Şimdiye kadar hep bildiğin bir klasörde çalıştın. Gerçekte bir sistemde on binlerce dosya vardır ve aradığının nerede olduğunu bilmezsin.", "`find` bir klasörden başlayıp altındaki her şeyi tarar. Ev dizinindeki bütün `.txt` dosyalarını bulalım: `find /home -name \"*.txt\"`", "Yıldız “herhangi bir şey” demek: adı ne olursa olsun, sonu `.txt` olanlar."], gorev: "/home altındaki .txt dosyalarını bul.", ipucu: "`find /home -name \"*.txt\"`", cozum: ["find /home -name \"*.txt\""], gec: { cikti: "liste\\.txt" } },
+        { k: ["Nottaki görev: eski bir yedek aramak. Yedek dosyalarının adı çoğu zaman `.bak` ile biter. Bu kez bütün sistemi, yani `/` kökünden başlayarak tara: `find / -name \"*.bak\"`"], gorev: "Sistemdeki .bak dosyalarını bul.", ipucu: "`find / -name \"*.bak\"`", cozum: ["find / -name \"*.bak\""], gec: { cikti: "site\\.bak" } },
+        { k: ["`/var/backups/site.bak`. Birisi siteyi taşırken yedek almış ve silmeyi unutmuş. Böyle dosyalar saldırganların ilk aradığı şeydir, çünkü içlerinde çoğu zaman parola olur.", "Dosya adını bilmeseydik de bulabilirdik: `grep -r` bir klasördeki **bütün dosyaların içinde** arar. Dene: `grep -r parola /var`"], gorev: "/var altındaki dosyaların içinde “parola” geçen satırları bul.", ipucu: "`grep -r parola /var` (r: alt klasörlerle birlikte)", cozum: ["grep -r parola /var"], gec: { cikti: "db_parola" } },
+        { k: ["Veritabanı parolası düz yazıyla duruyor. Rapora yazılacak ilk bulgu bu.", "Bir şey daha: saldırganlar kendi dosyalarını gizli klasörlere koyar. Adı nokta ile başlayan **klasörleri** arayalım. `-type d` yalnızca klasörleri getirir: `find / -type d -name \".*\"`"], gorev: "Sistemdeki gizli klasörleri bul.", ipucu: "`find / -type d -name \".*\"`", cozum: ["find / -type d -name \".*\""], gec: { cikti: "/tmp/\\.onbellek" } },
+        { k: ["`/tmp/.onbellek`: geçici dosyalar klasörünün içinde gizli bir klasör. İçine bak ve bulduğunu gönder."], gorev: "Gizli klasördeki bayrağı bul ve gönder.", ipucu: "`ls -a /tmp/.onbellek`, sonra `cat /tmp/.onbellek/bayrak`", cozum: ["ls -a /tmp/.onbellek", "cat /tmp/.onbellek/bayrak", "bayrak QG{yedekler_de_gizli_tutulur}"], gec: { bayrak: "QG{yedekler_de_gizli_tutulur}" } }
+      ],
+      kapanis: "İki arama biçimi öğrendin: `find` ada ve türe göre, `grep -r` içeriğe göre arar. Savunma tarafındaki ders: yedekler de asıl dosyalar kadar korunmalı, işi biten yedek silinmeli."
+    },
+    {
+      id: "sg6", alan: "siber", no: 6, baslik: "Web sunucusunun günlüğü", seviye: "Başlangıç", sure: 25,
+      ozet: "Bir web sitesine gelen her istek kayda geçer. Kayıttan siteyi tarayan adresi, neleri denediğini ve neyi ele geçirdiğini çıkar.",
+      kazanim: ["HTTP durum kodları (200, 404)", "tarama saldırısını tanımak", "wc, cut, sort, uniq ile özet çıkarma"],
+      dosyalar: { "/var/log/nginx/access.log": webKayit, "/home/ogrenci/gorev.txt": "Olay: site yöneticisi gece trafiğinde bir tuhaflık fark etti.\nKayıt: /var/log/nginx/access.log\n" },
+      adimlar: [
+        { k: ["Bir web sitesini her açtığında tarayıcın sunucuya bir **istek** gönderir. Sunucu her isteği bir satır olarak kaydeder.", "İlk birkaç satıra bak: `head -5 /var/log/nginx/access.log`"], gorev: "Kaydın ilk satırlarını gör.", ipucu: "`head -5 /var/log/nginx/access.log`", cozum: ["head -5 /var/log/nginx/access.log"], gec: { cikti: "GET /" } },
+        { k: ["Bir satırı soldan sağa oku: isteği yapan **adres**, zaman, istenen **sayfa** ve sunucunun cevabı olan **durum kodu**.", "İki kodu bilmen yeter: `200` “buyur, işte sayfa”, `404` “böyle bir sayfa yok” demek.", "Kaç istek gelmiş? `wc -l` satırları sayar: `wc -l /var/log/nginx/access.log`"], gorev: "Toplam istek sayısını bul.", ipucu: "`wc -l /var/log/nginx/access.log`", cozum: ["wc -l /var/log/nginx/access.log"], gec: { cikti: "^\\d+ " } },
+        { k: ["Normal bir ziyaretçi var olan sayfalara tıklar; arada bir yanlış adres yazıp 404 alır. Çok sayıda 404 ise birinin **olmayan sayfaları denediğini** gösterir.", "404 alan istekleri listele: `grep \" 404 \" /var/log/nginx/access.log`"], gorev: "404 ile sonuçlanan istekleri listele.", ipucu: "`grep \" 404 \" /var/log/nginx/access.log` (boşluklar önemli; yoksa içinde 404 geçen başka sayılar da gelir)", cozum: ["grep \" 404 \" /var/log/nginx/access.log"], gec: { cikti: "wp-login" } },
+        { k: ["`/admin`, `/wp-login.php`, `/.env`, `/backup.sql` ... Bunlar tesadüf değil; yaygın yönetim sayfalarını ve unutulmuş dosyaları sırayla deneyen bir **tarama aracı**.", "Hangi adresten geldiğini say. Adres her satırın ilk parçası: `grep \" 404 \" /var/log/nginx/access.log | cut -d ' ' -f 1 | sort | uniq -c | sort -rn`"], gorev: "404 isteklerini adrese göre say.", ipucu: "Önceki komutun sonuna `| cut -d ' ' -f 1 | sort | uniq -c | sort -rn` ekle.", cozum: ["grep \" 404 \" /var/log/nginx/access.log | cut -d ' ' -f 1 | sort | uniq -c | sort -rn"], gec: { cikti: "^\\s+12 198\\.51\\.100\\.200" } },
+        { k: ["12 deneme tek bir adresten: `198.51.100.200`. Diğer adresin tek 404'ü sıradan bir yazım hatası.", "Asıl önemli soru: denemelerden biri tuttu mu? Bu adresin **200** alan isteğine bak: `grep 198.51.100.200 /var/log/nginx/access.log | grep \" 200 \"`"], gorev: "Tarayıcının başarılı olduğu isteği bul.", ipucu: "`grep 198.51.100.200 /var/log/nginx/access.log | grep \" 200 \"`", cozum: ["grep 198.51.100.200 /var/log/nginx/access.log | grep \" 200 \""], gec: { cikti: "yedek\\.zip" } },
+        { k: ["`/yedek.zip` indirilmiş: 48 bin baytlık bir dosya. Sitenin yedeği herkese açık bir klasörde unutulmuş ve tarama onu bulmuş.", "Bayrak, indirilen dosyanın adı: `QG{dosya_adi}` biçiminde gönder."], gorev: "İndirilen dosyanın adını bayrak olarak gönder.", ipucu: "Dosya adı yedek.zip.", cozum: ["bayrak QG{yedek.zip}"], gec: { bayrak: "QG{yedek.zip}" } }
+      ],
+      kapanis: "Bir taramanın izi böyle görünür: kısa sürede, tek adresten, art arda 404. Önceki labda unutulmuş yedeği sistemin içinde bulmuştun; burada aynı hatanın dışarıdan nasıl bulunduğunu gördün."
     }
   ];
 
@@ -101,7 +154,7 @@
     { id: "py", ad: "Python", tur: "dil", durum: "hazir", ozet: "İlk dil için en rahatı. Değişkenlerden veri raporu aracına.", olcu: "20 ders · 60 görev" },
     { id: "c", ad: "C", tur: "dil", durum: "hazir", ozet: "Bilgisayarın içini anlamak isteyenlere. İşaretçiler, bellek, yapılar.", olcu: "20 ders · 60 görev" },
     { id: "js", ad: "JavaScript ve Web", tur: "dil", durum: "hazir", ozet: "Dilin temeli, ardından web sayfaları, React, algoritmalar ve sunucu tarafı.", olcu: "50 ders · 150 görev" },
-    { id: "siber", ad: "Siber Güvenlik", tur: "lab", durum: "hazir", ozet: "Sıfırdan: terminal, kayıt inceleme, kodlamalar, izinler. Her konu tarayıcıdaki bir lab makinesinde.", olcu: "4 lab hazır · devamı geliyor" },
+    { id: "siber", ad: "Siber Güvenlik", tur: "lab", durum: "hazir", ozet: "Sıfırdan: terminal, kayıt inceleme, kodlamalar, izinler, dosya arama, web günlükleri. Her konu tarayıcıdaki bir lab makinesinde.", olcu: "6 lab hazır · devamı geliyor" },
     { id: "linux", ad: "Linux ve Komut Satırı", tur: "lab", durum: "yakinda", ozet: "Dosya sistemi, süreçler, betik yazma. Siber güvenlik lablarının devamı için temel.", olcu: "hazırlanıyor" },
     { id: "ag", ad: "Ağ Temelleri", tur: "lab", durum: "yakinda", ozet: "IP, port, DNS, HTTP. Bir isteğin tarayıcıdan sunucuya yolculuğu.", olcu: "hazırlanıyor" },
     { id: "veri", ad: "Veri Analizi", tur: "dil", durum: "yakinda", ozet: "Python ile tabloları okumak, temizlemek, özetlemek ve grafiğe dökmek.", olcu: "hazırlanıyor" },
