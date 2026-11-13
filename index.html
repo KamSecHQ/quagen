@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="assets/css/landing.css" />
   <link rel="stylesheet" href="assets/css/kam.css" />
   <link rel="stylesheet" href="assets/css/cam.css" />
-  <link rel="stylesheet" href="assets/css/quagen3d.css?v=8" />
+  <link rel="stylesheet" href="assets/css/quagen3d.css?v=9" />
   <script>(function () { var t = "light"; try { if (localStorage.getItem("quagen-tema") === "dark") t = "dark"; } catch (e) {} document.documentElement.dataset.theme = t; })();</script>
   <link rel="prefetch" href="nextgen.html" />
 </head>
@@ -56,27 +56,36 @@
           <span class="kam-av dev" id="kam-dev" aria-hidden="true"><b></b><b></b></span>
         </div>
       </div>
-      <!-- Ürün görüntüsü: NextGen'de bir ders -->
-      <div class="urun-sahne">
-        <figure class="urun" aria-label="NextGen'de bir ders ekranı">
-          <header class="urun-cubuk"><span class="urun-isik" aria-hidden="true"><i></i><i></i><i></i></span><span class="urun-adres">NextGen · Python · Ders 1</span></header>
-          <div class="urun-govde">
-            <div class="urun-sohbet">
-              <div class="urun-kim"><span class="kam-av" aria-hidden="true"><b></b><b></b></span><b>KAM</b></div>
-              <p class="k" style="--s:1">Bir değere ad vermek için eşittir kullanırız.</p>
-              <p class="k" style="--s:3">Burada “eşit mi?” diye sormaz; kutuya koy demektir.</p>
-              <p class="s" style="--s:5">Tırnaklı yazsam ne olur?</p>
-              <p class="k" style="--s:7">O zaman ekranda harfi harfine <code>ad</code> görürsün.</p>
-            </div>
-            <div class="urun-editor">
-              <div class="urun-sekme"><b>merhaba.py</b><span class="urun-calis">Çalıştır</span></div>
-              <pre class="urun-kod"><code><span style="--s:2"><i>1</i><em>ad</em> = <u>"Deniz"</u></span>
-<span style="--s:4"><i>2</i><em>yas</em> = <u>19</u></span>
-<span style="--s:6" class="vurgu"><i>3</i><em>print</em>(<u>f"{ad} {yas} yaşında."</u>)</span></code></pre>
-              <div class="urun-cikti" style="--s:8"><b>Çıktı</b><span>Deniz 19 yaşında.</span></div>
-            </div>
+      <!-- Üç deneyim: ders, lab, KAM -->
+      <div class="onizle" aria-label="QUAGEN'de bir ders, bir lab ve KAM">
+        <article class="cam oz">
+          <header><i></i><b>Ders</b><span>ortalama.py</span></header>
+          <pre class="oz-kod"><code><span style="--s:1"><i>1</i><em>def</em> <b>ortalama</b>(notlar: <em>list</em>[<em>int</em>]) -> <em>float</em>:</span>
+<span style="--s:2"><i>2</i>    <em>return</em> <b>sum</b>(notlar) / <b>len</b>(notlar)</span>
+<span style="--s:3"><i>3</i></span>
+<span style="--s:4"><i>4</i>notlar = [<u>85</u>, <u>92</u>, <u>78</u>]</span>
+<span style="--s:5"><i>5</i><b>print</b>(<u>f"{ortalama(notlar):.1f}"</u>)</span></code></pre>
+          <p class="oz-cikti" style="--s:7">85.0</p>
+        </article>
+        <article class="cam oz oz-lab">
+          <header><i></i><b>Lab</b><span>auth.log</span></header>
+          <pre class="oz-kod"><code><span style="--s:2"><em>$</em> grep <u>"Failed password"</u> auth.log \</span>
+<span style="--s:2">    | awk <u>'{print $11}'</u> | sort | uniq -c</span>
+<span style="--s:4" class="oz-soluk">      8 198.51.100.14</span>
+<span style="--s:5" class="oz-soluk">      5 192.0.2.45</span>
+<span style="--s:6" class="oz-soluk">     21 203.0.113.77</span>
+<span style="--s:8"><em>$</em> grep 203.0.113.77 auth.log | tail -1</span>
+<span style="--s:9" class="oz-soluk">03:18 Accepted password for deniz</span></code></pre>
+        </article>
+        <article class="cam oz oz-kam">
+          <header><span class="kam-av" aria-hidden="true"><b></b><b></b></span><b>KAM</b></header>
+          <div class="oz-sohbet">
+            <p class="s" style="--s:2"><code>IndexError: list index out of range</code> alıyorum.</p>
+            <p class="k" style="--s:4">Döngün <code>len(notlar)</code> değerine kadar gidiyor. Son geçerli indis <code>len(notlar) - 1</code>.</p>
+            <p class="k" style="--s:6">Dördüncü satırda <code>range(len(notlar))</code> kullan; sınırı kendisi ayarlar.</p>
+            <p class="s" style="--s:8">Çalıştı. Testlerin üçü de geçti.</p>
           </div>
-        </figure>
+        </article>
       </div>
     </section>
 
@@ -246,7 +255,7 @@
   <script src="assets/js/python.js"></script>
   <script src="assets/js/tur.js"></script>
   <script src="assets/js/landing.js"></script>
-  <script src="assets/js/quagen3d.js?v=5"></script>
+  <script src="assets/js/quagen3d.js?v=6"></script>
   <script src="assets/js/gecis.js"></script>
 </body>
 </html>
