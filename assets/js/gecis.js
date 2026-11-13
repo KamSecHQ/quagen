@@ -20,6 +20,6 @@
     try { sessionStorage.setItem("kd-gecis", "1"); } catch (_) {}
     setTimeout(() => (location.href = href), 1150);
   }
-  document.addEventListener("click", (e) => { const a = e.target.closest && e.target.closest(".dunya a"); if (a) git(a, e); });
+  document.addEventListener("click", (e) => { const a = e.target.closest && e.target.closest(".dunya a, .quagen-don, .ng-git"); if (a) git(a, e); });
   addEventListener("pageshow", (e) => { if (e.persisted) document.querySelectorAll(".gecis").forEach((x) => x.remove()); });
 })();

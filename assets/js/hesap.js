@@ -5,7 +5,7 @@
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const params = new URLSearchParams(location.search);
   /* Yalnızca bu sitedeki göreli adreslere yönlendir (açık yönlendirme açığı olmasın) */
-  const sonra = (() => { const s = params.get("sonra") || ""; return /^(nextgen\.html|index\.html|portfolyo\.html|p\/)[^:]*$/.test(s) ? s : "nextgen.html"; })();
+  const sonra = (() => { const s = params.get("sonra") || ""; return /^(nextgen\.html|pratik\.html|rehber\.html|index\.html|portfolyo\.html|p\/)[^:]*$/.test(s) ? s : "nextgen.html"; })();
 
   /* ---------- Sol panel: canlı kod ---------- */
   const KOD = [

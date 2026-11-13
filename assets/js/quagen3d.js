@@ -107,7 +107,7 @@
   })();
 
   /* ---------- Levhalar imlece doğru eğilir ---------- */
-  const levhalar = document.querySelectorAll(".kam-ozellik article, .bilim article, .adimlar li, .rakamlar, .cta-in, .kapi, .programlar > .program");
+  const levhalar = document.querySelectorAll(".bilim article, .adimlar li, .cta-in, .kapi, .programlar > .program");
   levhalar.forEach((el) => {
     el.classList.add("q-egim");
     if (!inceImlec || azHareket) return;

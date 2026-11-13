@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="assets/css/landing.css" />
   <link rel="stylesheet" href="assets/css/kam.css" />
   <link rel="stylesheet" href="assets/css/cam.css" />
-  <link rel="stylesheet" href="assets/css/quagen3d.css?v=4" />
+  <link rel="stylesheet" href="assets/css/quagen3d.css?v=5" />
   <script>(function () { var t = "light"; try { if (localStorage.getItem("quagen-tema") === "dark") t = "dark"; } catch (e) {} document.documentElement.dataset.theme = t; })();</script>
   <link rel="prefetch" href="nextgen.html" />
 </head>
@@ -24,15 +24,14 @@
   <header class="nav" id="nav">
     <div class="nav-in cam">
       <a href="#" class="logo" aria-label="QUAGEN ana sayfa">QUAGEN</a>
-      <nav class="dunya" id="dunya" aria-label="Dünyalar"><span aria-current="page">QUAGEN</span><a href="nextgen.html" class="js-warp">NextGen</a></nav>
       <nav class="nav-links" aria-label="Bölümler">
         <a href="#programlar">Programlar</a>
-        <a href="#kam">KAM</a>
         <a href="#ders">Nasıl öğretir</a>
         <a href="#bilim">Bilim</a>
         <a href="#sss">Sorular</a>
       </nav>
       <button class="nav-tema" id="tema" aria-label="Temayı değiştir"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
+      <a href="nextgen.html" class="ng-git" id="ng-git"><span class="ng-git-ik" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" fill="currentColor"/></svg></span><span>NextGen'e git</span><svg class="ng-git-ok" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
       <a href="hesap.html#kayit" class="btn btn-ink nav-kayit" id="nav-login"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="10" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 20a6.5 6.5 0 0 1 13 0M19 8v6M16 11h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Ücretsiz başla</span></a>
     </div>
   </header>
@@ -56,12 +55,6 @@
           <span class="kam-av dev" id="kam-dev" aria-hidden="true"><b></b><b></b></span>
         </div>
       </div>
-      <dl class="rakamlar cam" id="hakkinda">
-        <div><dt>90</dt><dd>ders, sıfırdan projeye</dd></div>
-        <div><dt>14</dt><dd>lab, tarayıcıdaki sanal makinede</dd></div>
-        <div><dt>25</dt><dd>proje fikri, basitten zora</dd></div>
-        <div><dt>0 ₺</dt><dd>derslerin ve labların tamamı</dd></div>
-      </dl>
     </section>
 
     <!-- Programlar -->
@@ -79,33 +72,6 @@
         <a class="cam program" href="nextgen.html#lab"><span class="p-tur">Lab</span><h3>Ağ Temelleri</h3><p>IP adresi, DNS, portlar, HTTP. Bir isteğin yolculuğunu komut satırından izlersin.</p><span class="p-olcu">4 lab</span><b>Lablara git</b></a>
       </div>
       <p class="program-not">Sırada: Web Güvenliği, Veri Analizi, Veritabanları ve SQL.</p>
-    </section>
-
-    <!-- KAM: öğretmen ve canlı örnek -->
-    <section class="section wrap" id="kam">
-      <header class="sec-head">
-        <h2>Öğretmenin KAM.</h2>
-        <p>QUAGEN'in yapay zekâ öğretmeni. Dersi mesajlaşarak anlatır; anlattığı satır yanda parlar, kod çalışır. Aşağıda kendisiyle konuşabilirsin.</p>
-      </header>
-      <div class="sahne-3b"><div class="sahne cam" id="sahne">
-        <section class="s-sohbet" aria-label="KAM ile sohbet">
-          <div class="kam-akis" id="h-akis" aria-live="polite"></div>
-          <div class="kam-cevap" id="h-cevap" data-odak="yok"></div>
-        </section>
-        <section class="s-kod" aria-label="KAM'in yazdığı kod">
-          <header class="sahne-bas"><span class="s-isik" aria-hidden="true"><i></i><i></i><i></i></span><span class="file" id="h-dosya">merhaba.c</span><span class="sahne-durum" id="h-durum"></span></header>
-          <pre class="sahne-kod" id="h-kod"><code><span class="sahne-bos">KAM anlatmaya başlayınca kod burada belirecek.</span></code></pre>
-          <div class="sahne-cikti" id="h-cikti" hidden></div>
-        </section>
-      </div></div>
-      <noscript><p class="lead">Sohbeti görmek için JavaScript gerekir. <a href="nextgen.html">NextGen'e doğrudan git.</a></p></noscript>
-      <p class="kam-tur-satir"><button class="btn btn-line" id="tur-ac" type="button">KAM sayfayı gezdirsin</button></p>
-      <div class="kam-ozellik">
-        <article class="cam"><h3>Konuyu konuşarak anlatır</h3><p>Sayfalarca yazı yerine mesaj mesaj ilerler. Anlattığı satır yanda parlar, kod çalışır, sonucu birlikte görürsünüz.</p></article>
-        <article class="cam"><h3>Cevabı vermez, yolu gösterir</h3><p>Görevde takıldığında hatanı teşhis eder ve doğru yere baktıran bir ipucu verir. Çözümü sen bulursun; öğrenen de sen olursun.</p></article>
-        <article class="cam"><h3>Sana plan yapar</h3><p>Günde kaç dakikan olduğunu sorar, ona göre gerçekçi bir süre söyler. Her girişte bugün ne yapman gerektiğini sıralar.</p></article>
-        <article class="cam"><h3>Abartmaz</h3><p>“Harikasın” demek için konuşmaz. Zor olan şeye zor der, ara verdiysen bunu söyler, sonra yapılabilir bir sonraki adımı gösterir.</p></article>
-      </div>
     </section>
 
     <!-- Bir ders nasıl geçer -->
@@ -198,7 +164,6 @@
     <div class="wrap foot-in">
       <span class="logo">QUAGEN</span>
       <a href="#programlar">Programlar</a>
-      <a href="#kam">KAM</a>
       <a href="#bilim">Bilim</a>
       <a href="hesap.html#kayit">Ücretsiz başla</a>
       <span class="foot-c">© 2026 QUAGEN</span>
@@ -240,7 +205,7 @@
   <script src="assets/js/python.js"></script>
   <script src="assets/js/tur.js"></script>
   <script src="assets/js/landing.js"></script>
-  <script src="assets/js/quagen3d.js?v=2"></script>
+  <script src="assets/js/quagen3d.js?v=3"></script>
   <script src="assets/js/gecis.js"></script>
 </body>
 </html>
