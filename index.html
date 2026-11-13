@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="assets/css/landing.css" />
   <link rel="stylesheet" href="assets/css/kam.css" />
   <link rel="stylesheet" href="assets/css/cam.css" />
-  <link rel="stylesheet" href="assets/css/quagen3d.css?v=7" />
+  <link rel="stylesheet" href="assets/css/quagen3d.css?v=8" />
   <script>(function () { var t = "light"; try { if (localStorage.getItem("quagen-tema") === "dark") t = "dark"; } catch (e) {} document.documentElement.dataset.theme = t; })();</script>
   <link rel="prefetch" href="nextgen.html" />
 </head>
@@ -56,33 +56,27 @@
           <span class="kam-av dev" id="kam-dev" aria-hidden="true"><b></b><b></b></span>
         </div>
       </div>
-      <!-- Üç deneyim: ders, lab, KAM -->
-      <div class="onizle" aria-label="QUAGEN'de bir gün">
-        <article class="cam oz">
-          <header><i></i><b>Ders</b><span>merhaba.py</span></header>
-          <pre class="oz-kod"><code><span style="--s:1"><em>ad</em> = <u>"Deniz"</u></span>
-<span style="--s:2"><em>yas</em> = <u>19</u></span>
-<span style="--s:3">print(<u>f"{ad} {yas} yaşında."</u>)</span></code></pre>
-          <p class="oz-cikti" style="--s:5">Deniz 19 yaşında.</p>
-          <p class="oz-not">Kodu sen yazarsın, tarayıcında çalışır.</p>
-        </article>
-        <article class="cam oz oz-lab">
-          <header><i></i><b>Lab</b><span>ogrenci@lab</span></header>
-          <pre class="oz-kod"><code><span style="--s:2"><em>$</em> nslookup okul.lab</span>
-<span style="--s:3" class="oz-soluk">Adres:   10.0.0.10</span>
-<span style="--s:5"><em>$</em> curl -I http://okul.lab/yonetim</span>
-<span style="--s:6" class="oz-soluk">HTTP/1.1 403 Yasak</span></code></pre>
-          <p class="oz-not">Lablar sanal bir makinede geçer; hiçbir şeyi bozamazsın.</p>
-        </article>
-        <article class="cam oz oz-kam">
-          <header><span class="kam-av" aria-hidden="true"><b></b><b></b></span><b>KAM</b><span>seninle yazışıyor</span></header>
-          <div class="oz-sohbet">
-            <p class="k" style="--s:3">Eşittir burada “eşit mi?” diye sormaz; kutuya koy demektir.</p>
-            <p class="s" style="--s:5">Tırnaklı yazsam ne olur?</p>
-            <p class="k" style="--s:7">O zaman ekranda harfi harfine <code>ad</code> görürsün.</p>
+      <!-- Ürün görüntüsü: NextGen'de bir ders -->
+      <div class="urun-sahne">
+        <figure class="urun" aria-label="NextGen'de bir ders ekranı">
+          <header class="urun-cubuk"><span class="urun-isik" aria-hidden="true"><i></i><i></i><i></i></span><span class="urun-adres">NextGen · Python · Ders 1</span></header>
+          <div class="urun-govde">
+            <div class="urun-sohbet">
+              <div class="urun-kim"><span class="kam-av" aria-hidden="true"><b></b><b></b></span><b>KAM</b></div>
+              <p class="k" style="--s:1">Bir değere ad vermek için eşittir kullanırız.</p>
+              <p class="k" style="--s:3">Burada “eşit mi?” diye sormaz; kutuya koy demektir.</p>
+              <p class="s" style="--s:5">Tırnaklı yazsam ne olur?</p>
+              <p class="k" style="--s:7">O zaman ekranda harfi harfine <code>ad</code> görürsün.</p>
+            </div>
+            <div class="urun-editor">
+              <div class="urun-sekme"><b>merhaba.py</b><span class="urun-calis">Çalıştır</span></div>
+              <pre class="urun-kod"><code><span style="--s:2"><i>1</i><em>ad</em> = <u>"Deniz"</u></span>
+<span style="--s:4"><i>2</i><em>yas</em> = <u>19</u></span>
+<span style="--s:6" class="vurgu"><i>3</i><em>print</em>(<u>f"{ad} {yas} yaşında."</u>)</span></code></pre>
+              <div class="urun-cikti" style="--s:8"><b>Çıktı</b><span>Deniz 19 yaşında.</span></div>
+            </div>
           </div>
-          <p class="oz-not">Takıldığında KAM'e sorarsın.</p>
-        </article>
+        </figure>
       </div>
     </section>
 
@@ -252,7 +246,7 @@
   <script src="assets/js/python.js"></script>
   <script src="assets/js/tur.js"></script>
   <script src="assets/js/landing.js"></script>
-  <script src="assets/js/quagen3d.js?v=4"></script>
+  <script src="assets/js/quagen3d.js?v=5"></script>
   <script src="assets/js/gecis.js"></script>
 </body>
 </html>

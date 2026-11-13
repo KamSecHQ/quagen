@@ -107,11 +107,11 @@
   })();
 
   /* ---------- Levhalar imlece doğru eğilir ---------- */
-  const levhalar = document.querySelectorAll(".bilim article, .adimlar li, .cta-in, .kapi, .programlar > .program, .onizle > .oz");
+  const levhalar = document.querySelectorAll(".bilim article, .adimlar li, .cta-in, .kapi, .programlar > .program, .urun");
   levhalar.forEach((el) => {
     el.classList.add("q-egim");
     if (!inceImlec || azHareket) return;
-    const guc = el.matches(".kapi, .rakamlar, .cta-in") ? 3 : 7;
+    const guc = el.matches(".kapi, .rakamlar, .cta-in, .urun") ? 3 : 7;
     el.addEventListener("pointermove", (e) => {
       const b = el.getBoundingClientRect(), x = (e.clientX - b.left) / b.width, y = (e.clientY - b.top) / b.height;
       el.classList.add("tut");
