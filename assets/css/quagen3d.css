@@ -235,3 +235,55 @@ html.q3d[data-theme="light"] { background: radial-gradient(110% 70% at 85% -10%,
 .q3d .nav-in { gap: 14px; }
 @media (max-width: 820px) { .q3d .ng-git > span:not(.ng-git-ik) { display: none; } .q3d .ng-git { padding: 0 10px 0 6px; height: 38px; } .q3d .ng-git-ik { width: 26px; height: 26px; } .q3d .wrap, .q3d .nav-in { width: calc(100% - 32px); } }
 @media (prefers-reduced-motion: reduce) { .q3d .ng-git::before { display: none; } }
+
+/* ---------- v7: açılışın altında üç deneyim, yeni KAM bölümü ---------- */
+.q3d .hero-ust { min-height: min(62vh, 760px); }
+.q3d .onizle { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.4vw, 28px); margin-top: clamp(8px, 2vh, 32px); perspective: 1600px; }
+.q3d .oz { display: flex; flex-direction: column; gap: 14px; padding: clamp(18px, 1.5vw, 30px); min-height: clamp(250px, 17vw, 380px); overflow: hidden; }
+.q3d .oz header { display: flex; align-items: center; gap: 10px; font-size: clamp(14px, 0.95vw, 18px); }
+.q3d .oz header i { width: 10px; height: 10px; border-radius: 50%; background: var(--q-kor); box-shadow: 16px 0 0 var(--rule-2), 32px 0 0 var(--rule-2); margin-right: 32px; }
+.q3d .oz header b { font-weight: 750; }
+.q3d .oz header span:last-child { margin-left: auto; font: 500 0.85em var(--mono); color: var(--graphite); }
+.q3d .oz header .kam-av { font-size: 30px; }
+.q3d .oz-kod { margin: 0; font: 500 clamp(14px, 1.05vw, 21px)/1.75 var(--mono); white-space: pre-wrap; color: var(--ink); }
+.q3d .oz-kod em { font-style: normal; color: #c9502a; }
+.q3d .oz-kod u { text-decoration: none; color: #2f6fe0; }
+.q3d .oz-soluk { color: var(--graphite); }
+.q3d .oz-kod span, .q3d .oz-cikti, .q3d .oz-sohbet p { opacity: 0; animation: q-belir 0.5s var(--ease) forwards; animation-delay: calc(var(--s, 0) * 0.45s + 0.6s); }
+@keyframes q-belir { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.q3d .oz-cikti { padding: 10px 14px; border-radius: 6px; border-left: 3px solid #1f9d55; background: rgba(31, 157, 85, 0.1); font: 600 clamp(14px, 1vw, 20px) var(--mono); }
+.q3d .oz-not { margin-top: auto; color: var(--graphite); font-size: clamp(14px, 0.95vw, 18px); }
+.q3d .oz-sohbet { display: grid; gap: 10px; }
+.q3d .oz-sohbet p { max-width: 86%; padding: 10px 14px; border-radius: 14px; font-size: clamp(14px, 1vw, 19px); line-height: 1.4; }
+.q3d .oz-sohbet .k { background: var(--sunken); border-bottom-left-radius: 4px; }
+.q3d .oz-sohbet .s { justify-self: end; background: linear-gradient(135deg, #f0602c, #e8456b); color: #fff7f2; border-bottom-right-radius: 4px; }
+.q3d .oz-sohbet code { padding: 1px 6px; border-radius: 5px; background: rgba(120, 60, 40, 0.14); font-size: 0.92em; }
+:root.q3d[data-theme="dark"] .oz-kod em { color: #ff9a6b; } :root.q3d[data-theme="dark"] .oz-kod u { color: #8fbcff; }
+
+.q3d .kam-bolum { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.25fr); gap: clamp(32px, 6vw, 140px); align-items: start; }
+.q3d .kam-yan { position: sticky; top: 110px; display: grid; gap: clamp(18px, 1.6vw, 30px); justify-items: start; }
+.q3d .kam-yan .kam-av { font-size: clamp(110px, 12vw, 260px); filter: drop-shadow(0 30px 44px rgba(60, 100, 230, 0.35)); animation: q-yuz 6s ease-in-out infinite; }
+.q3d .kam-yan h2 { font-size: clamp(44px, 5.6vw, 140px); line-height: 0.9; }
+.q3d .kam-yan p { font-size: clamp(17px, 1.4vw, 28px); color: var(--ink-2); max-width: 30ch; }
+.q3d .kam-liste { list-style: none; counter-reset: kam; display: grid; }
+.q3d .kam-liste li { counter-increment: kam; display: grid; grid-template-columns: clamp(64px, 7vw, 150px) minmax(0, 1fr); column-gap: clamp(14px, 2vw, 40px); padding: clamp(24px, 2.6vw, 52px) 0; border-top: 1px solid var(--rule-2); }
+.q3d .kam-liste li:last-child { border-bottom: 1px solid var(--rule-2); }
+.q3d .kam-liste li::before { content: counter(kam); grid-row: span 2; font: 800 clamp(56px, 6vw, 140px)/0.8 var(--sans); font-stretch: 75%; color: transparent; -webkit-text-stroke: 1.5px var(--q-kor); }
+.q3d .kam-liste h3 { font-size: clamp(26px, 2.6vw, 60px); font-stretch: 78%; line-height: 1; }
+.q3d .kam-liste p { margin-top: 12px; color: var(--ink-2); font-size: clamp(16px, 1.25vw, 25px); line-height: 1.5; max-width: 46ch; }
+.q3d .kam-yan.rv.in, .q3d .kam-liste li.rv.in { transform: none; }
+
+/* geniş ekranda düğmeler ve küçük yazılar da büyür */
+.q3d .hero-git .btn-lg, .q3d .kam-yan .btn-lg, .q3d .cta .btn-lg, .q3d .kapi .btn-lg { height: clamp(50px, 3.2vw, 72px); padding: 0 clamp(22px, 1.8vw, 40px); font-size: clamp(16px, 1.1vw, 22px); }
+.q3d .hero-guven { font-size: clamp(15px, 1vw, 20px); }
+.q3d .program h3 { font-size: clamp(26px, 2.1vw, 44px); }
+.q3d .program p, .q3d .bilim p { font-size: clamp(15px, 1vw, 20px); }
+.q3d .bilim h3 { font-size: clamp(24px, 1.7vw, 38px); }
+.q3d .adimlar h3 { font-size: clamp(22px, 1.8vw, 40px); }
+.q3d .adimlar p { font-size: clamp(15px, 1.05vw, 21px); }
+.q3d .kiyas b, .q3d .kiyas span { font-size: clamp(15.5px, 1.15vw, 24px); }
+.q3d .faq summary { font-size: clamp(20px, 1.5vw, 32px); }
+.q3d .faq details p { font-size: clamp(16px, 1.1vw, 22px); }
+
+@media (max-width: 1040px) { .q3d .onizle { grid-template-columns: 1fr; } .q3d .oz { min-height: 0; } .q3d .kam-bolum { grid-template-columns: 1fr; } .q3d .kam-yan { position: static; } }
+@media (prefers-reduced-motion: reduce) { .q3d .oz-kod span, .q3d .oz-cikti, .q3d .oz-sohbet p { opacity: 1; animation: none; } .q3d .kam-yan .kam-av { animation: none; } }

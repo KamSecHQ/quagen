@@ -20,7 +20,7 @@
   /* Açılış koreografisi ve kaydırdıkça beliren bölümler */
   requestAnimationFrame(() => document.body.classList.add("ready"));
   setTimeout(() => document.body.classList.add("ready"), 80); /* kare gelmese de (arka plan sekmesi) içerik görünür olsun */
-  const bolumler = document.querySelectorAll(".section .sec-head, .adimlar > li, .faq-liste, .cta-in, .kam-ozellik > article, .bilim > article, .kapi, .programlar > *, .kiyas");
+  const bolumler = document.querySelectorAll(".section .sec-head, .adimlar > li, .faq-liste, .cta-in, .kam-ozellik > article, .bilim > article, .kapi, .programlar > *, .kiyas, .kam-yan, .kam-liste > li");
   bolumler.forEach((el) => el.classList.add("rv"));
   if (!reduced && "IntersectionObserver" in window) {
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });

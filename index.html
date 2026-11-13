@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="assets/css/landing.css" />
   <link rel="stylesheet" href="assets/css/kam.css" />
   <link rel="stylesheet" href="assets/css/cam.css" />
-  <link rel="stylesheet" href="assets/css/quagen3d.css?v=6" />
+  <link rel="stylesheet" href="assets/css/quagen3d.css?v=7" />
   <script>(function () { var t = "light"; try { if (localStorage.getItem("quagen-tema") === "dark") t = "dark"; } catch (e) {} document.documentElement.dataset.theme = t; })();</script>
   <link rel="prefetch" href="nextgen.html" />
 </head>
@@ -26,6 +26,7 @@
       <a href="#" class="logo" aria-label="QUAGEN ana sayfa">QUAGEN</a>
       <nav class="nav-links" aria-label="Bölümler">
         <a href="#programlar">Programlar</a>
+        <a href="#kam">KAM</a>
         <a href="#ders">Nasıl öğretir</a>
         <a href="#bilim">Bilim</a>
         <a href="#sss">Sorular</a>
@@ -42,7 +43,7 @@
       <div class="hero-ust">
         <div class="hero-yazi">
           <h1 class="hero-h" id="hero-h">Yazılımı sıfırdan, kendi hızında öğren.</h1>
-          <p class="lead">QUAGEN, Türkçe ve ücretsiz bir yazılım okulu. Video izlemezsin: yapay zekâ öğretmen KAM konuyu anlatır, kodu tarayıcında sen yazarsın.</p>
+          <p class="lead">QUAGEN, Türkçe ve ücretsiz bir yazılım okulu. Video izlemezsin: süper zekâ asistanın KAM konuyu anlatır, kodu tarayıcında sen yazarsın.</p>
           <div class="hero-git">
             <a href="hesap.html?sonra=nextgen.html#kayit" class="btn btn-marker btn-lg js-basla">Ücretsiz başla</a>
             <a href="#programlar" class="btn btn-line btn-lg">Programları incele</a>
@@ -54,6 +55,34 @@
         <div class="hero-kure">
           <span class="kam-av dev" id="kam-dev" aria-hidden="true"><b></b><b></b></span>
         </div>
+      </div>
+      <!-- Üç deneyim: ders, lab, KAM -->
+      <div class="onizle" aria-label="QUAGEN'de bir gün">
+        <article class="cam oz">
+          <header><i></i><b>Ders</b><span>merhaba.py</span></header>
+          <pre class="oz-kod"><code><span style="--s:1"><em>ad</em> = <u>"Deniz"</u></span>
+<span style="--s:2"><em>yas</em> = <u>19</u></span>
+<span style="--s:3">print(<u>f"{ad} {yas} yaşında."</u>)</span></code></pre>
+          <p class="oz-cikti" style="--s:5">Deniz 19 yaşında.</p>
+          <p class="oz-not">Kodu sen yazarsın, tarayıcında çalışır.</p>
+        </article>
+        <article class="cam oz oz-lab">
+          <header><i></i><b>Lab</b><span>ogrenci@lab</span></header>
+          <pre class="oz-kod"><code><span style="--s:2"><em>$</em> nslookup okul.lab</span>
+<span style="--s:3" class="oz-soluk">Adres:   10.0.0.10</span>
+<span style="--s:5"><em>$</em> curl -I http://okul.lab/yonetim</span>
+<span style="--s:6" class="oz-soluk">HTTP/1.1 403 Yasak</span></code></pre>
+          <p class="oz-not">Lablar sanal bir makinede geçer; hiçbir şeyi bozamazsın.</p>
+        </article>
+        <article class="cam oz oz-kam">
+          <header><span class="kam-av" aria-hidden="true"><b></b><b></b></span><b>KAM</b><span>seninle yazışıyor</span></header>
+          <div class="oz-sohbet">
+            <p class="k" style="--s:3">Eşittir burada “eşit mi?” diye sormaz; kutuya koy demektir.</p>
+            <p class="s" style="--s:5">Tırnaklı yazsam ne olur?</p>
+            <p class="k" style="--s:7">O zaman ekranda harfi harfine <code>ad</code> görürsün.</p>
+          </div>
+          <p class="oz-not">Takıldığında KAM'e sorarsın.</p>
+        </article>
       </div>
     </section>
 
@@ -72,6 +101,24 @@
         <a class="cam program" href="nextgen.html#lab"><span class="p-tur">Lab</span><h3>Ağ Temelleri</h3><p>IP adresi, DNS, portlar, HTTP. Bir isteğin yolculuğunu komut satırından izlersin.</p><span class="p-olcu">4 lab</span><b>Lablara git</b></a>
       </div>
       <p class="program-not">Sırada: Web Güvenliği, Veri Analizi, Veritabanları ve SQL.</p>
+    </section>
+
+    <!-- KAM -->
+    <section class="section wrap" id="kam">
+      <div class="kam-bolum">
+        <div class="kam-yan">
+          <span class="kam-av" aria-hidden="true"><b></b><b></b></span>
+          <h2>Süper zekâ asistanın KAM.</h2>
+          <p>Dersin her adımında yanında. Konuyu anlatır, takıldığında yol gösterir, sana göre plan yapar.</p>
+          <a href="hesap.html?sonra=nextgen.html#kayit" class="btn btn-marker btn-lg js-basla">Ücretsiz başla</a>
+        </div>
+        <ol class="kam-liste">
+          <li><h3>Konuyu konuşarak anlatır</h3><p>Sayfalarca yazı yerine mesaj mesaj ilerler. Anlattığı satır yanda parlar, kod çalışır, sonucu birlikte görürsünüz.</p></li>
+          <li><h3>Cevabı vermez, yolu gösterir</h3><p>Görevde takıldığında hatanı teşhis eder ve doğru yere baktıran bir ipucu verir. Çözümü sen bulursun.</p></li>
+          <li><h3>Sana plan yapar</h3><p>Günde kaç dakikan olduğunu sorar, ona göre gerçekçi bir süre söyler. Her girişte bugün ne yapacağını sıralar.</p></li>
+          <li><h3>Abartmaz</h3><p>Zor olan şeye zor der, ara verdiysen bunu söyler, sonra yapılabilir bir sonraki adımı gösterir.</p></li>
+        </ol>
+      </div>
     </section>
 
     <!-- Bir ders nasıl geçer -->
@@ -205,7 +252,7 @@
   <script src="assets/js/python.js"></script>
   <script src="assets/js/tur.js"></script>
   <script src="assets/js/landing.js"></script>
-  <script src="assets/js/quagen3d.js?v=3"></script>
+  <script src="assets/js/quagen3d.js?v=4"></script>
   <script src="assets/js/gecis.js"></script>
 </body>
 </html>

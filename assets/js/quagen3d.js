@@ -24,7 +24,7 @@
   const DURAK = [
     { sec: ".hero-kure", bicim: "kure", x: 0, y: 0, boy: 1, egX: 0.25, bagli: true },
     { sec: "#programlar", bicim: "halka", x: 0.3, y: -0.05, boy: 1.25, egX: 1.05 },
-    { sec: "#kam", bicim: "kure", x: -0.38, y: 0.1, boy: 0.7, egX: 0.3 },
+    { sec: ".kam-yan .kam-av", bicim: "kure", x: 0, y: 0, boy: 0.42, egX: 0.3, bagli: true },
     { sec: "#ders", bicim: "sarmal", x: -0.36, y: 0, boy: 0.95, egX: 0.15 },
     { sec: "#nextgen", bicim: "tunel", x: 0.22, y: 0, boy: 1.15, egX: 0, sabit: true },
     { sec: "#bilim", bicim: "dalga", x: 0, y: 0.1, boy: 1.2, egX: 0.5, sabit: true },
@@ -107,7 +107,7 @@
   })();
 
   /* ---------- Levhalar imlece doğru eğilir ---------- */
-  const levhalar = document.querySelectorAll(".bilim article, .adimlar li, .cta-in, .kapi, .programlar > .program");
+  const levhalar = document.querySelectorAll(".bilim article, .adimlar li, .cta-in, .kapi, .programlar > .program, .onizle > .oz");
   levhalar.forEach((el) => {
     el.classList.add("q-egim");
     if (!inceImlec || azHareket) return;
