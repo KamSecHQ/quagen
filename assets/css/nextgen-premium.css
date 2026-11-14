@@ -1,0 +1,80 @@
+/* NextGen — premium katman (nextgen, pratik, rehber). QUAGEN ile aynı dil: gece mavisi + altın,
+ * sistem yazı tipi, dolu ve sakin yüzeyler, hap düğmeler. Tüm sayfa stillerinden SONRA yüklenir.
+ * NextGen çalışma alanıdır: varsayılanı koyu; açık temada fildişi. */
+:root.ngp {
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Helvetica Neue", Arial, sans-serif;
+  --paper: #f8f5ee; --surface: #ffffff; --sunken: #f1ece1; --code-bg: #fdfbf7;
+  --ink: #0f172a; --ink-2: #334155; --graphite: #5f6b80; --faint: #98a2b3;
+  --rule: rgba(15, 23, 42, 0.09); --rule-2: rgba(15, 23, 42, 0.17);
+  --marker: #dcbb6c; --marker-ink: #0b1530; --marker-wash: rgba(201, 165, 90, 0.26);
+  --link: #1e3a8a; --altin: #a07c34;
+  --glass: #ffffff; --glass-strong: #ffffff; --glass-line: rgba(15, 23, 42, 0.05); --glass-edge: rgba(15, 23, 42, 0.09);
+  --glass-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 22px 44px -32px rgba(15, 23, 42, 0.28);
+  --blur: none;
+  --isik-1: rgba(201, 165, 90, 0.14); --isik-2: rgba(30, 58, 138, 0.06); --isik-3: transparent; --nokta: rgba(15, 23, 42, 0.05);
+  --r-s: 8px; --r-m: 12px; --r-l: 20px;
+  --float: 0 1px 2px rgba(15, 23, 42, 0.05), 0 24px 56px -24px rgba(15, 23, 42, 0.3);
+}
+:root.ngp[data-theme="dark"] {
+  --paper: #0b1530; --surface: #111d3d; --sunken: #0d1834; --code-bg: #0a1329;
+  --ink: #f5f1e6; --ink-2: #c8cfdf; --graphite: #8e99b4; --faint: #5b6784;
+  --rule: rgba(245, 241, 230, 0.09); --rule-2: rgba(245, 241, 230, 0.17);
+  --marker: #e3c888; --marker-ink: #0b1530; --marker-wash: rgba(227, 200, 136, 0.16);
+  --link: #a9c0ff; --altin: #d4b26a;
+  --glass: #111d3d; --glass-strong: #14224a; --glass-line: rgba(245, 241, 230, 0.06); --glass-edge: rgba(245, 241, 230, 0.08);
+  --glass-shadow: 0 24px 48px -30px rgba(0, 0, 0, 0.7);
+  --isik-1: rgba(212, 178, 106, 0.08); --isik-2: rgba(40, 70, 170, 0.22); --isik-3: transparent; --nokta: rgba(245, 241, 230, 0.035);
+  --float: 0 1px 0 rgba(0, 0, 0, 0.2), 0 24px 56px -20px rgba(0, 0, 0, 0.7);
+}
+
+/* Arka plan: gezen ışıklar yerine sabit, sakin bir aydınlık */
+.ngp body::before { animation: none; transform: none; }
+
+/* Yazı */
+.ngp body { letter-spacing: -0.008em; }
+.ngp h1, .ngp h2, .ngp h3 { font-weight: 600; font-stretch: normal; letter-spacing: -0.022em; line-height: 1.12; }
+.ngp b, .ngp strong { font-weight: 600; }
+.ngp .brand-word, :root.ngp[data-theme="dark"] .brand-word { font-stretch: normal; font-weight: 600; letter-spacing: -0.02em; background: none; box-shadow: none; }
+
+/* Düğmeler: hap */
+.ngp .btn { border-radius: 980px; font-weight: 500; letter-spacing: -0.008em; }
+.ngp .btn:not(.sm) { padding-inline: 18px; }
+.ngp .btn.primary, .ngp .btn.isik, .ngp .btn-marker { box-shadow: none; }
+.ngp .btn.primary:hover:not(:disabled), .ngp .btn.isik:hover:not(:disabled) { transform: none; }
+
+/* Yüzeyler: cam yerine dolu, ince kenarlı */
+.ngp .cam { backdrop-filter: none; -webkit-backdrop-filter: none; }
+.ngp .side { backdrop-filter: none; -webkit-backdrop-filter: none; background: color-mix(in srgb, var(--paper) 92%, var(--surface)); }
+.ngp .side-link { border-radius: 10px; }
+
+/* Elle yazılmış sarı / lacivert kalıntılar */
+.ngp .avatar, .ngp .lc-mark, .ngp .pf-lang, .ngp .nav-av { background: #0b1530; color: #e3c888; }
+.ngp .pf-cta .btn.primary { background: #e3c888; border-color: #e3c888; color: #0b1530; }
+
+/* KAM: neon çekirdek (QUAGEN ile aynı) */
+.ngp .kam-av {
+  background:
+    radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.98) 0 5%, transparent 17%),
+    radial-gradient(circle at 36% 28%, #c9dcff 0%, #6f9bff 22%, #2f5bff 50%, #1a2bd0 76%, #0a1470 100%);
+  box-shadow:
+    inset -0.08em -0.1em 0.2em rgba(6, 12, 80, 0.55),
+    inset 0.04em 0.05em 0.1em rgba(255, 255, 255, 0.5),
+    0 0 0 0.012em rgba(170, 205, 255, 0.9),
+    0 0 0.16em rgba(90, 150, 255, 0.95),
+    0 0 0.5em rgba(70, 120, 255, 0.7),
+    0 0 1.1em rgba(110, 80, 255, 0.4);
+}
+.ngp .kam-av > b { background: #fff3b0; box-shadow: 0 0 0.08em #ffe27a, 0 0 0.22em #ffd84d, 0 0 0.5em rgba(255, 200, 60, 0.8); }
+.ngp .kam-kart .kam-av, .ngp .kam-cekmece.genis .kam-bas .kam-av { animation: kam-sal 5s ease-in-out infinite, ngp-neon 3.6s ease-in-out infinite; }
+@keyframes ngp-neon {
+  0%, 100% { filter: brightness(1); }
+  45% { filter: brightness(1.16) drop-shadow(0 0 0.18em rgba(90, 140, 255, 0.7)); }
+  52% { filter: brightness(0.84); }
+  55% { filter: brightness(1.16); }
+  58% { filter: brightness(0.92); }
+  62% { filter: brightness(1.1); }
+}
+@media (prefers-reduced-motion: reduce) { .ngp .kam-kart .kam-av, .ngp .kam-cekmece.genis .kam-bas .kam-av { animation: none; } }
+
+/* Üst çubuk: ince, buzlu (QUAGEN üst şeridi gibi) */
+.ngp .bar { background: color-mix(in srgb, var(--paper) 78%, transparent); backdrop-filter: saturate(1.8) blur(20px); -webkit-backdrop-filter: saturate(1.8) blur(20px); box-shadow: none; border-bottom-color: var(--rule); }
