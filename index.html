@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="assets/css/landing.css" />
   <link rel="stylesheet" href="assets/css/kam.css" />
   <link rel="stylesheet" href="assets/css/cam.css" />
-  <link rel="stylesheet" href="assets/css/quagen3d.css?v=11" />
+  <link rel="stylesheet" href="assets/css/quagen3d.css?v=12" />
   <script>(function () { var t = "light"; try { if (localStorage.getItem("quagen-tema") === "dark") t = "dark"; } catch (e) {} document.documentElement.dataset.theme = t; })();</script>
   <link rel="prefetch" href="nextgen.html" />
 </head>
@@ -24,16 +24,21 @@
   <header class="nav" id="nav">
     <div class="nav-in cam">
       <a href="#" class="logo" aria-label="QUAGEN ana sayfa">QUAGEN</a>
+      <div class="nav-orta">
       <nav class="nav-links" aria-label="Bölümler">
         <a href="#programlar">Programlar</a>
+        <a href="onizleme.html">Önizleme</a>
         <a href="#kam">KAM</a>
         <a href="#ders">Nasıl öğretir</a>
         <a href="#bilim">Bilim</a>
         <a href="#sss">Sorular</a>
       </nav>
       <button class="nav-tema" id="tema" aria-label="Temayı değiştir"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="nav-sag">
       <a href="nextgen.html" class="ng-git" id="ng-git"><span class="ng-git-ik" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" fill="currentColor"/></svg></span><span>NextGen'e git</span><svg class="ng-git-ok" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
       <a href="hesap.html#kayit" class="btn btn-ink nav-kayit" id="nav-login"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="10" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 20a6.5 6.5 0 0 1 13 0M19 8v6M16 11h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Ücretsiz başla</span></a>
+      </div>
     </div>
   </header>
 
@@ -55,37 +60,6 @@
         <div class="hero-kure">
           <span class="kam-av dev" id="kam-dev" aria-hidden="true"><b></b><b></b></span>
         </div>
-      </div>
-      <!-- Üç deneyim: ders, lab, KAM -->
-      <div class="onizle" aria-label="QUAGEN'de bir ders, bir lab ve KAM">
-        <article class="cam oz">
-          <header><i></i><b>Ders</b><span>ortalama.py</span></header>
-          <pre class="oz-kod"><code><span style="--s:1"><i>1</i><em>def</em> <b>ortalama</b>(notlar: <em>list</em>[<em>int</em>]) -> <em>float</em>:</span>
-<span style="--s:2"><i>2</i>    <em>return</em> <b>sum</b>(notlar) / <b>len</b>(notlar)</span>
-<span style="--s:3"><i>3</i></span>
-<span style="--s:4"><i>4</i>notlar = [<u>85</u>, <u>92</u>, <u>78</u>]</span>
-<span style="--s:5"><i>5</i><b>print</b>(<u>f"{ortalama(notlar):.1f}"</u>)</span></code></pre>
-          <p class="oz-cikti" style="--s:7">85.0</p>
-        </article>
-        <article class="cam oz oz-lab">
-          <header><i></i><b>Lab</b><span>auth.log</span></header>
-          <pre class="oz-kod"><code><span style="--s:2"><em>$</em> grep <u>"Failed password"</u> auth.log \</span>
-<span style="--s:2">    | awk <u>'{print $11}'</u> | sort | uniq -c</span>
-<span style="--s:4" class="oz-soluk">      8 198.51.100.14</span>
-<span style="--s:5" class="oz-soluk">      5 192.0.2.45</span>
-<span style="--s:6" class="oz-soluk">     21 203.0.113.77</span>
-<span style="--s:8"><em>$</em> grep 203.0.113.77 auth.log | tail -1</span>
-<span style="--s:9" class="oz-soluk">03:18 Accepted password for deniz</span></code></pre>
-        </article>
-        <article class="cam oz oz-kam">
-          <header><span class="kam-av" aria-hidden="true"><b></b><b></b></span><b>KAM</b></header>
-          <div class="oz-sohbet">
-            <p class="s" style="--s:2"><code>IndexError: list index out of range</code> alıyorum.</p>
-            <p class="k" style="--s:4">Döngün <code>len(notlar)</code> değerine kadar gidiyor. Son geçerli indis <code>len(notlar) - 1</code>.</p>
-            <p class="k" style="--s:6">Dördüncü satırda <code>range(len(notlar))</code> kullan; sınırı kendisi ayarlar.</p>
-            <p class="s" style="--s:8">Çalıştı. Testlerin üçü de geçti.</p>
-          </div>
-        </article>
       </div>
     </section>
 
@@ -255,7 +229,7 @@
   <script src="assets/js/python.js"></script>
   <script src="assets/js/tur.js"></script>
   <script src="assets/js/landing.js"></script>
-  <script src="assets/js/quagen3d.js?v=7"></script>
+  <script src="assets/js/quagen3d.js?v=8"></script>
   <script src="assets/js/gecis.js"></script>
 </body>
 </html>

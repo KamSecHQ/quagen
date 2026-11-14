@@ -22,7 +22,7 @@
   };
   /* Kaydırma durakları: hangi bölümde hangi biçim, ekranın neresinde, ne büyüklükte, hangi eğimle */
   const DURAK = [
-    { sec: ".hero-kure", bicim: "kure", x: 0, y: 0, boy: 1, egX: 0.25, bagli: true },
+    { sec: ".hero-kure", bicim: "kure", x: 0, y: 0, boy: 0.68, egX: 0.25, bagli: true },
     { sec: "#programlar", bicim: "halka", x: 0.3, y: -0.05, boy: 1.25, egX: 1.05 },
     { sec: ".kam-yan .kam-av", bicim: "kure", x: 0, y: 0, boy: 0.42, egX: 0.3, bagli: true },
     { sec: "#ders", bicim: "sarmal", x: -0.36, y: 0, boy: 0.95, egX: 0.15 },
