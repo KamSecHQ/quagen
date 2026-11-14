@@ -596,3 +596,9 @@ html.q3d[data-theme="light"] .cam { box-shadow: 0 2px 4px rgba(15, 23, 42, 0.03)
 .q3d .hero-kure .kam-av.dev { animation: q-neon 3.6s ease-in-out infinite; }
 .q3d .hero-kure::after { animation: none; }
 @media (prefers-reduced-motion: reduce) { .q3d .hero-kure .kam-av.dev { animation: none; } }
+
+/* ---------- v14: KAM sabit parlak (yanıp sönme yok, yalnızca göz kırpar); aşağıdaki KAM de yörüngesinin ortasında ---------- */
+.q3d .kam-av, .q3d .hero-kure .kam-av.dev, .q3d .kam-yan .kam-av { animation: none; filter: none;
+  box-shadow: inset -0.08em -0.1em 0.2em rgba(6, 12, 80, 0.55), inset 0.04em 0.05em 0.1em rgba(255, 255, 255, 0.35), 0 0 0 0.012em rgba(200, 225, 255, 1), 0 0 0.24em rgba(120, 175, 255, 1), 0 0 0.75em rgba(80, 135, 255, 0.85), 0 0 1.6em rgba(130, 90, 255, 0.55); }
+/* Yörünge yazıya değmesin: KAM'in çevresinde kürenin sığacağı boşluk */
+.q3d .kam-yan .kam-av { margin: clamp(28px, 6vmin, 80px) 0 clamp(40px, 9vmin, 110px); }

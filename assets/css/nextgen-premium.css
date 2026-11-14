@@ -64,7 +64,8 @@
     0 0 1.1em rgba(110, 80, 255, 0.4);
 }
 .ngp .kam-av > b { background: #fff3b0; box-shadow: 0 0 0.08em #ffe27a, 0 0 0.22em #ffd84d, 0 0 0.5em rgba(255, 200, 60, 0.8); }
-.ngp .kam-kart .kam-av, .ngp .kam-cekmece.genis .kam-bas .kam-av { animation: kam-sal 5s ease-in-out infinite, ngp-neon 3.6s ease-in-out infinite; }
+/* Sabit parlak: yanıp sönme yok, yalnızca göz kırpar */
+.ngp .kam-kart .kam-av, .ngp .kam-cekmece.genis .kam-bas .kam-av { animation: kam-sal 5s ease-in-out infinite; }
 @keyframes ngp-neon {
   0%, 100% { filter: brightness(1); }
   45% { filter: brightness(1.16) drop-shadow(0 0 0.18em rgba(90, 140, 255, 0.7)); }
