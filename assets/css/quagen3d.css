@@ -345,11 +345,11 @@ html.q3d[data-theme="dark"] { background: radial-gradient(90% 60% at 90% -10%, r
 
 /* Yazı: serif başlıklar */
 .q3d h1, .q3d h2, .q3d .sec-head h2, .q3d .kam-yan h2, .q3d .cta h2, .q3d .kapi h2, .q3d .program h3, .q3d .kam-liste h3, .q3d .bilim h3, .q3d .adimlar h3 {
-  font-family: "Fraunces", Georgia, "Times New Roman", serif; font-stretch: normal; font-weight: 500; font-variation-settings: "SOFT" 30, "WONK" 0; letter-spacing: -0.022em; }
+  font-family: var(--sans); font-stretch: normal; font-weight: 500; font-variation-settings: "SOFT" 30, "WONK" 0; letter-spacing: -0.022em; }
 .q3d .hero-h, .q3d .sec-head h2, .q3d .kam-yan h2, .q3d .cta h2 { line-height: 0.98; font-weight: 450; }
 .q3d .hero-h em, .q3d .sec-head h2 em, .q3d .cta h2 em { font-style: italic; color: var(--altin); font-weight: 400; }
 .q3d .program h3, .q3d .kam-liste h3, .q3d .bilim h3, .q3d .adimlar h3 { font-weight: 550; letter-spacing: -0.012em; }
-.q3d .logo { font-family: "Fraunces", Georgia, serif; font-weight: 600; letter-spacing: 0.06em; font-stretch: normal; }
+.q3d .logo { font-family: var(--sans); font-weight: 600; letter-spacing: 0.06em; font-stretch: normal; }
 .q3d .logo::after { background: var(--altin-acik); box-shadow: none; width: 6px; height: 6px; }
 .q3d .sec-head p, .q3d .lead { color: var(--ink-2); }
 
@@ -397,7 +397,7 @@ html.q3d[data-theme="dark"] { background: radial-gradient(90% 60% at 90% -10%, r
 .q3d .program-not { color: var(--graphite); }
 
 /* KAM ve basamak numaraları altın çizgi */
-.q3d .kam-liste li::before, .q3d .adim-n, .q3d[data-theme] .adim-n, .q3d .adimlar li:nth-child(5) .adim-n { font-family: "Fraunces", Georgia, serif; font-weight: 400; font-stretch: normal; -webkit-text-stroke: 1.2px var(--altin-acik); }
+.q3d .kam-liste li::before, .q3d .adim-n, .q3d[data-theme] .adim-n, .q3d .adimlar li:nth-child(5) .adim-n { font-family: var(--sans); font-weight: 400; font-stretch: normal; -webkit-text-stroke: 1.2px var(--altin-acik); }
 .q3d .kam-yan p { color: var(--ink-2); }
 
 /* Kıyas */
@@ -406,7 +406,7 @@ html.q3d[data-theme="dark"] { background: radial-gradient(90% 60% at 90% -10%, r
 
 /* Bilim (koyu) */
 .q3d .bilim .b-site { border-left-color: var(--altin); color: var(--ink); }
-.q3d .bilim .b-kaynak { color: var(--graphite); font-style: italic; font-family: "Fraunces", Georgia, serif; }
+.q3d .bilim .b-kaynak { color: var(--graphite); font-style: italic; font-family: var(--sans); }
 
 /* NextGen kapısı: gece mavisi levha, altın halkalar */
 .q3d[data-theme] .kapi { background: radial-gradient(80% 120% at 100% 50%, #16264f, #0b1530 70%); color: #f5f1e6; border: 1px solid rgba(201, 165, 90, 0.3); box-shadow: 0 40px 80px -44px rgba(11, 21, 48, 0.8); }
@@ -418,7 +418,7 @@ html.q3d[data-theme="dark"] { background: radial-gradient(90% 60% at 90% -10%, r
 .q3d[data-theme] .kapi-diller span { color: #8e99b4; }
 
 /* SSS (koyu) */
-.q3d .faq summary { font-family: "Fraunces", Georgia, serif; font-weight: 500; font-stretch: normal; }
+.q3d .faq summary { font-family: var(--sans); font-weight: 500; font-stretch: normal; }
 .q3d .faq summary::after { border-color: var(--altin-acik); }
 
 /* Kapanış: gece mavisi büyük levha */
@@ -430,3 +430,107 @@ html.q3d[data-theme="dark"] { background: radial-gradient(90% 60% at 90% -10%, r
 .q3d .foot { border-top: 0; }
 .q3d .foot-in { color: var(--graphite); }
 .q3d .foot-in .logo { color: var(--ink); }
+
+/* ---------- v11: Apple havası — sistem yazı tipi, ortalanmış düzen, hap düğmeler, sade yuvarlak kartlar ---------- */
+html.q3d { --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Arial, sans-serif; }
+.q3d body { font-family: var(--sans); letter-spacing: -0.01em; }
+.q3d h1, .q3d h2, .q3d .sec-head h2, .q3d .kam-yan h2, .q3d .cta h2, .q3d .kapi h2 { font-weight: 600; letter-spacing: -0.025em; line-height: 1.05; font-variation-settings: normal; }
+.q3d .program h3, .q3d .kam-liste h3, .q3d .bilim h3, .q3d .adimlar h3, .q3d .faq summary { font-weight: 600; letter-spacing: -0.018em; line-height: 1.12; font-variation-settings: normal; }
+.q3d .hero-h em, .q3d .sec-head h2 em, .q3d .cta h2 em { font-style: normal; font-weight: 600; }
+.q3d .bilim .b-kaynak { font-style: normal; }
+.q3d .logo { font-weight: 600; letter-spacing: -0.02em; font-size: 21px; }
+.q3d .logo::after { display: none; }
+
+/* Üst şerit: ince, küçük yazılı, buzlu */
+.q3d .nav-in { height: 52px; }
+.q3d .nav::before { opacity: 1; background: color-mix(in srgb, var(--paper) 72%, transparent); backdrop-filter: saturate(1.8) blur(20px); -webkit-backdrop-filter: saturate(1.8) blur(20px); border-bottom-color: transparent; }
+.q3d .nav.scrolled::before { border-bottom-color: var(--rule); }
+.q3d .nav-links { gap: clamp(18px, 2.4vw, 40px); }
+.q3d .nav-links a { font-size: 13px; font-weight: 400; letter-spacing: -0.005em; color: var(--ink); opacity: 0.82; }
+.q3d .nav-links a:hover { opacity: 1; }
+.q3d .nav-links a::after { display: none; }
+.q3d .ng-git { height: 32px; font-size: 13px; font-weight: 500; padding: 0 12px 0 4px; box-shadow: none; }
+.q3d .ng-git-ik { width: 24px; height: 24px; }
+.q3d[data-theme] .nav-kayit { height: 32px; padding: 0 14px; font-size: 13px; font-weight: 500; box-shadow: none; }
+
+/* Düğmeler: hap */
+.q3d .btn, .q3d .btn-line, .q3d[data-theme] .btn-marker { border-radius: 980px; font-weight: 400; letter-spacing: -0.01em; }
+.q3d[data-theme] .btn-marker, .q3d[data-theme] .nav-kayit { box-shadow: none; }
+.q3d[data-theme] .btn-marker:hover, .q3d[data-theme] .nav-kayit:hover { transform: none; box-shadow: none; }
+.q3d[data-theme] .btn-line { border-color: var(--ink); }
+.q3d[data-theme] .btn-line:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.q3d .hero-git .btn-lg, .q3d .kam-yan .btn-lg, .q3d .cta .btn-lg, .q3d .kapi .btn-lg { height: clamp(44px, 2.9vw, 60px); padding: 0 clamp(22px, 1.7vw, 34px); font-size: clamp(17px, 1.1vw, 21px); }
+
+/* Açılış: başlık, alt yazı, iki düğme ortada; ürün (KAM) altında */
+.q3d .hero { padding-top: clamp(40px, 7vh, 88px); }
+.q3d .hero-ust { display: flex; flex-direction: column; align-items: center; text-align: center; gap: clamp(8px, 2vh, 28px); min-height: 0; }
+.q3d .hero-yazi { display: grid; justify-items: center; }
+.q3d .hero-h { font-size: clamp(44px, 5.4vw, 112px); max-width: 16ch; }
+.q3d .lead { margin-top: clamp(12px, 1.2vw, 22px); font-size: clamp(21px, 1.9vw, 34px); line-height: 1.2; font-weight: 400; max-width: 38ch; color: var(--ink); letter-spacing: -0.012em; }
+.q3d .hero-git { justify-content: center; margin-top: clamp(20px, 1.8vw, 32px); }
+.q3d .hero-guven { justify-content: center; margin-top: 18px; font-size: clamp(13px, 0.85vw, 16px); }
+.q3d .hero-kure { order: 0; width: 100%; min-height: clamp(300px, 46vh, 560px); }
+.q3d .kam-av.dev { font-size: clamp(150px, 16vw, 340px); }
+.q3d .onizle { margin-top: clamp(16px, 3vh, 48px); }
+
+/* Bölüm başlıkları ortada */
+.q3d .sec-head { max-width: min(1100px, 100%); margin-inline: auto; margin-bottom: clamp(40px, 4.5vw, 80px); text-align: center; }
+.q3d .sec-head h2 { font-size: clamp(36px, 4.4vw, 88px); }
+.q3d .sec-head p { margin: clamp(12px, 1.2vw, 22px) auto 0; font-size: clamp(19px, 1.5vw, 28px); line-height: 1.3; max-width: 46ch; }
+.q3d .program-not { text-align: center; }
+
+/* Kartlar: geniş yuvarlak köşe, çizgisiz, yumuşak zemin */
+.q3d .cam { border-radius: clamp(18px, 1.6vw, 28px); border-color: transparent; box-shadow: none; }
+.q3d .cam::before { display: none; }
+html.q3d[data-theme="light"] .cam { box-shadow: 0 2px 4px rgba(15, 23, 42, 0.03), 0 18px 40px -28px rgba(15, 23, 42, 0.22); }
+.q3d .koyu .cam { background: var(--surface); box-shadow: none; }
+.q3d .oz header i { box-shadow: 16px 0 0 var(--rule-2), 32px 0 0 var(--rule-2); }
+.q3d .p-tur { border: 0; background: none; padding: 0; text-transform: none; letter-spacing: -0.005em; font-size: clamp(13px, 0.9vw, 17px); font-weight: 600; }
+.q3d .program h3 { font-size: clamp(26px, 2vw, 40px); }
+.q3d .program b { font-weight: 400; color: var(--altin); font-size: clamp(15px, 1vw, 19px); }
+.q3d .program b::after { width: 7px; height: 7px; background: none; border-right: 1.5px solid currentColor; border-top: 1.5px solid currentColor; transform: rotate(45deg); transition: translate 0.25s var(--ease); }
+.q3d a.program:hover b::after { width: 7px; translate: 4px 0; }
+.q3d .p-olcu { font-family: var(--sans); font-size: clamp(13px, 0.9vw, 16px); }
+
+/* KAM: ortada tanıtım, altında dört sade kart */
+.q3d .kam-bolum { grid-template-columns: 1fr; gap: clamp(40px, 5vw, 88px); }
+.q3d .kam-yan { position: static; justify-items: center; text-align: center; gap: clamp(14px, 1.3vw, 24px); }
+.q3d .kam-yan .kam-av { font-size: clamp(120px, 11vw, 220px); }
+.q3d .kam-yan h2 { font-size: clamp(36px, 4.4vw, 88px); }
+.q3d .kam-yan p { max-width: 40ch; font-size: clamp(19px, 1.5vw, 28px); line-height: 1.3; }
+.q3d .kam-liste { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 1.4vw, 28px); }
+.q3d .kam-liste li, .q3d .kam-liste li:last-child { display: block; padding: clamp(26px, 2.6vw, 52px); border: 0; border-radius: clamp(18px, 1.6vw, 28px); background: var(--surface); box-shadow: 0 2px 4px rgba(15, 23, 42, 0.03), 0 18px 40px -28px rgba(15, 23, 42, 0.22); }
+.q3d .kam-liste li::before { display: none; }
+.q3d .kam-liste h3 { font-size: clamp(24px, 2.1vw, 44px); }
+.q3d .kam-liste p { max-width: none; font-size: clamp(16px, 1.15vw, 22px); }
+
+/* Bir ders: düz sıra, küçük altın numara */
+.q3d .adimlar { align-items: stretch; }
+.q3d .adimlar li:nth-child(n) { margin-bottom: 0; padding: clamp(22px, 1.8vw, 36px); }
+.q3d .adim-n, .q3d[data-theme] .adim-n, .q3d .adimlar li:nth-child(5) .adim-n { -webkit-text-stroke: 0; color: var(--altin) !important; font-size: clamp(15px, 1vw, 19px); font-weight: 600; line-height: 1; margin-bottom: clamp(28px, 3vw, 64px); }
+.q3d .adim-n::before { content: "Adım "; }
+
+/* Kıyas ve sorular: ortada sütun */
+.q3d .kiyas, .q3d .faq-liste { max-width: min(1200px, 100%); margin-inline: auto; padding-inline: clamp(20px, 2.4vw, 48px); }
+.q3d .kiyas-bas span, .q3d .kiyas-bas span:last-child { text-transform: none; letter-spacing: -0.005em; font-size: clamp(13px, 0.9vw, 17px); }
+.q3d .faq summary { font-size: clamp(19px, 1.4vw, 28px); }
+.q3d .bilim .b-site { border-left: 0; padding-left: 0; color: var(--altin); }
+
+/* NextGen ve kapanış */
+.q3d[data-theme] .kapi { border: 0; border-radius: clamp(22px, 2vw, 36px); box-shadow: none; }
+.q3d[data-theme] .kapi-diller li { border: 0; border-radius: 16px; background: rgba(245, 241, 230, 0.06); }
+.q3d[data-theme] .cta-in { flex-direction: column; align-items: center; text-align: center; gap: clamp(16px, 1.6vw, 30px); border: 0; border-radius: clamp(22px, 2vw, 36px); padding: clamp(48px, 6vw, 120px) 24px; }
+.q3d .cta h2 { flex: none; font-size: clamp(36px, 4.4vw, 88px); }
+.q3d .cta-in .kam-av { font-size: clamp(64px, 6vw, 120px); }
+.q3d .foot-in { font-size: 12.5px; }
+.q3d .foot-in .logo { font-size: 17px; }
+#q-ilerleme { display: none; }
+
+@media (max-width: 1040px) { .q3d .kam-liste { grid-template-columns: 1fr; } }
+@media (max-width: 820px) {
+  .q3d .hero-kure { order: 0; min-height: 260px; }
+  .q3d .kam-av.dev { font-size: 150px; }
+  .q3d .hero-h { font-size: clamp(40px, 10.5vw, 64px); }
+  .q3d .nav-in { height: 48px; }
+  .q3d .ng-git { height: 30px; padding: 0 8px 0 4px; }
+}

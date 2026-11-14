@@ -9,7 +9,7 @@
   --glass: #ffffff; --glass-strong: #ffffff; --glass-edge: rgba(15, 23, 42, 0.09);
   --glass-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 28px 56px -36px rgba(15, 23, 42, 0.32);
   --isik-1: rgba(201, 165, 90, 0.16); --isik-2: rgba(30, 58, 138, 0.07); --isik-3: transparent; --nokta: rgba(15, 23, 42, 0.07);
-  --serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Arial, sans-serif; --serif: var(--sans);
 }
 :root.qp[data-theme="dark"] {
   --paper: #0b1530; --surface: #111d3d; --sunken: #0e1834; --code-bg: #0a1329;
@@ -68,3 +68,18 @@
 .qp .seal { background: radial-gradient(circle at 35% 35%, #ecd59c, #c9a55a 60%, #a07c34); box-shadow: 0 0 0 3px var(--surface), 0 0 0 4px #a07c34; }
 .qp .seal::after { border-color: #0b1530; }
 .qp .tag { background: #0b1530; color: #e3c888; }
+
+/* v2: Apple havası — sistem yazı tipi, hap düğmeler, yuvarlak kartlar */
+.qp body { letter-spacing: -0.01em; }
+.qp h1, .qp h2, .qp h3, .qp .name, .qp .w-in p { font-weight: 600; letter-spacing: -0.025em; line-height: 1.06; }
+.qp .logo { font-weight: 600; letter-spacing: -0.02em; }
+.qp .logo::after { display: none; }
+.qp .art-quote, .qp .headline { font-style: normal; }
+.qp .auth-panel .submit { border-radius: 980px; font-weight: 400; font-size: 17px; box-shadow: none; }
+.qp .auth-panel .field input, .qp .auth-panel .prefix { border-radius: 12px; border-width: 1px; }
+.qp .tabs, .qp .tab-ink, .qp .tabs button { border-radius: 980px; }
+.qp .tab-ink { box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12); }
+.qp .card.cam, .qp .card { border-radius: 24px; }
+.qp .cta, .qp .links a { border-radius: 980px; font-weight: 400; }
+.qp .lang { border-radius: 22px; border-color: transparent; }
+.qp .stats b, .qp .lr-in b, .qp .hero-av { font-weight: 600; }
