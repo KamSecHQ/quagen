@@ -40,7 +40,7 @@
     const bicimler = {}; Object.keys(BICIM).forEach((k) => (bicimler[k] = BICIM[k](N)));
     const r = rastgele(3);
     const gecikme = new Float32Array(N), sicak = new Uint8Array(N), ton = new Float32Array(N);
-    for (let i = 0; i < N; i++) { gecikme[i] = r() * 0.35; sicak[i] = r() < 0.07 ? 1 : 0; ton[i] = r(); }
+    for (let i = 0; i < N; i++) { gecikme[i] = r() * 0.35; sicak[i] = r() < 0.1 ? 1 : 0; ton[i] = r(); }
     const duraklar = DURAK.map((d) => ({ ...d, el: document.querySelector(d.sec) })).filter((d) => d.el);
     let W = 0, H = 0, dpr = 1, imX = 0, imY = 0, hX = 0, hY = 0, t0 = performance.now(), gorunur = true, acik = kok.dataset.theme === "light";
     const boyutla = () => { dpr = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
@@ -94,9 +94,10 @@
         const yakin = Math.max(0, Math.min(1, (1.3 - z2) / 2.6)), en = (0.9 + yakin * 2.3) * (sicak[i] ? 1.5 : 1);
         const alfa = (0.26 + yakin * 0.74) * (acik ? 0.75 : 1);
         /* Sıcak bir toz bulutu; aralarında KAM'in mavisinden seyrek noktalar */
-        if (sicak[i]) ctx.fillStyle = acik ? `rgba(40,90,210,${alfa})` : `rgba(120,175,255,${alfa})`;
-        else if (acik) ctx.fillStyle = `rgba(${170 + ton[i] * 50 | 0},${70 + ton[i] * 40 | 0},${40 + ton[i] * 30 | 0},${alfa})`;
-        else ctx.fillStyle = `rgba(255,${130 + yakin * 70 + ton[i] * 25 | 0},${90 + ton[i] * 90 | 0},${alfa})`;
+        /* Gece mavisi toz; aralarında seyrek altın noktalar */
+        if (sicak[i]) ctx.fillStyle = acik ? `rgba(176,134,52,${alfa})` : `rgba(227,200,136,${alfa})`;
+        else if (acik) ctx.fillStyle = `rgba(${14 + ton[i] * 30 | 0},${28 + ton[i] * 40 | 0},${70 + ton[i] * 70 | 0},${alfa * 0.7})`;
+        else ctx.fillStyle = `rgba(${200 + ton[i] * 45 | 0},${200 + yakin * 30 + ton[i] * 15 | 0},${190 + ton[i] * 40 | 0},${alfa * 0.8})`;
         ctx.fillRect(px - en / 2, py - en / 2, en, en);
       }
       if (!azHareket && gorunur) requestAnimationFrame(ciz);

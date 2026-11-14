@@ -306,3 +306,127 @@ html.q3d[data-theme="light"] { background: radial-gradient(110% 70% at 85% -10%,
 .q3d .oz-sohbet .s code { background: rgba(255, 255, 255, 0.22); }
 :root.q3d[data-theme="dark"] .oz-kod em { color: #ff8fb8; } :root.q3d[data-theme="dark"] .oz-kod b { color: #9ec1ff; } :root.q3d[data-theme="dark"] .oz-kod u { color: #8fe0a8; }
 @media (max-width: 1280px) { .q3d .onizle { grid-template-columns: 1fr; } .q3d .oz { min-height: 0; } .q3d .oz-kod { font-size: clamp(10.8px, 2.95vw, 17px); } }
+
+/* ---------- v10: premium — gece mavisi + altın, bölümler sırayla açık / koyu ---------- */
+/* Açık bölüm: fildişi zemin, gece mavisi yazı. Koyu bölüm (.koyu): gece mavisi zemin, fildişi yazı.
+ * Vurgu tek renk: altın. Başlıklar serif (Fraunces), metin Bricolage. */
+html.q3d[data-theme="light"], html.q3d[data-theme="light"] .acik {
+  --q-bg: #f8f5ee; --q-kor: #a07c34; --q-ice: #c9a55a; --q-mor: #1e3a8a;
+  --altin: #a07c34; --altin-acik: #c9a55a;
+  --marker: #0b1530; --marker-ink: #f8f5ee; --marker-wash: rgba(160, 124, 52, 0.12);
+  --paper: #f8f5ee; --surface: #ffffff; --sunken: #f1ece1; --code-bg: #fdfbf7;
+  --ink: #0f172a; --ink-2: #334155; --graphite: #5f6b80; --faint: #a3acbb;
+  --rule: rgba(15, 23, 42, 0.09); --rule-2: rgba(15, 23, 42, 0.16);
+  --glass: #ffffff; --glass-strong: #ffffff; --glass-edge: rgba(15, 23, 42, 0.09);
+  --glass-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 28px 56px -36px rgba(15, 23, 42, 0.32);
+}
+html.q3d[data-theme="dark"], .q3d .koyu {
+  --q-bg: #0b1530; --q-kor: #d4b26a; --q-ice: #e3c888; --q-mor: #8fa8e8;
+  --altin: #d4b26a; --altin-acik: #e3c888;
+  --marker: #d4b26a; --marker-ink: #0b1530; --marker-wash: rgba(212, 178, 106, 0.13);
+  --paper: #0b1530; --surface: #111d3d; --sunken: #0e1834; --code-bg: #0a1329;
+  --ink: #f5f1e6; --ink-2: #c8cfdf; --graphite: #8e99b4; --faint: #56627f;
+  --rule: rgba(245, 241, 230, 0.1); --rule-2: rgba(245, 241, 230, 0.18);
+  --glass: #111d3d; --glass-strong: #13204a; --glass-edge: rgba(212, 178, 106, 0.16);
+  --glass-shadow: 0 30px 60px -36px rgba(0, 0, 0, 0.7);
+  color: var(--ink);
+}
+html.q3d[data-theme="dark"] .koyu { --q-bg: #060c1d; --paper: #060c1d; --surface: #0c1630; --glass: #0c1630; --glass-strong: #0f1a38; }
+
+html.q3d[data-theme="light"] { background: radial-gradient(90% 60% at 90% -10%, rgba(201, 165, 90, 0.16), transparent 60%), radial-gradient(70% 50% at -10% 40%, rgba(30, 58, 138, 0.06), transparent 60%), var(--q-bg); background-attachment: fixed; color: var(--ink); }
+html.q3d[data-theme="dark"] { background: radial-gradient(90% 60% at 90% -10%, rgba(212, 178, 106, 0.1), transparent 60%), var(--q-bg); background-attachment: fixed; }
+
+/* Koyu bölüm kenardan kenara uzanır; .wrap genişliği içerikte kalır */
+.q3d .koyu { position: relative; background: var(--q-bg); box-shadow: 0 0 0 100vmax var(--q-bg); clip-path: inset(0 -100vmax); }
+.q3d .section { padding-block: clamp(96px, 14vh, 176px); }
+.q3d .hero { padding-bottom: clamp(72px, 11vh, 140px); }
+.q3d .cta { padding-block: clamp(80px, 12vh, 150px); }
+.q3d .koyu .sec-head h2, .q3d .koyu h3 { color: var(--ink); }
+
+/* Yazı: serif başlıklar */
+.q3d h1, .q3d h2, .q3d .sec-head h2, .q3d .kam-yan h2, .q3d .cta h2, .q3d .kapi h2, .q3d .program h3, .q3d .kam-liste h3, .q3d .bilim h3, .q3d .adimlar h3 {
+  font-family: "Fraunces", Georgia, "Times New Roman", serif; font-stretch: normal; font-weight: 500; font-variation-settings: "SOFT" 30, "WONK" 0; letter-spacing: -0.022em; }
+.q3d .hero-h, .q3d .sec-head h2, .q3d .kam-yan h2, .q3d .cta h2 { line-height: 0.98; font-weight: 450; }
+.q3d .hero-h em, .q3d .sec-head h2 em, .q3d .cta h2 em { font-style: italic; color: var(--altin); font-weight: 400; }
+.q3d .program h3, .q3d .kam-liste h3, .q3d .bilim h3, .q3d .adimlar h3 { font-weight: 550; letter-spacing: -0.012em; }
+.q3d .logo { font-family: "Fraunces", Georgia, serif; font-weight: 600; letter-spacing: 0.06em; font-stretch: normal; }
+.q3d .logo::after { background: var(--altin-acik); box-shadow: none; width: 6px; height: 6px; }
+.q3d .sec-head p, .q3d .lead { color: var(--ink-2); }
+
+/* Üst şerit */
+.q3d .nav::before { background: color-mix(in srgb, var(--paper) 86%, transparent); }
+.q3d .nav-links a { color: var(--ink-2); }
+.q3d .nav-links a:hover { color: var(--ink); }
+.q3d .nav-links a::after { background: var(--altin-acik); height: 1.5px; }
+#q-ilerleme { height: 2px; background: linear-gradient(90deg, #a07c34, #e3c888); }
+
+/* Düğmeler: açıkta gece mavisi, koyuda altın */
+.q3d .btn { border-radius: 6px; letter-spacing: 0.005em; }
+.q3d[data-theme] .btn-marker, .q3d[data-theme] .nav-kayit, .q3d[data-theme] .cta .btn-marker { background: #0b1530; color: #f8f5ee; box-shadow: inset 0 0 0 1px rgba(201, 165, 90, 0.45), 0 14px 30px -16px rgba(11, 21, 48, 0.7); }
+.q3d[data-theme] .btn-marker:hover, .q3d[data-theme] .nav-kayit:hover { background: #16264f; transform: translateY(-1px); box-shadow: inset 0 0 0 1px rgba(201, 165, 90, 0.8), 0 18px 36px -16px rgba(11, 21, 48, 0.8); }
+.q3d[data-theme="dark"] .btn-marker, .q3d[data-theme="dark"] .nav-kayit, .q3d[data-theme] .koyu .btn-marker, .q3d[data-theme] .koyu.cta .btn-marker, .q3d[data-theme] .kapi .btn-marker, .q3d[data-theme] .cta-in .btn-marker { background: linear-gradient(180deg, #e3c888, #c9a55a); color: #0b1530; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 14px 32px -16px rgba(201, 165, 90, 0.7); }
+.q3d[data-theme="dark"] .btn-marker:hover, .q3d[data-theme="dark"] .nav-kayit:hover, .q3d[data-theme] .koyu .btn-marker:hover, .q3d[data-theme] .kapi .btn-marker:hover, .q3d[data-theme] .cta-in .btn-marker:hover { background: linear-gradient(180deg, #ecd59c, #d4b26a); }
+.q3d[data-theme] .btn-line { background: transparent; border: 1px solid var(--rule-2); color: var(--ink); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.q3d[data-theme] .btn-line:hover { border-color: var(--altin); background: var(--marker-wash); }
+.q3d .ng-git { background: #0b1530; border-color: rgba(201, 165, 90, 0.35); }
+.q3d .ng-git-ik { background: linear-gradient(180deg, #e3c888, #c9a55a); color: #0b1530; }
+
+/* Levhalar: cam yerine dolu, ince çerçeveli kâğıt */
+.q3d .cam { background: var(--glass); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow); backdrop-filter: none; -webkit-backdrop-filter: none; border-radius: 8px; }
+.q3d .cam::before { background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--altin-acik) 80%, transparent) 50%, transparent); opacity: 0.55; }
+.q3d[data-theme] .q-egim.tut { box-shadow: 0 34px 60px -34px rgba(11, 21, 48, 0.45), 0 0 0 1px color-mix(in srgb, var(--altin-acik) 55%, transparent); }
+.q3d[data-theme] .q-egim::after { background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--altin-acik) 12%, transparent), transparent 60%); }
+.q3d .koyu .q-egim.tut { box-shadow: 0 34px 60px -30px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(212, 178, 106, 0.5); }
+
+/* Açılış */
+.q3d .hero-guven li::before { border-color: var(--altin); }
+.q3d .hero-kure::after { background: radial-gradient(closest-side, rgba(11, 21, 48, 0.24), transparent); }
+.q3d .oz header i { background: var(--altin-acik); }
+.q3d .oz-kod em { color: #1e3a8a; font-weight: 600; }
+.q3d .oz-kod b { color: #8a6424; font-weight: 500; }
+.q3d .oz-kod u { color: #2f6b4f; }
+:root.q3d[data-theme="dark"] .oz-kod em { color: #9fb6f0; } :root.q3d[data-theme="dark"] .oz-kod b { color: #e3c888; } :root.q3d[data-theme="dark"] .oz-kod u { color: #93d1ae; }
+.q3d .oz-sohbet .s { background: #0b1530; color: #f5f1e6; }
+:root.q3d[data-theme="dark"] .oz-sohbet .s { background: linear-gradient(180deg, #e3c888, #c9a55a); color: #0b1530; }
+.q3d .oz-sohbet .s code { background: rgba(255, 255, 255, 0.14); }
+.q3d .oz-sohbet code { background: rgba(15, 23, 42, 0.07); }
+
+/* Programlar (koyu) */
+.q3d .p-tur { color: var(--altin); background: var(--marker-wash); border: 1px solid color-mix(in srgb, var(--altin) 30%, transparent); letter-spacing: 0.06em; text-transform: uppercase; font-size: 11.5px; }
+.q3d .program b::after { background: var(--altin); }
+.q3d .program-not { color: var(--graphite); }
+
+/* KAM ve basamak numaraları altın çizgi */
+.q3d .kam-liste li::before, .q3d .adim-n, .q3d[data-theme] .adim-n, .q3d .adimlar li:nth-child(5) .adim-n { font-family: "Fraunces", Georgia, serif; font-weight: 400; font-stretch: normal; -webkit-text-stroke: 1.2px var(--altin-acik); }
+.q3d .kam-yan p { color: var(--ink-2); }
+
+/* Kıyas */
+.q3d .kiyas-bas span:last-child { color: var(--altin); letter-spacing: 0.06em; text-transform: uppercase; }
+.q3d .kiyas-bas span { letter-spacing: 0.06em; text-transform: uppercase; font-size: 12.5px; }
+
+/* Bilim (koyu) */
+.q3d .bilim .b-site { border-left-color: var(--altin); color: var(--ink); }
+.q3d .bilim .b-kaynak { color: var(--graphite); font-style: italic; font-family: "Fraunces", Georgia, serif; }
+
+/* NextGen kapısı: gece mavisi levha, altın halkalar */
+.q3d[data-theme] .kapi { background: radial-gradient(80% 120% at 100% 50%, #16264f, #0b1530 70%); color: #f5f1e6; border: 1px solid rgba(201, 165, 90, 0.3); box-shadow: 0 40px 80px -44px rgba(11, 21, 48, 0.8); }
+.q3d[data-theme] .kapi h2 { color: #f5f1e6; }
+.q3d[data-theme] .kapi p { color: #c8cfdf; }
+.q3d[data-theme] .kapi::before { background: repeating-radial-gradient(circle, transparent 0 28px, rgba(227, 200, 136, 0.22) 28px 29px, transparent 29px 56px, rgba(143, 168, 232, 0.16) 56px 57px); }
+.q3d[data-theme] .kapi::after { background: radial-gradient(circle, rgba(227, 200, 136, 0.45), rgba(30, 58, 138, 0.3) 45%, transparent 70%); }
+.q3d[data-theme] .kapi-diller li { background: rgba(245, 241, 230, 0.04); border: 1px solid rgba(201, 165, 90, 0.2); color: #f5f1e6; }
+.q3d[data-theme] .kapi-diller span { color: #8e99b4; }
+
+/* SSS (koyu) */
+.q3d .faq summary { font-family: "Fraunces", Georgia, serif; font-weight: 500; font-stretch: normal; }
+.q3d .faq summary::after { border-color: var(--altin-acik); }
+
+/* Kapanış: gece mavisi büyük levha */
+.q3d[data-theme] .cta-in { background: radial-gradient(70% 140% at 0% 0%, #16264f, #0b1530 70%); border: 1px solid rgba(201, 165, 90, 0.3); color: #f5f1e6; padding: clamp(36px, 4vw, 80px); }
+.q3d[data-theme] .cta-in h2 { color: #f5f1e6; }
+.q3d .cta-in::before { opacity: 0.8; }
+
+/* Alt bilgi (koyu) */
+.q3d .foot { border-top: 0; }
+.q3d .foot-in { color: var(--graphite); }
+.q3d .foot-in .logo { color: var(--ink); }

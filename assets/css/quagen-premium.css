@@ -1,0 +1,70 @@
+/* QUAGEN — premium katman (Hesap ve Portfolyo). Ana sayfadaki gece mavisi + altın dili.
+ * Sayfa stilinden ve cam.css'ten SONRA yüklenir. Açık: fildişi zemin; koyu: gece mavisi. */
+:root.qp {
+  --paper: #f8f5ee; --surface: #ffffff; --sunken: #f1ece1; --code-bg: #fdfbf7;
+  --ink: #0f172a; --ink-2: #334155; --graphite: #5f6b80; --faint: #98a2b3;
+  --rule: rgba(15, 23, 42, 0.09); --rule-2: rgba(15, 23, 42, 0.18);
+  --marker: #c9a55a; --marker-ink: #0b1530; --marker-wash: rgba(201, 165, 90, 0.2);
+  --link: #1e3a8a; --altin: #a07c34;
+  --glass: #ffffff; --glass-strong: #ffffff; --glass-edge: rgba(15, 23, 42, 0.09);
+  --glass-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 28px 56px -36px rgba(15, 23, 42, 0.32);
+  --isik-1: rgba(201, 165, 90, 0.16); --isik-2: rgba(30, 58, 138, 0.07); --isik-3: transparent; --nokta: rgba(15, 23, 42, 0.07);
+  --serif: "Fraunces", Georgia, "Times New Roman", serif;
+}
+:root.qp[data-theme="dark"] {
+  --paper: #0b1530; --surface: #111d3d; --sunken: #0e1834; --code-bg: #0a1329;
+  --ink: #f5f1e6; --ink-2: #c8cfdf; --graphite: #8e99b4; --faint: #56627f;
+  --rule: rgba(245, 241, 230, 0.1); --rule-2: rgba(245, 241, 230, 0.2);
+  --marker: #d4b26a; --marker-ink: #0b1530; --marker-wash: rgba(212, 178, 106, 0.16);
+  --link: #e3c888; --altin: #d4b26a;
+  --glass: #111d3d; --glass-strong: #13204a; --glass-edge: rgba(212, 178, 106, 0.16);
+  --glass-shadow: 0 30px 60px -36px rgba(0, 0, 0, 0.7);
+  --isik-1: rgba(212, 178, 106, 0.1); --isik-2: rgba(30, 58, 138, 0.25); --isik-3: transparent; --nokta: rgba(245, 241, 230, 0.05);
+}
+.qp body::before { animation: none; }
+.qp .cam { backdrop-filter: none; -webkit-backdrop-filter: none; }
+.qp h1, .qp h2, .qp .name, .qp .w-in p { font-family: var(--serif); font-stretch: normal; font-weight: 500; letter-spacing: -0.02em; }
+.qp h3 { font-family: var(--serif); font-stretch: normal; font-weight: 550; letter-spacing: -0.01em; }
+.qp .logo { font-family: var(--serif); font-stretch: normal; font-weight: 600; letter-spacing: 0.06em; background: none; box-shadow: none; padding: 0; }
+.qp .logo::after { content: ""; display: inline-block; width: 6px; height: 6px; margin-left: 3px; border-radius: 50%; background: #c9a55a; }
+:root.qp[data-theme="dark"] .logo { box-shadow: none; }
+
+/* ---------- Hesap: solda gece mavisi, sağda her temada fildişi form ---------- */
+.qp .auth-art { background: radial-gradient(90% 70% at 100% 0%, #16264f, #0b1530 65%); color: #f5f1e6; }
+.qp .auth-art::before { background: radial-gradient(40% 35% at 70% 30%, rgba(212, 178, 106, 0.14), transparent 70%), radial-gradient(35% 30% at 20% 80%, rgba(143, 168, 232, 0.1), transparent 70%); }
+.qp .auth-art .logo { color: #f5f1e6; }
+.qp .art-code { color: #f5f1e6; }
+.qp .art-code .ln.hi { background: linear-gradient(90deg, rgba(212, 178, 106, 0.22), rgba(212, 178, 106, 0.04)); }
+.qp .art-code .k { color: #9fb6f0; } .qp .art-code .n { color: #e3c888; } .qp .art-code .s { color: #93d1ae; }
+.qp .art-code .caret { background: #d4b26a; }
+.qp .art-quote { font-family: var(--serif); font-style: italic; font-size: 17px; color: #c8cfdf; }
+.qp .auth-panel {
+  --paper: #f8f5ee; --surface: #ffffff; --sunken: #f1ece1; --ink: #0f172a; --ink-2: #334155; --graphite: #5f6b80; --faint: #98a2b3;
+  --rule: rgba(15, 23, 42, 0.09); --rule-2: rgba(15, 23, 42, 0.18); --marker: #c9a55a; --marker-wash: rgba(201, 165, 90, 0.22); --link: #1e3a8a;
+  --fail: #b42318; --fail-wash: #fdecea; --pass: #1f7a4d; --warn: #9a5800;
+  --glass: #ffffff; --glass-strong: #ffffff; --glass-edge: rgba(15, 23, 42, 0.09); --glass-line: rgba(15, 23, 42, 0.06);
+  --glass-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 28px 56px -36px rgba(15, 23, 42, 0.32);
+  background: radial-gradient(70% 50% at 100% 0%, rgba(201, 165, 90, 0.14), transparent 60%), #f8f5ee; color: var(--ink); color-scheme: light;
+}
+.qp .auth-panel .submit { background: #0b1530; color: #f8f5ee; box-shadow: inset 0 0 0 1px rgba(201, 165, 90, 0.45), 0 14px 30px -16px rgba(11, 21, 48, 0.6); border-radius: 6px; }
+.qp .auth-panel .submit:hover { background: #16264f; }
+.qp .auth-panel .s-spin { border-color: rgba(255, 255, 255, 0.25); border-top-color: #d4b26a; }
+.qp .auth-panel .s-check { border-color: #d4b26a; }
+.qp .auth-panel .field input, .qp .auth-panel .prefix { border-radius: 6px; }
+.qp .auth-panel .field input:focus, .qp .auth-panel .prefix:focus-within { border-color: #0b1530; }
+.qp .tab-ink { box-shadow: 0 1px 2px rgba(15, 23, 42, 0.1), inset 0 -2px 0 #c9a55a; }
+.qp .welcome { background: #0b1530; color: #f5f1e6; }
+.qp .w-mark { background: linear-gradient(90deg, #c9a55a, #e3c888); height: 4px; }
+
+/* ---------- Portfolyo ---------- */
+.qp .hero-av { background: #0b1530; color: #e3c888; font-family: var(--serif); font-stretch: normal; font-weight: 500; }
+.qp .headline { font-family: var(--serif); font-stretch: normal; font-weight: 500; font-style: italic; background: none; color: var(--altin); }
+.qp .links a { background: #0b1530; color: #f8f5ee; box-shadow: inset 0 0 0 1px rgba(201, 165, 90, 0.4); }
+:root.qp[data-theme="dark"] .links a { background: linear-gradient(180deg, #e3c888, #c9a55a); color: #0b1530; box-shadow: none; }
+.qp .cta { border-width: 1px; border-radius: 6px; }
+.qp .stats { border-top: 1px solid var(--altin); }
+.qp .stats b, .qp .lr-in b { font-family: var(--serif); font-stretch: normal; font-weight: 500; }
+.qp .lang { border-radius: 8px; }
+.qp .seal { background: radial-gradient(circle at 35% 35%, #ecd59c, #c9a55a 60%, #a07c34); box-shadow: 0 0 0 3px var(--surface), 0 0 0 4px #a07c34; }
+.qp .seal::after { border-color: #0b1530; }
+.qp .tag { background: #0b1530; color: #e3c888; }
