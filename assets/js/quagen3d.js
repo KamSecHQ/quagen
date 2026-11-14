@@ -22,7 +22,7 @@
   };
   /* Kaydırma durakları: hangi bölümde hangi biçim, ekranın neresinde, ne büyüklükte, hangi eğimle */
   const DURAK = [
-    { sec: ".hero-kure", bicim: "kure", x: 0, y: 0, boy: 0.68, egX: 0.25, bagli: true },
+    { sec: ".hero-kure", bicim: "kure", x: 0, y: 0, boy: 0.68, egX: 0.25, bagli: true, kilit: true },
     { sec: "#programlar", bicim: "halka", x: 0.3, y: -0.05, boy: 1.25, egX: 1.05 },
     { sec: ".kam-yan .kam-av", bicim: "kure", x: 0, y: 0, boy: 0.42, egX: 0.3, bagli: true },
     { sec: "#ders", bicim: "sarmal", x: -0.36, y: 0, boy: 0.95, egX: 0.15 },
@@ -60,6 +60,8 @@
       }
       if (onceki.d === undefined) onceki = sonraki = merkezler[0];
       if (onceki !== sonraki) oran = yumusak((orta - onceki.m) / Math.max(1, sonraki.m - onceki.m));
+      /* Kilitli durak (açılıştaki KAM): ekranda göründüğü sürece küre ondan ayrılmaz, biçim de değişmez */
+      if (onceki.d.kilit && onceki.b.bottom > 0) oran = 0;
       return { a: onceki, b: sonraki, oran };
     }
     const merkez = (k) => (k.d.bagli ? { x: (k.b.left + k.b.width / 2) / W - 0.5, y: (k.b.top + k.b.height / 2) / H - 0.5 } : { x: k.d.x, y: k.d.y });
@@ -130,7 +132,6 @@
   if (kam && inceImlec && !azHareket) addEventListener("pointermove", (e) => {
     const b = kam.getBoundingClientRect(), dx = (e.clientX - (b.left + b.width / 2)) / innerWidth, dy = (e.clientY - (b.top + b.height / 2)) / innerHeight;
     kam.style.setProperty("--kry", (dx * 34).toFixed(1) + "deg"); kam.style.setProperty("--krx", (-dy * 26).toFixed(1) + "deg");
-    kam.style.setProperty("--kx", (dx * 18).toFixed(1) + "px"); kam.style.setProperty("--ky", (dy * 14).toFixed(1) + "px");
   }, { passive: true });
   let bekleyen = false;
   const kaydir = () => {
