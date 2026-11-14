@@ -105,7 +105,11 @@
       if (d.bitti || mesgul) return;
       const a = lab.adimlar[d.adim];
       if (!L().gecti(a, o, kabuk)) {
-        if (o.bayrak) { yazdir(`<div class="t-hata">Bayrak doğru değil. Biçim: QG{...}</div>`); sc.kam("Bu bayrak tutmadı. Metni olduğu gibi, süslü parantezleriyle birlikte yaz."); }
+        if (o.bayrak) {
+          const son = lab.adimlar[lab.adimlar.length - 1].gec.bayrak;
+          if (son && String(o.bayrak).trim() === son && d.adim < lab.adimlar.length - 1) { yazdir(`<div class="t-hata">Bayrak doğru, ama önce adımları bitir. Şu an ${d.adim + 1}. adımdasın.</div>`); sc.kam("Bayrağı bulmuşsun. Yine de önce sıradaki görevi yap; bayrağı son adımda alacağım."); }
+          else { yazdir(`<div class="t-hata">Bayrak doğru değil. Biçim: QG{...}</div>`); sc.kam("Bu bayrak tutmadı. Metni olduğu gibi, süslü parantezleriyle birlikte yaz."); }
+        }
         return;
       }
       d.adim++; S.save(); ilerle(); gorevEl.hidden = true;

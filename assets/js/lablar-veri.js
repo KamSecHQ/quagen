@@ -71,6 +71,19 @@
     }
   };
 
+
+  /* Sorun giderme labı için ağ: üç site, üçü de farklı bir nedenle açılmıyor. */
+  const AG_ARIZA = {
+    ben: "192.168.1.25", gecit: "192.168.1.1", dnsSunucu: "192.168.1.1",
+    dns: { "haber.lab": "10.0.0.31", "forum.lab": "10.0.0.32", "depo.lab": "10.0.0.33" },
+    makineler: {
+      "192.168.1.1": { ms: 1, portlar: { 53: "dns" } },
+      "10.0.0.31": { sessiz: true },
+      "10.0.0.32": { ms: 16, portlar: { 22: "ssh" } },
+      "10.0.0.33": { ms: 19, sunucu: "nginx/1.24", portlar: { 80: "http" }, web: { 80: { "/": { govde: "<h1>Depo</h1>\n<p>Belgeler /belgeler/ altinda.</p>\n" }, "/belgeler": { govde: "kilavuz.txt\n" }, "/belgeler/kilavuz.txt": { tur: "text/plain", govde: "Ariza giderme sirasi: isim, makine, port, sayfa.\nQG{isim_makine_port_sayfa}\n" } } } }
+    }
+  };
+
   const LABLAR = [
     {
       id: "sg1", alan: "siber", no: 1, baslik: "Terminalde yön bulmak", seviye: "Başlangıç", sure: 15,
@@ -330,6 +343,24 @@
       ],
       kapanis: "Bir web isteğinin parçalarını gördün: adres, durum kodu, başlıklar, gövde. `robots.txt` bir güvenlik önlemi değildir; bir dosyayı korumanın yolu ona erişimi kapatmaktır (`403`), adını saklamak değil."
     }
+    ,{
+      id: "ag5", alan: "ag", no: 5, baslik: "Site açılmıyor: sırayla ele", seviye: "Başlangıç", sure: 25, ag: AG_ARIZA,
+      ozet: "Dört site için “açılmıyor” şikâyeti geldi. Her birinin nedeni farklı. Rastgele denemek yerine dört soruyu sırayla sor: isim çözülüyor mu, makine yanıt veriyor mu, port açık mı, sayfa var mı?",
+      kazanim: ["sorun giderme sırası", "nslookup, ping, nc, curl birlikte", "belirtiden nedene gitmek"],
+      dosyalar: { "/home/ogrenci/sikayet.txt": "Açılmayan siteler:\n- blog.lab\n- haber.lab\n- forum.lab\n- depo.lab/belgeler/rehber.txt\n" },
+      adimlar: [
+        { k: ["Bir site açılmadığında neden dört yerden birindedir: **isim**, **makine**, **port** ya da **sayfa**. Bu sırayla bakılır, çünkü her biri bir öncekine dayanır.", "Önce şikâyetleri oku: `cat sikayet.txt`."], gorev: "Şikâyet listesini oku.", ipucu: "`cat sikayet.txt`", cozum: ["cat sikayet.txt"], gec: { cikti: "blog\\.lab" } },
+        { k: ["İlk site `blog.lab`. İlk soru: bu isim bir adrese çıkıyor mu? `nslookup blog.lab`"], gorev: "blog.lab isminin çözülüp çözülmediğine bak.", ipucu: "`nslookup blog.lab`", cozum: ["nslookup blog.lab"], gec: { komut: "^nslookup\\s+blog\\.lab$", hataOlsa: true } },
+        { k: ["`NXDOMAIN`: isim rehberde yok. Sorun **isimde**; makineye ya da porta bakmanın anlamı kalmadı. Çözüm alan adı kaydını düzeltmektir.", "İkinci site: `nslookup haber.lab`."], gorev: "haber.lab ismini sorgula.", ipucu: "`nslookup haber.lab`", cozum: ["nslookup haber.lab"], gec: { cikti: "10\\.0\\.0\\.31" } },
+        { k: ["İsim çözülüyor. Sıradaki soru: o adresteki makine yanıt veriyor mu? `ping -c 2 haber.lab`"], gorev: "haber.lab makinesine ping at.", ipucu: "`ping -c 2 haber.lab`", cozum: ["ping -c 2 haber.lab"], gec: { cikti: "%100 kayıp" } },
+        { k: ["Yanıt yok: sorun **makinede**. Kapalı olabilir ya da ağ bağlantısı kopmuştur; sunucunun başındaki kişiye haber verilir.", "Üçüncü site `forum.lab`. İsim ve makineyi tek komutla dene: `ping -c 2 forum.lab`."], gorev: "forum.lab makinesine ping at.", ipucu: "`ping -c 2 forum.lab`", cozum: ["ping -c 2 forum.lab"], gec: { cikti: "10\\.0\\.0\\.32 adresinden yanıt" } },
+        { k: ["İsim çözüldü, makine ayakta. Üçüncü soru: web kapısı açık mı? `nc -zv forum.lab 80`"], gorev: "forum.lab üzerinde 80 numaralı portu yokla.", ipucu: "`nc -zv forum.lab 80`", cozum: ["nc -zv forum.lab 80"], gec: { komut: "^nc\\b.*forum\\.lab\\s+80$", hataOlsa: true } },
+        { k: ["“Bağlantı reddedildi”: makine çalışıyor ama web sunucusu çalışmıyor. Sorun **portta**; hizmetin yeniden başlatılması gerekir.", "Son şikâyet bir sayfa: `curl -I http://depo.lab/belgeler/rehber.txt`"], gorev: "Şikâyet edilen sayfanın durum kodunu gör.", ipucu: "`curl -I http://depo.lab/belgeler/rehber.txt`", cozum: ["curl -I http://depo.lab/belgeler/rehber.txt"], gec: { cikti: "HTTP/1\\.1 404" } },
+        { k: ["`404`: isim, makine ve port sağlam; yalnızca **sayfa** yok. Belki adı yanlış yazılmıştır. Klasörde ne olduğuna bak: `curl http://depo.lab/belgeler`"], gorev: "belgeler klasörünün içeriğini iste.", ipucu: "`curl http://depo.lab/belgeler`", cozum: ["curl http://depo.lab/belgeler"], gec: { cikti: "kilavuz\\.txt" } },
+        { k: ["Dosyanın adı `rehber.txt` değil, `kilavuz.txt`. Şikâyet eden kişi adresi yanlış yazmış. Doğru adresi iste, içindeki bayrağı gönder."], gorev: "Doğru dosyayı oku ve bayrağı gönder.", ipucu: "`curl http://depo.lab/belgeler/kilavuz.txt`", cozum: ["curl http://depo.lab/belgeler/kilavuz.txt", "bayrak QG{isim_makine_port_sayfa}"], gec: { bayrak: "QG{isim_makine_port_sayfa}" } }
+      ],
+      kapanis: "Dört şikâyet, dört ayrı neden: isim yoktu, makine kapalıydı, hizmet çalışmıyordu, adres yanlıştı. Sıra hep aynı: `nslookup`, `ping`, `nc`, `curl`. İlk takılan adım sorunun yerini söyler."
+    }
   ];
 
   /* Öğrenme alanları (yol haritaları). durum: "hazir" | "yakinda" */
@@ -339,7 +370,7 @@
     { id: "js", ad: "JavaScript ve Web", tur: "dil", durum: "hazir", ozet: "Dilin temeli, ardından web sayfaları, React, algoritmalar ve sunucu tarafı.", olcu: "50 ders · 150 görev" },
     { id: "siber", ad: "Siber Güvenlik", tur: "lab", durum: "hazir", ozet: "Sıfırdan: terminal, kayıt inceleme, kodlamalar, izinler, dosya arama, web günlükleri. Her konu tarayıcıdaki bir lab makinesinde.", olcu: "6 lab hazır · devamı geliyor" },
     { id: "linux", ad: "Linux ve Komut Satırı", tur: "lab", durum: "hazir", ozet: "Dosya kurmak, büyük dosyaları özetlemek, metin dönüştürmek, betik yazmak. Siber güvenlik lablarının dayandığı temel.", olcu: "4 lab hazır · devamı geliyor" },
-    { id: "ag", ad: "Ağ Temelleri", tur: "lab", durum: "hazir", ozet: "IP adresi, DNS, portlar, HTTP. Bir isteğin tarayıcıdan sunucuya yolculuğunu komut satırından izle.", olcu: "4 lab hazır · devamı geliyor" },
+    { id: "ag", ad: "Ağ Temelleri", tur: "lab", durum: "hazir", ozet: "IP adresi, DNS, portlar, HTTP. Bir isteğin tarayıcıdan sunucuya yolculuğunu komut satırından izle.", olcu: "5 lab hazır · devamı geliyor" },
     { id: "veri", ad: "Veri Analizi", tur: "dil", durum: "yakinda", ozet: "Python ile tabloları okumak, temizlemek, özetlemek ve grafiğe dökmek.", olcu: "hazırlanıyor" },
     { id: "vt", ad: "Veritabanları ve SQL", tur: "lab", durum: "yakinda", ozet: "Tablolar, sorgular, birleştirmeler. Şu an Backend parkurunun içinde; ayrı bir yol olacak.", olcu: "hazırlanıyor" }
   ];
