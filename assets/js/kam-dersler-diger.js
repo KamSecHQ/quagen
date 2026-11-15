@@ -1,4 +1,4 @@
-/* QUAGEN — KAM'in elle yazılmış ders anlatımları: Python ve JavaScript (ilk dersler).
+/* QUAGEN — KAM'in elle yazılmış ders anlatımları: Python (ilk dört ders) ve JavaScript (ilk ders).
  * Biçim kam-dersler-c.js ile aynıdır: ["k", metin] · ["kod", kod] · ["v", [satırlar], metin] · ["calis"] ·
  * ["sen", cevap…] · ["sor", soru, [seçenekler], doğruIdx, doğruysa, yanlışsa]. Ağır ağır gider: her adımda tek yeni şey. */
 (function () {
@@ -32,6 +32,108 @@
     ["calis"],
     ["sor", "Baştaki `f` harfini unutursam ekranda ne görürüm?", ["Deniz 19 yaşında.", "{ad} {yas} yaşında.", "Hata"], 1, "Evet. `f` olmayınca süslü parantezler sıradan karakter olur ve olduğu gibi yazılır. Hata vermez, o yüzden fark etmesi zordur.", "`{ad} {yas} yaşında.` görürsün. `f` olmadan Python süslü parantezlere dokunmaz; hata da vermez, bu yüzden gözden kaçar."],
     ["k", "Bugünlük dört şey: `print` yazar, tırnak metin demektir, `=` kutuya koyar, `f\"...{ad}...\"` kutudakini cümleye yerleştirir. Şimdi bu satırları birkaç kez yazıp aklına yerleştireceğiz."]
+  ];
+
+  /* ==================== Python · Ders 2: koşullar ==================== */
+  D.py2 = [
+    ["k", "Geçen derste program her satırı sırayla çalıştırdı. Bugün programa **karar verdireceğiz**: bir şey doğruysa şunu yap, değilse bunu."],
+    ["kod", 'yas = 15\nif yas < 18:\n    print("Öğrenci bileti")'],
+    ["v", [2], "`if` “eğer” demek. Ardından bir **koşul** gelir: `yas < 18`. Satır iki noktayla biter."],
+    ["v", [3], "Bu satır dört boşluk **içeride**. Python'da girinti süs değildir; “bu satır `if`'e bağlı” demektir. Koşul doğruysa çalışır."],
+    ["calis"],
+    ["sor", "`yas` 30 olsaydı ekranda ne görürdün?", ["Öğrenci bileti", "Hiçbir şey", "Hata"], 1, "Evet. Koşul yanlış olunca içerideki satır atlanır; program sessizce biter.", "Hiçbir şey. 30 < 18 yanlıştır, bu yüzden içerideki satır atlanır. Hata da olmaz."],
+    ["k", "Koşul yanlışken de bir şey yapmak istersen `else` eklersin: “değilse”."],
+    ["kod", 'yas = 15\nif yas < 18:\n    print("Öğrenci bileti")\nelse:\n    print("Tam bilet")'],
+    ["v", [4], "`else` koşul almaz; `if` tutmadıysa çalışır. O da iki noktayla biter ve `if` ile **aynı hizadadır**."],
+    ["calis"],
+    ["sen", "İkiden fazla seçenek olursa?", "Devam"],
+    ["k", "Araya `elif` girer: “değilse, eğer”. Python koşulları yukarıdan aşağı dener ve **ilk tutanı** çalıştırır; gerisine bakmaz."],
+    ["kod", 'yas = 15\nif yas < 7:\n    fiyat = 0\nelif yas < 18:\n    fiyat = 20\nelse:\n    fiyat = 40\nprint(f"Bilet: {fiyat} TL")'],
+    ["v", [2, 3], "Yedi yaşından küçükse ücretsiz."],
+    ["v", [4, 5], "Buraya ancak ilk koşul tutmadıysa gelinir. Yaş zaten 7 ya da daha büyüktür; yalnızca 18'den küçük mü diye bakmak yeter."],
+    ["v", [8], "Bu satır girintisiz. Hangi dal çalışırsa çalışsın, en sonda bu satır çalışır."],
+    ["calis"],
+    ["sor", "`yas` 5 olsaydı hem `yas < 7` hem `yas < 18` doğru olurdu. Fiyat kaç çıkardı?", ["0", "20", "Önce 0, sonra 20"], 0, "Doğru. İlk tutan dal çalışır ve zincir orada biter; `elif`'e hiç bakılmaz.", "0 çıkardı. Python ilk tutan dalı çalıştırır ve zinciri bırakır; ikinci koşul doğru olsa da ona bakmaz."],
+    ["k", "İki koşulu birleştirmek için üç sözcük var. `and`: ikisi de doğru olmalı. `or`: biri yeter. `not`: tersine çevirir."],
+    ["kod", 'yas = 25\nogrenci = True\nif yas < 18 or ogrenci:\n    print("İndirimli")\nif yas >= 18 and not ogrenci:\n    print("Tam")'],
+    ["v", [2], "`True` ve `False` doğruluk değerleridir. Baş harfleri büyük yazılır ve tırnak almazlar."],
+    ["v", [3], "Yaş 18'den küçük değil, ama öğrenci. `or` için biri yeter: koşul doğru."],
+    ["v", [5], "`not ogrenci` “öğrenci değilse” demek. `and` ikisini de ister; öğrenci olduğu için bu koşul yanlış."],
+    ["calis"],
+    ["sor", "`ogrenci = False` olsaydı ekranda ne yazardı?", ["İndirimli", "Tam", "İkisi de"], 1, "Evet. İlk koşulun iki yanı da yanlış olur; ikinci koşulun iki yanı da doğru.", "Tam yazardı. 25 yaşında ve öğrenci değil: `or`'un iki yanı da yanlış, `and`'in iki yanı da doğru olur."],
+    ["k", "Bir değer tek başına da koşul olabilir. Boş metin, `0` ve boş liste **yanlış** sayılır; geri kalan her şey doğru."],
+    ["kod", 'ad = ""\nif ad:\n    print("Merhaba", ad)\nelse:\n    print("Ad boş")'],
+    ["v", [2], "`if ad:` “`ad` dolu mu?” diye sormanın kısa yolu. Boş olduğu için `else` çalışacak."],
+    ["calis"],
+    ["k", "Son iki ayrıntı. Eşitlik `==` ile sorulur; tek `=` kutuya koymaktı. Bir sayının ötekine tam bölünüp bölünmediğine de `%` (kalan) ile bakılır."],
+    ["kod", 'sayi = 12\nif sayi % 2 == 0:\n    print("çift")\nelse:\n    print("tek")\nif 10 <= sayi < 20:\n    print("10 ile 20 arasında")'],
+    ["v", [2], "`sayi % 2` ikiye bölümden **kalanı** verir. Kalan 0 ise sayı çifttir."],
+    ["v", [6], "Python'a özgü bir kolaylık: matematikteki gibi zincir yazabilirsin. Okunuşu: “`sayi` 10 ile 20 arasında mı?”"],
+    ["calis"],
+    ["sor", "İkinci satırı `if sayi % 2 = 0:` diye tek eşittirle yazsaydım?", ["Yine çalışırdı", "Hata verirdi"], 1, "Evet. Tek `=` bir şeyi kutuya koyar, soru sormaz; `if` içinde Python bunu kabul etmez.", "Hata verirdi. Tek `=` atamadır; “eşit mi?” diye sormak için `==` gerekir."],
+    ["k", "Bugünlük: `if`, `elif`, `else` karar verir; girinti neyin neye bağlı olduğunu söyler; `and`, `or`, `not` koşulları birleştirir. Görevlerde sıra önemli olacak: en özel koşulu en üste yaz."]
+  ];
+
+  /* ==================== Python · Ders 3: döngüler ==================== */
+  D.py3 = [
+    ["k", "Aynı işi on kez yapmak için on satır yazmayız. **Döngü** bir bloğu tekrar tekrar çalıştırır. İlki `for`."],
+    ["kod", 'for i in range(3):\n    print("Merhaba", i)'],
+    ["v", [1], "`range(3)` sırayla 0, 1, 2 sayılarını verir. Üç sayı var ama **0'dan başlar**, 3 dahil değildir. `i` her turda sıradaki sayıyı tutar."],
+    ["v", [2], "Girintili satır döngünün gövdesidir; her turda bir kez çalışır."],
+    ["calis"],
+    ["sor", "`range(5)` hangi sayıları verir?", ["1, 2, 3, 4, 5", "0, 1, 2, 3, 4", "0, 1, 2, 3, 4, 5"], 1, "Evet. Beş sayı, 0'dan başlar, 5 dahil değil.", "0, 1, 2, 3, 4. `range(n)` her zaman 0'dan başlar ve n'yi içermez; yine de tam n tane sayı verir."],
+    ["k", "`range`'e başlangıç ve adım da verilebilir: `range(baş, son, adım)`. Son yine dahil değildir."],
+    ["kod", 'toplam = 0\nfor i in range(1, 6):\n    toplam += i\nprint("toplam:", toplam)\nfor i in range(10, 0, -3):\n    print(i)'],
+    ["v", [1], "Sonucu biriktireceğimiz kutu. Döngüden **önce** hazırlanır."],
+    ["v", [2, 3], "`range(1, 6)` 1'den 5'e kadar sayar. `toplam += i`, `toplam = toplam + i` yazmanın kısasıdır."],
+    ["v", [5], "Adım eksi olursa geriye sayar: 10, 7, 4, 1."],
+    ["calis"],
+    ["sen", "Kaç tur döneceğini bilmiyorsam?", "Devam"],
+    ["k", "O zaman `while`: koşul doğru **oldukça** döner. Bir sayının basamaklarını tek tek almak buna iyi bir örnek."],
+    ["kod", 'n = 4096\nbasamak = 0\nwhile n > 0:\n    son = n % 10\n    print("son basamak:", son)\n    n = n // 10\n    basamak += 1\nprint(basamak, "tur döndü")'],
+    ["v", [4], "`% 10` son basamağı verir: 4096 % 10 = 6."],
+    ["v", [6], "`//` tam bölmedir, kesri atar: 4096 // 10 = 409. Yani son basamağı siler. Bu satır olmasaydı `n` hiç değişmez, döngü **sonsuza** giderdi."],
+    ["calis"],
+    ["sor", "Bu döngü ne zaman durur?", ["n 10'dan küçük olunca", "n 0 olunca", "Her zaman 4 tur sonra"], 1, "Evet. Her turda bir basamak silinir; sonunda `n` 0 olur ve `n > 0` yanlışa döner.", "`n` 0 olunca. Koşul `n > 0`; her turda bir basamak silinir ve son basamak da gidince `n` 0 kalır."],
+    ["k", "Son iki araç döngünün akışını değiştirir. `break` döngüden hemen çıkar. `continue` bu turun kalanını atlar ve sıradaki tura geçer."],
+    ["kod", 'for i in range(1, 10):\n    if i % 2 == 0:\n        continue\n    if i > 6:\n        break\n    print(i)'],
+    ["v", [2, 3], "Sayı çiftse bu turu atla; aşağıdaki satırlara inilmez."],
+    ["v", [4, 5], "Altıyı geçince döngüyü tamamen bitir."],
+    ["calis"],
+    ["sor", "Ekrana hangi sayılar yazıldı?", ["1 3 5", "1 3 5 7 9", "2 4 6"], 0, "Doğru. Çiftler `continue` ile atlandı, 7'ye gelince `break` döngüyü bitirdi.", "1, 3 ve 5. Çift sayılar `continue` ile atlanır; 7'ye gelince `i > 6` doğru olur ve `break` döngüyü bitirir."],
+    ["k", "Bugünlük: tur sayısını biliyorsan `for` ve `range`, bilmiyorsan `while`. `while` içinde koşulu değiştiren bir satır mutlaka olmalı. `%` kalanı, `//` tam bölümü verir."]
+  ];
+
+  /* ==================== Python · Ders 4: fonksiyonlar ==================== */
+  D.py4 = [
+    ["k", "Aynı birkaç satırı programın üç yerinde yazıyorsan onlara bir ad verip tek yerde toplamanın zamanı gelmiştir. Buna **fonksiyon** denir."],
+    ["kod", 'def kare(x):\n    return x * x\n\nprint(kare(4))\nprint(kare(7))'],
+    ["v", [1], "`def` “tanımla” demek. `kare` fonksiyonun adı, `x` ise dışarıdan alacağı değer: **parametre**."],
+    ["v", [2], "`return` sonucu çağırana **geri verir**. Fonksiyon bu satırda biter."],
+    ["v", [4], "Çağırmak için adını yazar, parantez içinde değeri verirsin. `kare(4)` yazan yere 16 gelir."],
+    ["calis"],
+    ["sor", "İkinci satır `print(x * x)` olsaydı `sonuc = kare(4)` ne tutardı?", ["16", "None", "Hata"], 1, "Evet. `print` ekrana yazar ama geri vermez. `return` olmayan fonksiyon `None`, yani “değer yok” döndürür.", "`None` tutardı. `print` yalnızca ekrana yazar; sonucu başka yerde kullanacaksan `return` ile geri vermen gerekir."],
+    ["k", "Parametrelere **varsayılan değer** verilebilir. Çağıran o değeri yazmazsa varsayılan kullanılır."],
+    ["kod", 'def selamla(ad, selam="Merhaba"):\n    return f"{selam}, {ad}!"\n\nprint(selamla("Ada"))\nprint(selamla("Linus", "Selam"))\nprint(selamla("Deniz", selam="Günaydın"))'],
+    ["v", [1], "`selam=\"Merhaba\"`: ikinci değer verilmezse “Merhaba” olur."],
+    ["v", [5], "İki değer verince ikincisi sırayla ikinci parametreye gider."],
+    ["v", [6], "Parametreyi **adıyla** da verebilirsin. Çok parametreli fonksiyonlarda neyin ne olduğu böyle daha açık okunur."],
+    ["calis"],
+    ["sen", "Bir fonksiyon iki sonuç döndürebilir mi?", "Devam"],
+    ["k", "Evet: aralarına virgül koyarsın. Python onları tek pakette (**demet**) geri verir; sen de karşılığında iki ad yazarsın."],
+    ["kod", 'def istatistik(sayilar):\n    toplam = sum(sayilar)\n    return toplam, toplam / len(sayilar)\n\nt, ort = istatistik([4, 8, 6])\nprint("toplam:", t)\nprint("ortalama:", ort)'],
+    ["v", [2], "`sum` listedeki sayıları toplar, `len` kaç tane olduğunu verir. İkisi de Python'un hazır fonksiyonlarıdır."],
+    ["v", [3], "Virgülle ayrılmış iki değer birlikte geri dönüyor."],
+    ["v", [5], "Soldaki iki ad, dönen iki değeri sırayla alır: `t` toplamı, `ort` ortalamayı."],
+    ["calis"],
+    ["sor", "`sonuc = istatistik([4, 8, 6])` yazsaydım `sonuc` ne olurdu?", ["18", "(18, 6.0)", "Hata"], 1, "Evet. Tek ad yazarsan paketin tamamını alırsın: iki değerli bir demet.", "`(18, 6.0)` olurdu. Tek ada atayınca Python iki değeri paket hâlinde verir; ayırmak için solda iki ad yazarsın."],
+    ["k", "Son olarak bir tuzak. Varsayılan değer fonksiyon **tanımlanırken bir kez** oluşturulur. Liste gibi değişebilen bir şeyi varsayılan yaparsan çağrılar onu paylaşır."],
+    ["kod", 'def ekle(x, liste=None):\n    if liste is None:\n        liste = []\n    liste.append(x)\n    return liste\n\nprint(ekle(1))\nprint(ekle(2))'],
+    ["v", [1], "`liste=[]` yazmak yerine `None` yazdık. `None` “değer yok” demektir."],
+    ["v", [2, 3], "Liste verilmediyse **her çağrıda yeni** bir boş liste açılır."],
+    ["calis"],
+    ["sor", "İlk satır `def ekle(x, liste=[]):` olsaydı ikinci `print` ne yazardı?", ["[2]", "[1, 2]", "Hata"], 1, "Evet. Aynı liste iki çağrıda da kullanılır; birincinin eklediği 1 hâlâ içindedir.", "`[1, 2]` yazardı. Varsayılan liste bir kez oluşturulur ve her çağrıda aynısı kullanılır; ilk çağrının eklediği 1 içinde kalır."],
+    ["k", "Bugünlük: `def` tanımlar, `return` geri verir, varsayılan değer çağrıyı kısaltır, virgülle iki sonuç dönebilir. Değişebilen varsayılan için `None` kullan."]
   ];
 
   /* ==================== JavaScript · Ders 1: değişkenler ve veri tipleri ==================== */
