@@ -84,6 +84,31 @@
     }
   };
 
+  /* Yönlendirme labı için ağ: kısa adres bir belge sunucusuna, o da başka bir yola ve porta yönlendirir. */
+  const AG_TASINDI = {
+    ben: "192.168.1.25", gecit: "192.168.1.1", dnsSunucu: "192.168.1.1",
+    dns: { "kisa.lab": "10.0.0.50", "belge.lab": "10.0.0.51" },
+    makineler: {
+      "192.168.1.1": { ms: 1, portlar: { 53: "dns" } },
+      "10.0.0.50": { ms: 14, sunucu: "nginx/1.24", portlar: { 80: "http" }, web: { 80: { "/": { govde: "Kisa adres hizmeti\n" }, "/r/kilavuz": { kod: 301, govde: "", basliklar: { Location: "http://belge.lab/kilavuz" } } } } },
+      "10.0.0.51": {
+        ms: 17, sunucu: "nginx/1.24", portlar: { 80: "http", 8080: "http-alt" },
+        web: {
+          80: { "/": { govde: "<h1>Belge sunucusu</h1>\n" }, "/kilavuz": { kod: 301, govde: "", basliklar: { Location: "/v2/kilavuz.txt" } }, "/v2/kilavuz.txt": { kod: 301, govde: "", basliklar: { Location: "http://belge.lab:8080/v2/kilavuz.txt" } } },
+          8080: { "/v2/kilavuz.txt": { tur: "text/plain", govde: "Kilavuz, surum 2\nYonlendirme zinciri: kisa adres, yeni yol, yeni port.\nQG{location_basligini_izle}\n" } }
+        }
+      }
+    }
+  };
+
+  /* Bütünlük labı: yayıncının verdiği özetler. ayar.conf indirildikten sonra değiştirilmiş, özeti tutmuyor. */
+  const OZET = {
+    rapor: "9e167b0ef16a79e43b74157c2606320caca5ec97fd489d69569754afcb9bf86f",
+    kur: "f2ea69b16fdde7b923bd0f0e44261ab87aff0820a375bf9fad2f5aacd263d77e",
+    ayar: "f05b45e453f11ca7c1ea1ad2c899964325f7ce0677c6ec29c8a15a4b0537ddf1"
+  };
+  const OZET_ASIL = { rapor: "Haftalik rapor\nSunucu: 3 gun kesintisiz\nYedek: tamam\n", kur: "# kurulum betigi\nmkdir uygulama\necho Kurulum bitti\n", ayar: "port=8080\nyonetici=ayse\ngunluk=acik\n" };
+
   const LABLAR = [
     {
       id: "sg1", alan: "siber", no: 1, baslik: "Terminalde yön bulmak", seviye: "Başlangıç", sure: 15,
@@ -361,6 +386,62 @@
       ],
       kapanis: "Dört şikâyet, dört ayrı neden: isim yoktu, makine kapalıydı, hizmet çalışmıyordu, adres yanlıştı. Sıra hep aynı: `nslookup`, `ping`, `nc`, `curl`. İlk takılan adım sorunun yerini söyler."
     }
+    ,{
+      id: "lx5", alan: "linux", no: 5, baslik: "En büyüğü bulmak: sayıyla sıralamak", seviye: "Başlangıç", sure: 20,
+      ozet: "Disk dolmuş. Elinde dosyaların boyut listesi var. Listeyi sayıya göre sırala, en çok yer tutan üçünü bul ve unutulmuş dev yedeğe ulaş.",
+      kazanim: ["sort ile alfabetik sıra", "sort -n ile sayısal sıra", "sort -r ile ters sıra", "head -n ile ilk satırlar", "cut ile sütun seçmek"],
+      dosyalar: {
+        "/home/ogrenci/boyutlar.txt": "96 notlar.txt\n1024 sunum.pdf\n8 liste.txt\n20480 yedek/eski-proje.tar\n512 foto.png\n4096 video/ders1.mp4\n7 ayar.conf\n300 muzik.mp3\n",
+        "/home/ogrenci/yedek/eski-proje.tar": "(eski proje arsivi)\n",
+        "/home/ogrenci/yedek/BENIOKU.txt": "Bu yedek 2019'dan kaldi. Proje coktan bitti, silinebilir.\nQG{sayiyla_sirala_buyugu_bul}\n",
+        "/home/ogrenci/video/ders1.mp4": "(video)\n"
+      },
+      adimlar: [
+        { k: ["Disk doldu ve neyin yer kapladığını bulman gerekiyor. `boyutlar.txt` içinde her satırda bir dosyanın boyutu (KB) ve adı var.", "Önce bak: `cat boyutlar.txt`."], gorev: "Boyut listesini oku.", ipucu: "`cat boyutlar.txt`", cozum: ["cat boyutlar.txt"], gec: { cikti: "20480 yedek" } },
+        { k: ["Sıralamayı dene: `sort boyutlar.txt`. Sonuca dikkatle bak; bir şey ters gidecek."], gorev: "Listeyi sort ile sırala.", ipucu: "`sort boyutlar.txt`", cozum: ["sort boyutlar.txt"], gec: { komut: "^sort\\s+boyutlar\\.txt$" } },
+        { k: ["`1024`, `8`'den önce geldi. `sort` satırları **metin** gibi karşılaştırır: önce ilk karaktere bakar ve `1`, `8`'den küçüktür. Sözlükte “on”un “sekiz”den önce gelmesi gibi.", "Sayı olarak sıralamak için `-n` ekle: `sort -n boyutlar.txt`."], gorev: "Listeyi sayıya göre sırala.", ipucu: "`sort -n boyutlar.txt`", cozum: ["sort -n boyutlar.txt"], gec: { cikti: "^7 ayar\\.conf\\n8 liste\\.txt\\n96 notlar\\.txt\\n300 " } },
+        { k: ["Şimdi küçükten büyüğe doğru. Ama aradığımız en büyükler; onlar en altta kaldı. `-r` sırayı ters çevirir.", "İkisini birlikte kullan: `sort -n -r boyutlar.txt`."], gorev: "Listeyi büyükten küçüğe sırala.", ipucu: "`sort -n -r boyutlar.txt`", cozum: ["sort -n -r boyutlar.txt"], gec: { cikti: "^20480 [^\\n]+\\n4096 [^\\n]+\\n1024 " } },
+        { k: ["Liste uzun olsaydı hepsini görmek istemezdin. Yalnızca ilk üçünü almak için hattın sonuna `| head -n 3` ekle."], gorev: "En çok yer tutan üç dosyayı listele.", ipucu: "`sort -n -r boyutlar.txt | head -n 3`", cozum: ["sort -n -r boyutlar.txt | head -n 3"], gec: { cikti: "^20480 [^\\n]+\\n4096 [^\\n]+\\n1024 [^\\n]+\\n(?![\\s\\S])" } },
+        { k: ["Birinci açık ara önde: 20 MB'lık bir yedek. Yalnızca **adını** almak için önce tek satıra indir, sonra ikinci sütunu kes.", "`sort -n -r boyutlar.txt | head -n 1 | cut -d ' ' -f 2`"], gorev: "En büyük dosyanın yalnızca adını yazdır.", ipucu: "`sort -n -r boyutlar.txt | head -n 1 | cut -d ' ' -f 2`", cozum: ["sort -n -r boyutlar.txt | head -n 1 | cut -d ' ' -f 2"], gec: { cikti: "^yedek/eski-proje\\.tar\\n(?![\\s\\S])" } },
+        { k: ["Dosya `yedek` klasöründe. Silmeden önce ne olduğunu anlamak gerekir. Klasöre bak: `ls yedek`. Yanında bir açıklama dosyası var; onu oku ve bayrağı gönder."], gorev: "Yedek klasöründeki açıklamayı oku ve bayrağı gönder.", ipucu: "`ls yedek`, sonra `cat yedek/BENIOKU.txt`", cozum: ["ls yedek", "cat yedek/BENIOKU.txt", "bayrak QG{sayiyla_sirala_buyugu_bul}"], gec: { bayrak: "QG{sayiyla_sirala_buyugu_bul}" } }
+      ],
+      kapanis: "`sort` tek başına metin gibi sıralar; sayılar için `-n`, tersten için `-r` gerekir. `sort -n -r | head -n 3` kalıbı “en büyük üç” sorusunun cevabıdır: disk kullanımında, kayıt sayımında, puan tablosunda hep aynı kalıbı kullanırsın."
+    }
+    ,{
+      id: "ag6", alan: "ag", no: 6, baslik: "Taşınan sayfanın peşinde: yönlendirme", seviye: "Başlangıç", sure: 20, ag: AG_TASINDI,
+      ozet: "Bir kısa adres boş sayfa döndürüyor. Sayfa silinmedi, taşındı. Yanıt başlıklarındaki Location satırını izleyerek belgenin son adresine ulaş.",
+      kazanim: ["301 yönlendirmesi", "Location başlığı", "göreli ve tam adres", "adreste port yazmak", "tarayıcının perde arkasında yaptığı"],
+      dosyalar: { "/home/ogrenci/not.txt": "Kilavuzun kisa adresi: http://kisa.lab/r/kilavuz\n" },
+      adimlar: [
+        { k: ["Elinde bir kısa adres var. Önce nota bak: `cat not.txt`, sonra adresi iste: `curl http://kisa.lab/r/kilavuz`."], gorev: "Kısa adresi curl ile iste.", ipucu: "`curl http://kisa.lab/r/kilavuz`", cozum: ["cat not.txt", "curl http://kisa.lab/r/kilavuz"], gec: { komut: "^curl\\s+(http://)?kisa\\.lab/r/kilavuz$" } },
+        { k: ["Hiçbir şey gelmedi ama hata da yok. Gövde boş; açıklama **başlıklarda**. Başlıkları görmek için `-I` ekle: `curl -I http://kisa.lab/r/kilavuz`."], gorev: "Aynı adresin yanıt başlıklarını gör.", ipucu: "`curl -I http://kisa.lab/r/kilavuz`", cozum: ["curl -I http://kisa.lab/r/kilavuz"], gec: { cikti: "Location: http://belge\\.lab/kilavuz" } },
+        { k: ["`301`: “kalıcı olarak taşındı”. `Location` satırı yeni adresi söylüyor. Tarayıcın bunu görünce sana sormadan yeni adrese gider; sen şimdi aynısını elle yapıyorsun.", "Yeni adresin başlıklarına bak: `curl -I http://belge.lab/kilavuz`."], gorev: "Location satırındaki adresin başlıklarını iste.", ipucu: "`curl -I http://belge.lab/kilavuz`", cozum: ["curl -I http://belge.lab/kilavuz"], gec: { cikti: "Location: /v2/kilavuz\\.txt" } },
+        { k: ["Yine `301`, ama bu kez `Location` bir site adıyla başlamıyor: `/v2/kilavuz.txt`. Bu **göreli** bir adres; “aynı sunucuda, şu yolda” demek.", "Sunucu adını başına sen ekle: `curl -I http://belge.lab/v2/kilavuz.txt`."], gorev: "Göreli adresi tam adrese çevirip başlıklarını iste.", ipucu: "`curl -I http://belge.lab/v2/kilavuz.txt`", cozum: ["curl -I http://belge.lab/v2/kilavuz.txt"], gec: { cikti: "Location: http://belge\\.lab:8080/" } },
+        { k: ["Üçüncü yönlendirme. Bu kez adreste `:8080` var: aynı makine, **başka port**. Port yazılmazsa `http` için 80 varsayılır; farklıysa adreste belirtilir.", "Zincirin sonuna geldik mi? Yalnızca durum satırını süz: `curl -I http://belge.lab:8080/v2/kilavuz.txt | grep HTTP`."], gorev: "Son adresin durum kodunu gör.", ipucu: "`curl -I http://belge.lab:8080/v2/kilavuz.txt | grep HTTP`", cozum: ["curl -I http://belge.lab:8080/v2/kilavuz.txt | grep HTTP"], gec: { cikti: "HTTP/1\\.1 200" } },
+        { k: ["`200`: artık yönlendirme yok, belge burada. `-I` olmadan iste, içindeki bayrağı gönder."], gorev: "Belgeyi oku ve bayrağı gönder.", ipucu: "`curl http://belge.lab:8080/v2/kilavuz.txt`", cozum: ["curl http://belge.lab:8080/v2/kilavuz.txt", "bayrak QG{location_basligini_izle}"], gec: { bayrak: "QG{location_basligini_izle}" } }
+      ],
+      kapanis: "Boş gelen sayfa çoğu zaman taşınmış sayfadır. `301` görünce `Location` satırını izle: tam adres olabilir, göreli olabilir, portu değişmiş olabilir. Gerçek `curl`'de `-L` bu zinciri senin yerine izler; tarayıcılar bunu her gün fark ettirmeden yapar."
+    }
+    ,{
+      id: "sg7", alan: "siber", no: 7, baslik: "Parmak izi: dosya değişti mi?", seviye: "Başlangıç", sure: 25,
+      ozet: "Üç dosya indirdin. Yayıncı her birinin özetini (hash) vermiş. Özetleri kendin hesapla, listeyle karşılaştır ve indirildikten sonra değiştirilmiş dosyayı bul.",
+      kazanim: ["özet (hash) nedir", "sha256sum", "tek harf değişince özetin tamamen değişmesi", "sort ve uniq -c ile iki listeyi karşılaştırmak", "bütünlük denetimi"],
+      dosyalar: {
+        "/home/ogrenci/ozetler.txt": `${OZET.rapor}  indirilen/rapor.txt\n${OZET.kur}  indirilen/kur.sh\n${OZET.ayar}  indirilen/ayar.conf\n`,
+        "/home/ogrenci/indirilen/rapor.txt": OZET_ASIL.rapor,
+        "/home/ogrenci/indirilen/kur.sh": OZET_ASIL.kur,
+        "/home/ogrenci/indirilen/ayar.conf": OZET_ASIL.ayar + "yonetici=misafir\n# QG{ozet_tutmuyorsa_guvenme}\n"
+      },
+      adimlar: [
+        { k: ["**Özet** (hash), bir dosyanın parmak izidir: dosyanın içeriğinden hesaplanan 64 karakterlik bir değer. İçerik aynıysa özet aynıdır.", "Yayıncı, dosyalarının özetlerini bir listede vermiş. Oku: `cat ozetler.txt`."], gorev: "Yayıncının özet listesini oku.", ipucu: "`cat ozetler.txt`", cozum: ["cat ozetler.txt"], gec: { cikti: "indirilen/kur\\.sh" } },
+        { k: ["Şimdi indirdiğin bir dosyanın özetini kendin hesapla: `sha256sum indirilen/rapor.txt`. Çıkan değeri listedeki ilk satırla karşılaştır."], gorev: "rapor.txt dosyasının özetini hesapla.", ipucu: "`sha256sum indirilen/rapor.txt`", cozum: ["sha256sum indirilen/rapor.txt"], gec: { cikti: "^9e167b0ef16a79e4" } },
+        { k: ["İkisi de `9e167b0e` ile başlıyor ve sonuna kadar aynı: dosya yolda değişmemiş.", "Küçük bir değişiklik özeti ne kadar etkiler? İki komutu sırayla dene: `echo merhaba | sha256sum`, sonra `echo Merhaba | sha256sum`."], gorev: "Tek harfi farklı iki metnin özetini hesapla.", ipucu: "`echo merhaba | sha256sum`, sonra `echo Merhaba | sha256sum`", cozum: ["echo merhaba | sha256sum", "echo Merhaba | sha256sum"], gec: { cikti: "^9239257aac927332" } },
+        { k: ["Tek harf büyüdü, özetin **tamamı** değişti. Bu yüzden özet tutuyorsa dosyanın tek bir karakteri bile oynamamıştır.", "Üç dosyanın özetini birden hesapla ve bir dosyaya yaz: `sha256sum indirilen/rapor.txt indirilen/kur.sh indirilen/ayar.conf > benim.txt`."], gorev: "Üç dosyanın özetini benim.txt dosyasına yaz.", ipucu: "`sha256sum indirilen/rapor.txt indirilen/kur.sh indirilen/ayar.conf > benim.txt`", cozum: ["sha256sum indirilen/rapor.txt indirilen/kur.sh indirilen/ayar.conf > benim.txt"], gec: { durum: (k) => { const m = metin(k, "/home/ogrenci/benim.txt"); return m.split("\n").filter(Boolean).length === 3 && /rapor\.txt/.test(m) && /kur\.sh/.test(m) && /ayar\.conf/.test(m); } } },
+        { k: ["64 karakteri gözle karşılaştırmak hataya açıktır. İki listeyi alt alta koy, sırala, aynı satırları say: tutan satır **2** kez, tutmayan **1** kez görünür.", "`cat ozetler.txt benim.txt | sort | uniq -c`"], gorev: "İki listeyi birleştirip her satırın kaç kez geçtiğini say.", ipucu: "`cat ozetler.txt benim.txt | sort | uniq -c`", cozum: ["cat ozetler.txt benim.txt | sort | uniq -c"], gec: { cikti: "\\b1 [0-9a-f]{64}  indirilen/ayar\\.conf" } },
+        { k: ["`rapor.txt` ve `kur.sh` ikişer kez: özetleri tutuyor. `ayar.conf` iki ayrı özetle birer kez görünüyor: senin elindeki dosya, yayıncının dosyası **değil**.", "Ne değiştiğini gör: `cat indirilen/ayar.conf`. Sonradan eklenen satırları bul, bayrağı gönder."], gorev: "Değiştirilmiş dosyayı oku ve bayrağı gönder.", ipucu: "`cat indirilen/ayar.conf`", cozum: ["cat indirilen/ayar.conf", "bayrak QG{ozet_tutmuyorsa_guvenme}"], gec: { bayrak: "QG{ozet_tutmuyorsa_guvenme}" } }
+      ],
+      kapanis: "Biri dosyaya ikinci bir yönetici eklemiş; gözle fark etmesi zor, özetle kaçması imkânsız. İndirdiğin bir dosyanın özeti yayıncının verdiğiyle tutmuyorsa o dosyayı kullanma. Özet, dosyanın **değişmediğini** gösterir; içeriğini gizlemez, yani şifreleme değildir."
+    }
   ];
 
   /* Öğrenme alanları (yol haritaları). durum: "hazir" | "yakinda" */
@@ -368,9 +449,9 @@
     { id: "py", ad: "Python", tur: "dil", durum: "hazir", ozet: "İlk dil için en rahatı. Değişkenlerden veri raporu aracına.", olcu: "20 ders · 60 görev" },
     { id: "c", ad: "C", tur: "dil", durum: "hazir", ozet: "Bilgisayarın içini anlamak isteyenlere. İşaretçiler, bellek, yapılar.", olcu: "20 ders · 60 görev" },
     { id: "js", ad: "JavaScript ve Web", tur: "dil", durum: "hazir", ozet: "Dilin temeli, ardından web sayfaları, React, algoritmalar ve sunucu tarafı.", olcu: "50 ders · 150 görev" },
-    { id: "siber", ad: "Siber Güvenlik", tur: "lab", durum: "hazir", ozet: "Sıfırdan: terminal, kayıt inceleme, kodlamalar, izinler, dosya arama, web günlükleri. Her konu tarayıcıdaki bir lab makinesinde.", olcu: "6 lab hazır · devamı geliyor" },
-    { id: "linux", ad: "Linux ve Komut Satırı", tur: "lab", durum: "hazir", ozet: "Dosya kurmak, büyük dosyaları özetlemek, metin dönüştürmek, betik yazmak. Siber güvenlik lablarının dayandığı temel.", olcu: "4 lab hazır · devamı geliyor" },
-    { id: "ag", ad: "Ağ Temelleri", tur: "lab", durum: "hazir", ozet: "IP adresi, DNS, portlar, HTTP. Bir isteğin tarayıcıdan sunucuya yolculuğunu komut satırından izle.", olcu: "5 lab hazır · devamı geliyor" },
+    { id: "siber", ad: "Siber Güvenlik", tur: "lab", durum: "hazir", ozet: "Sıfırdan: terminal, kayıt inceleme, kodlamalar, izinler, dosya arama, web günlükleri, dosya özetleri. Her konu tarayıcıdaki bir lab makinesinde.", olcu: "7 lab hazır · devamı geliyor" },
+    { id: "linux", ad: "Linux ve Komut Satırı", tur: "lab", durum: "hazir", ozet: "Dosya kurmak, büyük dosyaları özetlemek, metin dönüştürmek, betik yazmak, sayıyla sıralamak. Siber güvenlik lablarının dayandığı temel.", olcu: "5 lab hazır · devamı geliyor" },
+    { id: "ag", ad: "Ağ Temelleri", tur: "lab", durum: "hazir", ozet: "IP adresi, DNS, portlar, HTTP, yönlendirme. Bir isteğin tarayıcıdan sunucuya yolculuğunu komut satırından izle.", olcu: "6 lab hazır · devamı geliyor" },
     { id: "veri", ad: "Veri Analizi", tur: "dil", durum: "yakinda", ozet: "Python ile tabloları okumak, temizlemek, özetlemek ve grafiğe dökmek.", olcu: "hazırlanıyor" },
     { id: "vt", ad: "Veritabanları ve SQL", tur: "lab", durum: "yakinda", ozet: "Tablolar, sorgular, birleştirmeler. Şu an Backend parkurunun içinde; ayrı bir yol olacak.", olcu: "hazırlanıyor" }
   ];

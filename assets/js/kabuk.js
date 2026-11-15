@@ -3,7 +3,7 @@
  *   const k = KD_KABUK.olustur({ dosyalar: { "/home/ogrenci/not.txt": "merhaba", "/etc/gizli": { icerik: "x", mod: "600", sahip: "root" } } });
  *   k.calistir("ls -la | grep not")  →  { cikti: "…", hata: false }
  * Desteklenen: pwd ls cd cat head tail echo grep find wc sort uniq cut tr base64 xxd rev whoami id hostname
- *              history clear mkdir touch rm cp mv chmod file help; ağ verilmişse ip ping nslookup nc curl; boru (|), > ve >> yönlendirme, ./betik çalıştırma (.sh dosyaları satır satır çalışır). */
+ *              history clear mkdir touch rm cp mv chmod file sha256sum help; ağ verilmişse ip ping nslookup nc curl; boru (|), > ve >> yönlendirme, ./betik çalıştırma (.sh dosyaları satır satır çalışır). */
 (function (kok) {
   const KOMUTLAR = {};
   const birlestir = (cwd, p) => {
@@ -36,6 +36,32 @@
     it();
     return { bel };
   }
+
+  /* SHA-256: tarayıcıda ve Node'da aynı sonucu veren küçük, bağımsız bir uygulama (lablardaki sha256sum için). */
+  const sha256 = (function () {
+    const asal = []; for (let n = 2; asal.length < 64; n++) if (asal.every((p) => n % p)) asal.push(n);
+    const kesir = (x) => ((x - Math.floor(x)) * 4294967296) | 0;
+    const SABIT = asal.map((p) => kesir(Math.cbrt(p))), BAS = asal.slice(0, 8).map((p) => kesir(Math.sqrt(p)));
+    const don = (x, n) => (x >>> n) | (x << (32 - n));
+    return function (metin) {
+      const b = []; const utf = unescape(encodeURIComponent(metin)); for (let i = 0; i < utf.length; i++) b.push(utf.charCodeAt(i));
+      const bit = b.length * 8; b.push(0x80); while (b.length % 64 !== 56) b.push(0);
+      for (let i = 7; i >= 0; i--) b.push(i > 3 ? Math.floor(bit / 4294967296) >>> ((i - 4) * 8) & 255 : (bit >>> (i * 8)) & 255);
+      const h = BAS.slice(), w = new Array(64);
+      for (let o = 0; o < b.length; o += 64) {
+        for (let i = 0; i < 16; i++) w[i] = (b[o + i * 4] << 24) | (b[o + i * 4 + 1] << 16) | (b[o + i * 4 + 2] << 8) | b[o + i * 4 + 3];
+        for (let i = 16; i < 64; i++) { const s0 = don(w[i - 15], 7) ^ don(w[i - 15], 18) ^ (w[i - 15] >>> 3), s1 = don(w[i - 2], 17) ^ don(w[i - 2], 19) ^ (w[i - 2] >>> 10); w[i] = (w[i - 16] + s0 + w[i - 7] + s1) | 0; }
+        let [a, bb, c, d, e, f, g, hh] = h;
+        for (let i = 0; i < 64; i++) {
+          const t1 = (hh + (don(e, 6) ^ don(e, 11) ^ don(e, 25)) + ((e & f) ^ (~e & g)) + SABIT[i] + w[i]) | 0;
+          const t2 = ((don(a, 2) ^ don(a, 13) ^ don(a, 22)) + ((a & bb) ^ (a & c) ^ (bb & c))) | 0;
+          hh = g; g = f; f = e; e = (d + t1) | 0; d = c; c = bb; bb = a; a = (t1 + t2) | 0;
+        }
+        [a, bb, c, d, e, f, g, hh].forEach((x, i) => (h[i] = (h[i] + x) | 0));
+      }
+      return h.map((x) => (x >>> 0).toString(16).padStart(8, "0")).join("");
+    };
+  })();
 
   function olustur(ayar = {}) {
     const kullanici = ayar.kullanici || "ogrenci", makine = ayar.makine || "lab", ev = ayar.ev || "/home/" + kullanici;
@@ -130,6 +156,8 @@
       rev: (a, stdin) => satirlar(girdi(a, stdin, "rev")).map((l) => [...l].reverse().join("")).join("\n") + "\n",
       base64: (a, stdin) => { const { b, kalan } = bayraklar(a); const m = girdi(kalan, stdin, "base64"); const B = (s) => (typeof btoa === "function" ? btoa(unescape(encodeURIComponent(s))) : Buffer.from(s, "utf8").toString("base64")); const D = (s) => (typeof atob === "function" ? decodeURIComponent(escape(atob(s))) : Buffer.from(s, "base64").toString("utf8")); if (b.has("d") || b.has("D")) { try { return D(m.replace(/\s+/g, "")); } catch (_) { throw new Error("base64: geçersiz girdi"); } } return B(m.replace(/\n$/, "")) + "\n"; },
       xxd: (a, stdin) => { const { b, kalan } = bayraklar(a); const m = girdi(kalan, stdin, "xxd"); if (b.has("r")) { const h = m.replace(/[^0-9a-fA-F]/g, ""); let s = ""; for (let i = 0; i + 1 < h.length; i += 2) s += String.fromCharCode(parseInt(h.slice(i, i + 2), 16)); return s; } const hex = [...m.replace(/\n$/, "")].map((c) => c.charCodeAt(0).toString(16).padStart(2, "0")).join(""); return hex + "\n"; },
+      /* Özet (hash): dosyanın parmak izi. Birden çok dosya verilebilir; dosya yoksa standart girdiyi özetler. */
+      sha256sum: (a, stdin) => { const kalan = a.filter((x) => !x.startsWith("-")); return kalan.length ? kalan.map((p) => sha256(oku(p, "sha256sum")) + "  " + p + "\n").join("") : sha256(stdin || "") + "  -\n"; },
       file: (a) => a.map((p) => { const d = fs.get(coz(p)); if (!d) return `${p}: bulunamadı`; if (d.tur === "d") return `${p}: dizin`; if (d.betik) return `${p}: çalıştırılabilir betik`; return `${p}: ${/^[A-Za-z0-9+/=\s]+$/.test(d.icerik) && d.icerik.trim().length % 4 === 0 && d.icerik.trim().length > 8 ? "ASCII metin (base64 olabilir)" : "ASCII metin"}`; }).join("\n") + "\n",
       mkdir: (a) => { for (const p of a.filter((x) => !x.startsWith("-"))) { const yol = coz(p); if (fs.has(yol)) throw new Error(`mkdir: ${p}: Zaten var`); const u = fs.get(ust(yol)); if (!u) throw new Error(`mkdir: ${p}: Üst dizin yok`); if (!izin(u, 2)) throw new Error(`mkdir: ${p}: Erişim engellendi`); fs.set(yol, { tur: "d", mod: "755", sahip: kullanici }); } return ""; },
       touch: (a) => { for (const p of a) if (!fs.has(coz(p))) yaz(p, "", false); return ""; },
@@ -181,7 +209,7 @@
         if (!baslikIste) return govde;
         return `HTTP/1.1 ${kod} ${ad}\nServer: ${m.sunucu || "nginx"}\nContent-Type: ${s.tur || "text/html; charset=utf-8"}\nContent-Length: ${govde.length}\n${Object.entries(s.basliklar || {}).map(([k, v]) => `${k}: ${v}\n`).join("")}`;
       },
-      help: () => (ag ? "Ağ      : ip addr  ping [-c]  nslookup  nc -zv  curl [-I]\n" : "") + "Kullanabileceğin komutlar:\n  Gezinme : pwd  ls [-l -a]  cd  find\n  Okuma   : cat  head  tail  wc  file\n  Arama   : grep [-i -n -c -v -r]  sort  uniq [-c]  cut -d -f\n  Dönüşüm : base64 [-d]  xxd [-r -p]  tr  rev  echo\n  Dosya   : mkdir  touch  cp  mv  rm  chmod\n  Diğer   : whoami  id  hostname  history  clear\nBoru (|) ve > yönlendirme çalışır. Örnek: cat kayit.log | grep Hata | wc -l\n"
+      help: () => (ag ? "Ağ      : ip addr  ping [-c]  nslookup  nc -zv  curl [-I]\n" : "") + "Kullanabileceğin komutlar:\n  Gezinme : pwd  ls [-l -a]  cd  find\n  Okuma   : cat  head  tail  wc  file\n  Arama   : grep [-i -n -c -v -r]  sort  uniq [-c]  cut -d -f\n  Dönüşüm : base64 [-d]  xxd [-r -p]  tr  rev  echo\n  Özet    : sha256sum\n  Dosya   : mkdir  touch  cp  mv  rm  chmod\n  Diğer   : whoami  id  hostname  history  clear\nBoru (|) ve > yönlendirme çalışır. Örnek: cat kayit.log | grep Hata | wc -l\n"
     };
     C.yardim = C.help; C.man = (a) => (a[0] && C[a[0]] ? `${a[0]}: kısa yardım için 'help' yaz.\n` : C.help());
     Object.assign(C, KOMUTLAR);
@@ -255,7 +283,7 @@
     return K;
   }
 
-  const api = { olustur, komutEkle: (ad, fn) => (KOMUTLAR[ad] = fn) };
+  const api = { olustur, komutEkle: (ad, fn) => (KOMUTLAR[ad] = fn), sha256 };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   kok.KD_KABUK = api;
 })(typeof window !== "undefined" ? window : globalThis);
