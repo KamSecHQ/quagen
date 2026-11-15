@@ -1,7 +1,8 @@
 /* QUAGEN — lab içerikleri. Her lab: sahte bir dosya sistemi + KAM'in anlattığı adımlar.
  * Adım: { k: [KAM mesajları], gorev, ipucu, cozum: [komutlar], gec: koşul }
  * Koşul türleri: { komut: "regex" } başarılı bir komut eşleşince · { cikti: "regex" } çıktı eşleşince
- *                { bayrak: "QG{…}" } öğrenci bayrağı girince · { durum: (kabuk) => bool } dosya sistemi istenen hâle gelince */
+ *                { bayrak: "QG{…}" } öğrenci bayrağı girince · { durum: (kabuk) => bool } dosya sistemi istenen hâle gelince
+ * ek: lab bitince açılan "Kendin dene" görevleri; anlatımsız ve isteğe bağlı: { gorev, cozum: [komutlar], gec } */
 (function (kok) {
   const SALDIRGAN = "203.0.113.77";
   const kayit = (() => {
@@ -109,6 +110,22 @@
   };
   const OZET_ASIL = { rapor: "Haftalik rapor\nSunucu: 3 gun kesintisiz\nYedek: tamam\n", kur: "# kurulum betigi\nmkdir uygulama\necho Kurulum bitti\n", ayar: "port=8080\nyonetici=ayse\ngunluk=acik\n" };
 
+  /* Envanter labı için ağ: dört makine, biri kapalı, biri eski ve şifresiz bir hizmeti açık bırakmış. */
+  const AG_ENVANTER = {
+    ben: "192.168.1.25", gecit: "192.168.1.1", dnsSunucu: "192.168.1.1",
+    dns: { "web.lab": "10.0.0.61", "dosya.lab": "10.0.0.62", "eski.lab": "10.0.0.63", "yazici.lab": "10.0.0.64" },
+    makineler: {
+      "192.168.1.1": { ms: 1, portlar: { 53: "dns" } },
+      "10.0.0.61": { ms: 11, sunucu: "nginx/1.24", portlar: { 22: "ssh", 80: "http" }, web: { 80: { "/": { govde: "<h1>Web sunucusu</h1>\n" } } } },
+      "10.0.0.62": { ms: 15, portlar: { 21: "ftp", 22: "ssh" } },
+      "10.0.0.63": { ms: 23, sunucu: "Apache/2.2", portlar: { 23: "telnet", 80: "http" }, web: { 80: { "/": { tur: "text/plain", govde: "Eski yonetim paneli (2011)\nBu makine telnet ile yonetiliyor; telnet parolayi sifrelemeden gonderir.\nQG{sifresiz_hizmeti_kapat}\n" } } } },
+      "10.0.0.64": { sessiz: true }
+    }
+  };
+
+  /* Parola labı: özetler echo ile üretilmiş gibi satır sonu dahil hesaplanmıştır. */
+  const PAROLA = { zayif: "e150a1ec81e8e93e1eae2c3a77e66ec6dbd6a3b460f89c1d08aecf422ee401a0", kedi: "d48f7a4f25c36c72beb6a623d116899dc5eb3a4d2409969ed6923f80c33d7cee", guclu: "a2b4d99aae84d198a8b33d4a17b38ce67a1f1b8c65d7fea8d3db5a9a5a0c0a36", futbol: "833dcad85276b200697427f80b1d6ac31fab7081144a800979a7c0af1b511d03", tAli: "f0f09cb2e74a794d0bbcb86638f9703832008ebb48c30fd3decb1f462ccce6ef", tEce: "fb9db759af04fb0a2f2ed1a0a33958ec5ea69a396b1b244eed64005f92fc0dbd", tCan: "008abb8c5d75f81617436054fd24769755b839d3876fa6cf1c797ece366e5034", tDeniz: "3095759d09187434a2bc838e2b1d945540d6ba38d19f58b0c49a9f089d3aa526", tMert: "f2fae2447dc6bf2a77ec9b863bb1164be4b2c76e08835938c9e9907f0158aa63", tOkan: "cc0671573566ede501e101e4e48e05662d90e39896a6d1ab277833d19a2a599d" };
+
   const LABLAR = [
     {
       id: "sg1", alan: "siber", no: 1, baslik: "Terminalde yön bulmak", seviye: "Başlangıç", sure: 15,
@@ -129,7 +146,8 @@
         { k: ["Notta bir “gizli klasör”den söz ediliyor ama `ls` onu göstermedi. Linux'ta adı **nokta ile başlayan** dosyalar gizlidir; saldırganlar da iz bırakmamak için bunu kullanır.", "Hepsini görmek için: `ls -a`."], gorev: "Gizli dosyaları da listele.", ipucu: "`ls -a` (a: all, hepsi)", cozum: ["ls -a"], gec: { cikti: "\\.gizli" } },
         { k: ["İşte `.gizli`. İçine gir, ne varsa oku. Bulduğun bayrağı alttaki kutuya yaz ya da `bayrak QG{...}` komutuyla gönder.", "Bayrak, bir labı çözdüğünü gösteren `QG{...}` biçimindeki metindir."], gorev: "Gizli klasördeki bayrağı bul ve gönder.", ipucu: "`cd .gizli`, sonra `ls`, sonra `cat bayrak.txt`.", cozum: ["cd .gizli", "cat bayrak.txt", "bayrak QG{nokta_ile_baslayan_gizlenir}"], gec: { bayrak: "QG{nokta_ile_baslayan_gizlenir}" } }
       ],
-      kapanis: "Dört komutla bir dosya sisteminde iz sürebiliyorsun: `pwd`, `ls`, `cd`, `cat`. Gerçek bir incelemede de ilk yapılan budur."
+      kapanis: "Dört komutla bir dosya sisteminde iz sürebiliyorsun: `pwd`, `ls`, `cd`, `cat`. Gerçek bir incelemede de ilk yapılan budur.",
+      ek: [{ gorev: "Ev dizinine dön ve indirilenler klasörünün içini listele.", cozum: ["cd", "ls indirilenler"], gec: { cikti: "resim\\.png" } }, { gorev: "belgeler klasörünü gizli dosyaları ve izinleriyle birlikte listele.", cozum: ["ls -la ~/belgeler"], gec: { cikti: "^d\\S+ .*\\.gizli/$" } }]
     },
     {
       id: "sg2", alan: "siber", no: 2, baslik: "İz sürmek: kayıt dosyaları", seviye: "Başlangıç", sure: 25,
@@ -145,7 +163,8 @@
         { k: ["En üstteki adres saldırgan. Peki başardı mı? Bu adresten **başarılı** bir giriş var mı bak: `grep Accepted /var/log/auth.log`."], gorev: "Başarılı girişleri listele.", ipucu: "`grep Accepted /var/log/auth.log`", cozum: ["grep Accepted /var/log/auth.log"], gec: { cikti: "Accepted password for deniz from 203" } },
         { k: ["Kötü haber: `deniz` hesabına saldırganın adresinden giriş yapılmış. Parolası tahmin edilmiş.", "Bayrak, saldırganın adresi ve ele geçirilen hesap: `QG{adres_hesap}` biçiminde gönder. Örnek biçim: `QG{1.2.3.4_ali}`."], gorev: "Saldırganın adresini ve ele geçirilen hesabı bayrak olarak gönder.", ipucu: "Adres 203 ile başlıyor, hesap deniz.", cozum: ["bayrak QG{203.0.113.77_deniz}"], gec: { bayrak: "QG{203.0.113.77_deniz}" } }
       ],
-      kapanis: "Az önce gerçek bir olay incelemesinin küçük bir kopyasını yaptın: kaydı oku, ara, say, sırala, sonuca var. Savunma tarafında çıkarılacak ders de belli: zayıf parola ve sınırsız deneme hakkı."
+      kapanis: "Az önce gerçek bir olay incelemesinin küçük bir kopyasını yaptın: kaydı oku, ara, say, sırala, sonuca var. Savunma tarafında çıkarılacak ders de belli: zayıf parola ve sınırsız deneme hakkı.",
+      ek: [{ gorev: "Var olmayan kullanıcı adlarıyla (invalid) yapılan deneme sayısını bul.", cozum: ["grep -c invalid /var/log/auth.log"], gec: { cikti: "^12\\n(?![\\s\\S])" } }, { gorev: "Saldırganın içeri girdikten sonra sudo ile çalıştırdığı komutu bul.", cozum: ["grep sudo /var/log/auth.log"], gec: { cikti: "COMMAND=/bin/cat /etc/shadow" } }]
     },
     {
       id: "sg3", alan: "siber", no: 3, baslik: "Kodlama şifreleme değildir", seviye: "Başlangıç", sure: 20,
@@ -164,7 +183,8 @@
         { k: ["Her iki karakter bir harfin sayı karşılığıydı: 42 → B, 75 → u ...", "Üçüncüsü harfleri kaydırıyor. **ROT13** her harfi alfabede 13 ileri atar; iki kez uygularsan başa dönersin. `tr` bir harf kümesini başka bir kümeye çevirir:", "`cat mesaj3.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m'`"], gorev: "ROT13'ü çöz.", ipucu: "`cat mesaj3.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m'`", cozum: ["cat mesaj3.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m'"], gec: { cikti: "QG\\{kodlama_sifreleme_degil\\}" } },
         { k: ["Bayrak ortaya çıktı. Gönder."], gorev: "Bayrağı gönder.", ipucu: "Çıkan `QG{...}` metnini kutuya yaz.", cozum: ["bayrak QG{kodlama_sifreleme_degil}"], gec: { bayrak: "QG{kodlama_sifreleme_degil}" } }
       ],
-      kapanis: "Bundan sonra garip görünen bir metinle karşılaştığında ilk soracağın şey: bu kodlama mı, şifreleme mi? Sonu `=` ile bitiyorsa Base64, yalnızca 0-9 a-f ise onaltılık olabilir."
+      kapanis: "Bundan sonra garip görünen bir metinle karşılaştığında ilk soracağın şey: bu kodlama mı, şifreleme mi? Sonu `=` ile bitiyorsa Base64, yalnızca 0-9 a-f ise onaltılık olabilir.",
+      ek: [{ gorev: "Kendi yazdığın bir sözcüğü Base64'e çevir, çıkan metni base64 -d ile geri aç.", cozum: ["echo selam | base64", "echo c2VsYW0K | base64 -d"], gec: { komut: "\\|\\s*base64\\s+-d\\s*$" } }]
     },
     {
       id: "sg4", alan: "siber", no: 4, baslik: "Dosya izinleri", seviye: "Başlangıç", sure: 20,
@@ -184,7 +204,8 @@
         { k: ["Yine “erişim engellendi”, ama bu kez nedeni farklı: dosyada **çalıştırma (x)** izni yok. Bir dosya program gibi çalışacaksa x izni gerekir.", "`chmod +x denetle.sh` ile ekle, sonra yeniden çalıştır."], gorev: "Betiğe çalıştırma izni ver ve çalıştır.", ipucu: "`chmod +x denetle.sh`, ardından `./denetle.sh`", cozum: ["chmod +x denetle.sh", "./denetle.sh"], gec: { cikti: "QG\\{en_az_yetki\\}" } },
         { k: ["Denetim geçti ve bayrağı verdi. Gönder."], gorev: "Bayrağı gönder.", ipucu: "Betiğin yazdığı `QG{...}` metnini kutuya yaz.", cozum: ["bayrak QG{en_az_yetki}"], gec: { bayrak: "QG{en_az_yetki}" } }
       ],
-      kapanis: "Buna **en az yetki ilkesi** denir: herkes yalnızca işini yapmasına yetecek kadar izne sahip olmalı. Sızıntıların önemli bir kısmı, herkese açık bırakılmış bir dosyayla başlar."
+      kapanis: "Buna **en az yetki ilkesi** denir: herkes yalnızca işini yapmasına yetecek kadar izne sahip olmalı. Sızıntıların önemli bir kısmı, herkese açık bırakılmış bir dosyayla başlar.",
+      ek: [{ gorev: "denetle.sh betiğini yalnızca sahibinin okuyup çalıştırabileceği hâle getir (700).", cozum: ["chmod 700 denetle.sh"], gec: { durum: (k) => (k.dosya("/home/ogrenci/denetle.sh") || {}).mod === "700" } }]
     },
     {
       id: "sg5", alan: "siber", no: 5, baslik: "Kayıp dosyanın peşinde", seviye: "Başlangıç", sure: 20,
@@ -208,7 +229,8 @@
         { k: ["Veritabanı parolası düz yazıyla duruyor. Rapora yazılacak ilk bulgu bu.", "Bir şey daha: saldırganlar kendi dosyalarını gizli klasörlere koyar. Adı nokta ile başlayan **klasörleri** arayalım. `-type d` yalnızca klasörleri getirir: `find / -type d -name \".*\"`"], gorev: "Sistemdeki gizli klasörleri bul.", ipucu: "`find / -type d -name \".*\"`", cozum: ["find / -type d -name \".*\""], gec: { cikti: "/tmp/\\.onbellek" } },
         { k: ["`/tmp/.onbellek`: geçici dosyalar klasörünün içinde gizli bir klasör. İçine bak ve bulduğunu gönder."], gorev: "Gizli klasördeki bayrağı bul ve gönder.", ipucu: "`ls -a /tmp/.onbellek`, sonra `cat /tmp/.onbellek/bayrak`", cozum: ["ls -a /tmp/.onbellek", "cat /tmp/.onbellek/bayrak", "bayrak QG{yedekler_de_gizli_tutulur}"], gec: { bayrak: "QG{yedekler_de_gizli_tutulur}" } }
       ],
-      kapanis: "İki arama biçimi öğrendin: `find` ada ve türe göre, `grep -r` içeriğe göre arar. Savunma tarafındaki ders: yedekler de asıl dosyalar kadar korunmalı, işi biten yedek silinmeli."
+      kapanis: "İki arama biçimi öğrendin: `find` ada ve türe göre, `grep -r` içeriğe göre arar. Savunma tarafındaki ders: yedekler de asıl dosyalar kadar korunmalı, işi biten yedek silinmeli.",
+      ek: [{ gorev: "Sistemdeki bütün .conf dosyalarını bul.", cozum: ["find / -name \"*.conf\""], gec: { cikti: "^/opt/arac/ayar\\.conf$" } }]
     },
     {
       id: "sg6", alan: "siber", no: 6, baslik: "Web sunucusunun günlüğü", seviye: "Başlangıç", sure: 25,
@@ -223,7 +245,8 @@
         { k: ["12 deneme tek bir adresten: `198.51.100.200`. Diğer adresin tek 404'ü sıradan bir yazım hatası.", "Asıl önemli soru: denemelerden biri tuttu mu? Bu adresin **200** alan isteğine bak: `grep 198.51.100.200 /var/log/nginx/access.log | grep \" 200 \"`"], gorev: "Tarayıcının başarılı olduğu isteği bul.", ipucu: "`grep 198.51.100.200 /var/log/nginx/access.log | grep \" 200 \"`", cozum: ["grep 198.51.100.200 /var/log/nginx/access.log | grep \" 200 \""], gec: { cikti: "yedek\\.zip" } },
         { k: ["`/yedek.zip` indirilmiş: 48 bin baytlık bir dosya. Sitenin yedeği herkese açık bir klasörde unutulmuş ve tarama onu bulmuş.", "Bayrak, indirilen dosyanın adı: `QG{dosya_adi}` biçiminde gönder."], gorev: "İndirilen dosyanın adını bayrak olarak gönder.", ipucu: "Dosya adı yedek.zip.", cozum: ["bayrak QG{yedek.zip}"], gec: { bayrak: "QG{yedek.zip}" } }
       ],
-      kapanis: "Bir taramanın izi böyle görünür: kısa sürede, tek adresten, art arda 404. Önceki labda unutulmuş yedeği sistemin içinde bulmuştun; burada aynı hatanın dışarıdan nasıl bulunduğunu gördün."
+      kapanis: "Bir taramanın izi böyle görünür: kısa sürede, tek adresten, art arda 404. Önceki labda unutulmuş yedeği sistemin içinde bulmuştun; burada aynı hatanın dışarıdan nasıl bulunduğunu gördün.",
+      ek: [{ gorev: "Sunucuya en çok istek yapan üç adresi, istek sayılarıyla birlikte listele.", cozum: ["cut -d ' ' -f 1 /var/log/nginx/access.log | sort | uniq -c | sort -rn | head -n 3"], gec: { cikti: "^\\s*\\d+ 198\\.51\\.100\\.200\\n[^\\n]+\\n[^\\n]+\\n(?![\\s\\S])" } }]
     }
     ,{
       id: "lx1", alan: "linux", no: 1, baslik: "Dosya ve klasör kurmak", seviye: "Başlangıç", sure: 20,
@@ -250,7 +273,8 @@
         { k: ["Son olarak silme: `rm`. Terminalde **çöp kutusu yoktur**; silinen geri gelmez. Gerçek sistemde bu komutu yazmadan önce iki kez bak.", "`rm proje/eski.txt`"], gorev: "proje/eski.txt dosyasını sil.", ipucu: "`rm proje/eski.txt`", cozum: ["rm proje/eski.txt"], gec: { durum: (k) => !var_(k, "/home/ogrenci/proje/eski.txt") && var_(k, "/home/ogrenci/proje") } },
         { k: ["Ev dizininde `denetle.sh` adında bir betik var; kurduğun yapıyı denetler. `./denetle.sh` ile çalıştır. Eksik varsa söyler, yoksa bayrağı verir."], gorev: "Denetleme betiğini çalıştır ve bayrağı gönder.", ipucu: "`./denetle.sh` yaz. Eksik sayarsa önceki adımlara bak.", cozum: ["./denetle.sh", "bayrak QG{kur_yaz_tasi_sil}"], gec: { bayrak: "QG{kur_yaz_tasi_sil}" } }
       ],
-      kapanis: "Bir çalışma alanını baştan kurabiliyorsun: `mkdir`, `echo >`, `>>`, `cp`, `mv`, `rm`. `>` ile `>>` farkını aklında tut; en çok veri kaybettiren hata budur."
+      kapanis: "Bir çalışma alanını baştan kurabiliyorsun: `mkdir`, `echo >`, `>>`, `cp`, `mv`, `rm`. `>` ile `>>` farkını aklında tut; en çok veri kaybettiren hata budur.",
+      ek: [{ gorev: "arsiv adında yeni bir klasör aç ve proje/notlar.txt dosyasını içine kopyala.", cozum: ["mkdir arsiv", "cp proje/notlar.txt arsiv/notlar.txt"], gec: { durum: (k) => var_(k, "/home/ogrenci/arsiv/notlar.txt") && var_(k, "/home/ogrenci/proje/notlar.txt") } }]
     },
     {
       id: "lx2", alan: "linux", no: 2, baslik: "Büyük dosyayı okumadan okumak", seviye: "Başlangıç", sure: 25,
@@ -266,7 +290,8 @@
         { k: ["Aynı ürünleri saymak için üç komut zincirlenir: önce `sort` aynıları yan yana getirir, `uniq -c` her birini sayar, son `sort -n` sayıya göre dizer.", "`cut -d, -f3 siparis.csv | sort | uniq -c | sort -n` yaz. En alttaki en çok satandır."], gorev: "Her üründen kaç tane satıldığını say.", ipucu: "`cut -d, -f3 siparis.csv | sort | uniq -c | sort -n`", cozum: ["cut -d, -f3 siparis.csv | sort | uniq -c | sort -n"], gec: { cikti: "\\d+ kalem" } },
         { k: ["İki şeyi de biliyorsun: en çok satan ürün ve iptal sayısı. `gorev.txt` bayrağın biçimini söylüyor. Bayrağı kendin kur ve gönder."], gorev: "Bayrağı QG{urun_iptalSayisi} biçiminde gönder.", ipucu: "`cat gorev.txt` ile biçime bak. Ürün: sayımın en altındaki. Sayı: grep -c sonucu.", cozum: ["bayrak " + LX2_BAYRAK], gec: { bayrak: LX2_BAYRAK } }
       ],
-      kapanis: "Bir dosyayı açmadan özetleyebiliyorsun: `wc` boyutu, `head` ve `tail` uçları, `grep -c` sayıyı, `cut | sort | uniq -c` dağılımı verir. Kayıt incelemede de aynı zincir kullanılır."
+      kapanis: "Bir dosyayı açmadan özetleyebiliyorsun: `wc` boyutu, `head` ve `tail` uçları, `grep -c` sayıyı, `cut | sort | uniq -c` dağılımı verir. Kayıt incelemede de aynı zincir kullanılır.",
+      ek: [{ gorev: "Yalnızca ankara siparişlerini ankara.csv dosyasına yaz.", cozum: ["grep ankara siparis.csv > ankara.csv"], gec: { durum: (k) => { const l = metin(k, "/home/ogrenci/ankara.csv").split("\n").filter(Boolean); return l.length > 0 && l.every((x) => /,ankara,/.test(x)); } } }]
     },
     {
       id: "lx3", alan: "linux", no: 3, baslik: "İlk betiğin", seviye: "Başlangıç", sure: 20,
@@ -285,7 +310,8 @@
         { k: ["Betiğe ikinci bir komut ekleyelim. `>>` sona ekliyordu: `echo 'wc -l liste.txt' >> selam.sh`. Sonra yeniden çalıştır; iki komutun çıktısı art arda gelir."], gorev: "Betiğe liste.txt satırlarını sayan komutu ekle ve çalıştır.", ipucu: "`echo 'wc -l liste.txt' >> selam.sh`, sonra `./selam.sh`", cozum: ["echo 'wc -l liste.txt' >> selam.sh", "./selam.sh"], gec: { cikti: "Merhaba\\n\\s*4\\b" } },
         { k: ["Dizinde hazır bir betik daha var: `anahtar.sh`. Önce `cat anahtar.sh` ile **ne yaptığını oku**. Tanımadığın bir betiği okumadan çalıştırmak, güvenlikte yapılan en yaygın hatalardan biridir.", "Zararsız olduğunu gördüysen izin ver, çalıştır, bayrağı gönder."], gorev: "anahtar.sh betiğini oku, çalıştır ve bayrağı gönder.", ipucu: "`cat anahtar.sh`, `chmod +x anahtar.sh`, `./anahtar.sh`", cozum: ["cat anahtar.sh", "chmod +x anahtar.sh", "./anahtar.sh", "bayrak QG{yaz_izin_ver_calistir}"], gec: { bayrak: "QG{yaz_izin_ver_calistir}" } }
       ],
-      kapanis: "Betik yazmanın üç adımı: komutları dosyaya koy, `chmod +x` ile izin ver, `./ad.sh` ile çalıştır. Başkasının betiğini çalıştırmadan önce mutlaka oku."
+      kapanis: "Betik yazmanın üç adımı: komutları dosyaya koy, `chmod +x` ile izin ver, `./ad.sh` ile çalıştır. Başkasının betiğini çalıştırmadan önce mutlaka oku.",
+      ek: [{ gorev: "Argüman alan bir betik yaz: say.sh, adı verilen dosyanın satırlarını saysın ($1). liste.txt ile çalıştır.", cozum: ["echo 'wc -l $1' > say.sh", "chmod +x say.sh", "./say.sh liste.txt"], gec: { komut: "^\\./say\\.sh\\s+liste\\.txt$" } }]
     }
     ,{
       id: "lx4", alan: "linux", no: 4, baslik: "Metni boru hattında dönüştürmek", seviye: "Başlangıç", sure: 20,
@@ -303,7 +329,8 @@
         { k: ["Beş kişi. Bu sonuç şu an yalnızca ekranda; saklamak için hattın sonuna `> temiz.txt` ekle. Sonra `wc -l temiz.txt` ile say."], gorev: "Temiz listeyi temiz.txt dosyasına yaz.", ipucu: "`cat isimler.txt | tr 'A-Z' 'a-z' | sort | uniq > temiz.txt`", cozum: ["cat isimler.txt | tr 'A-Z' 'a-z' | sort | uniq > temiz.txt"], gec: { durum: (k) => metin(k, "/home/ogrenci/temiz.txt") === "can\ndeniz\nece\nmert\nokan\n" } },
         { k: ["Son bir dönüştürme: `sifre.txt` içindeki bayrak **tersten** yazılmış. `rev` her satırı ters çevirir.", "`rev sifre.txt` ile oku ve bayrağı gönder. Tersten yazmak bir şifreleme değildir; tek komutla çözülür."], gorev: "Ters yazılmış bayrağı çevir ve gönder.", ipucu: "`rev sifre.txt`", cozum: ["rev sifre.txt", "bayrak QG{boru_ile_donustur}"], gec: { bayrak: "QG{boru_ile_donustur}" } }
       ],
-      kapanis: "Küçük komutları boruyla uç uca ekleyerek büyük bir iş yaptın: `tr` dönüştürdü, `sort` sıraladı, `uniq` eledi, `>` sakladı. Linux'un çalışma biçimi budur: her komut tek iş yapar, hattı sen kurarsın."
+      kapanis: "Küçük komutları boruyla uç uca ekleyerek büyük bir iş yaptın: `tr` dönüştürdü, `sort` sıraladı, `uniq` eledi, `>` sakladı. Linux'un çalışma biçimi budur: her komut tek iş yapar, hattı sen kurarsın.",
+      ek: [{ gorev: "Kaç farklı isim olduğunu tek komutla say (sort -u aynıları eler).", cozum: ["cat isimler.txt | tr 'A-Z' 'a-z' | sort -u | wc -l"], gec: { cikti: "^5\\n(?![\\s\\S])" } }, { gorev: "isimler.txt ile temiz.txt arasındaki farkı diff ile gör.", cozum: ["diff isimler.txt temiz.txt"], gec: { komut: "^diff\\s+\\S+\\s+\\S+$" } }]
     }
     ,{
       id: "ag1", alan: "ag", no: 1, baslik: "Adresin ve komşuların", seviye: "Başlangıç", sure: 15, ag: AG,
@@ -317,7 +344,8 @@
         { k: ["“Zaman aşımı, %100 kayıp.” Bu üç şeyden biri demektir: makine kapalı, adres yanlış ya da makine ping'e bilerek yanıt vermiyor. Ping'in sessizliği tek başına “makine yok” anlamına gelmez; bunu aklında tut.", "Uzaktaki bir makineyi dene: `ping -c 2 10.0.0.10`. Süreye dikkat et."], gorev: "10.0.0.10 adresine ping at.", ipucu: "`ping -c 2 10.0.0.10`", cozum: ["ping -c 2 10.0.0.10"], gec: { cikti: "10\\.0\\.0\\.10 adresinden yanıt" } },
         { k: ["Ağ geçidi 1 ms'de, uzaktaki makine 12 ms'de yanıt verdi; paket daha uzun yol gitti.", "`gorev.txt` bayrağın biçimini söylüyor. Kendi adresinle bayrağı kur ve gönder."], gorev: "Bayrağı kendi IP adresinle gönder.", ipucu: "`cat gorev.txt`. Adresin ilk adımda gördüğün `inet` değeri.", cozum: ["bayrak QG{192.168.1.25}"], gec: { bayrak: "QG{192.168.1.25}" } }
       ],
-      kapanis: "Üç şey öğrendin: her makinenin bir IP adresi var, dışarıya giden yol ağ geçidinden geçer, `ping` bir makinenin yanıt verip vermediğini söyler. Bir bağlantı sorununda ilk bakılan da budur."
+      kapanis: "Üç şey öğrendin: her makinenin bir IP adresi var, dışarıya giden yol ağ geçidinden geçer, `ping` bir makinenin yanıt verip vermediğini söyler. Bir bağlantı sorununda ilk bakılan da budur.",
+      ek: [{ gorev: "Ağ geçidine yalnızca bir paket gönder.", cozum: ["ping -c 1 192.168.1.1"], gec: { cikti: "1 paket gönderildi, 1 alındı" } }]
     },
     {
       id: "ag2", alan: "ag", no: 2, baslik: "İsimden adrese: DNS", seviye: "Başlangıç", sure: 20, ag: AG,
@@ -335,7 +363,8 @@
         { k: ["`depo.lab` rehberde yok ama bu dosyada yazıyor; o yüzden çalışır. Dene: `ping -c 1 depo.lab`.", "Bu dosyayı değiştirebilen biri, bir ismi istediği adrese yönlendirebilir. Zararlı yazılımların banka sitesini sahte adrese çevirmek için dokunduğu yer burasıdır; dosyanın sahibi bu yüzden `root`."], gorev: "depo.lab'e ping at.", ipucu: "`ping -c 1 depo.lab`", cozum: ["ping -c 1 depo.lab"], gec: { cikti: "PING depo\\.lab \\(10\\.0\\.0\\.42\\)" } },
         { k: ["Son görev: `arsiv.lab` hangi adrese çıkıyor? Bul, `gorev.txt` içindeki biçimle bayrağı gönder."], gorev: "arsiv.lab adresini bul ve bayrağı gönder.", ipucu: "`nslookup arsiv.lab`, sonra `cat gorev.txt`.", cozum: ["nslookup arsiv.lab", "bayrak QG{10.0.0.42}"], gec: { bayrak: "QG{10.0.0.42}" } }
       ],
-      kapanis: "İsim önce `/etc/hosts` dosyasında, sonra DNS'te aranır. `depo.lab` ile `arsiv.lab` aynı adrese çıktı: bir makinenin birden çok ismi olabilir. Bir site açılmıyorsa `nslookup`, sorunun isimde mi yoksa makinede mi olduğunu ayırır."
+      kapanis: "İsim önce `/etc/hosts` dosyasında, sonra DNS'te aranır. `depo.lab` ile `arsiv.lab` aynı adrese çıktı: bir makinenin birden çok ismi olabilir. Bir site açılmıyorsa `nslookup`, sorunun isimde mi yoksa makinede mi olduğunu ayırır.",
+      ek: [{ gorev: "posta.lab isminin hangi adrese çıktığını bul.", cozum: ["nslookup posta.lab"], gec: { cikti: "10\\.0\\.0\\.25" } }]
     },
     {
       id: "ag3", alan: "ag", no: 3, baslik: "Kapılar: portlar", seviye: "Başlangıç", sure: 20, ag: AG,
@@ -350,7 +379,8 @@
         { k: ["Yöneticiler deneme için açtıkları sunucuları kapatmayı unutur. `portlar.txt` içindeki son satırı yokla: `nc -zv okul.lab 8080`."], gorev: "8080 numaralı portu yokla.", ipucu: "`nc -zv okul.lab 8080`", cozum: ["nc -zv okul.lab 8080"], gec: { cikti: "8080 portu açık" } },
         { k: ["Açık. Adresin sonuna `:8080` ekleyerek o kapıdaki web sunucusuna gidilir: `curl http://okul.lab:8080/`. İçindeki bayrağı gönder."], gorev: "8080 portundaki sayfayı oku ve bayrağı gönder.", ipucu: "`curl http://okul.lab:8080/`", cozum: ["curl http://okul.lab:8080/", "bayrak QG{acik_port_acik_kapi}"], gec: { bayrak: "QG{acik_port_acik_kapi}" } }
       ],
-      kapanis: "Her açık port, dışarıya açılan bir kapıdır. Güvenlikte ilk kural, kullanılmayan kapıyı kapatmaktır. Burada yaptığın yoklamayı yalnızca kendi makinende ya da izin verilen alıştırma ortamlarında yap; başkasının sunucusunu izinsiz taramak birçok ülkede suçtur."
+      kapanis: "Her açık port, dışarıya açılan bir kapıdır. Güvenlikte ilk kural, kullanılmayan kapıyı kapatmaktır. Burada yaptığın yoklamayı yalnızca kendi makinende ya da izin verilen alıştırma ortamlarında yap; başkasının sunucusunu izinsiz taramak birçok ülkede suçtur.",
+      ek: [{ gorev: "posta.lab üzerinde e-posta portunu (25) yokla.", cozum: ["nc -zv posta.lab 25"], gec: { cikti: "25 portu açık" } }]
     },
     {
       id: "ag4", alan: "ag", no: 4, baslik: "Bir isteğin yolculuğu: HTTP", seviye: "Başlangıç", sure: 25, ag: AG,
@@ -366,7 +396,8 @@
         { k: ["`Disallow` satırları arama motoruna “buraya girme” der. Ama bu bir rica, kilit değil; üstelik gizlenmek istenen yerlerin listesini herkese vermiş olur.", "İlkini dene: `curl -I http://okul.lab/yonetim`."], gorev: "/yonetim adresinin durum kodunu gör.", ipucu: "`curl -I http://okul.lab/yonetim`", cozum: ["curl -I http://okul.lab/yonetim"], gec: { cikti: "HTTP/1\\.1 403" } },
         { k: ["`403`: sayfa var ama sunucu seni içeri almıyor. Doğru korunan bir sayfa böyle davranır.", "İkinci satırdaki klasör korunmuş mu? İçinde `notlar.txt` adında bir dosya olduğunu duydun. İste, bayrağı gönder."], gorev: "/yedek/notlar.txt dosyasını oku ve bayrağı gönder.", ipucu: "`curl http://okul.lab/yedek/notlar.txt`", cozum: ["curl http://okul.lab/yedek/notlar.txt", "bayrak QG{robots_gizlemez_isaret_eder}"], gec: { bayrak: "QG{robots_gizlemez_isaret_eder}" } }
       ],
-      kapanis: "Bir web isteğinin parçalarını gördün: adres, durum kodu, başlıklar, gövde. `robots.txt` bir güvenlik önlemi değildir; bir dosyayı korumanın yolu ona erişimi kapatmaktır (`403`), adını saklamak değil."
+      kapanis: "Bir web isteğinin parçalarını gördün: adres, durum kodu, başlıklar, gövde. `robots.txt` bir güvenlik önlemi değildir; bir dosyayı korumanın yolu ona erişimi kapatmaktır (`403`), adını saklamak değil.",
+      ek: [{ gorev: "Sunucunun hangi yazılımı kullandığını tek satırda göster (başlıklardan Server satırını süz).", cozum: ["curl -I http://okul.lab/ | grep Server"], gec: { cikti: "^Server: nginx/1\\.24\\n(?![\\s\\S])" } }]
     }
     ,{
       id: "ag5", alan: "ag", no: 5, baslik: "Site açılmıyor: sırayla ele", seviye: "Başlangıç", sure: 25, ag: AG_ARIZA,
@@ -384,7 +415,8 @@
         { k: ["`404`: isim, makine ve port sağlam; yalnızca **sayfa** yok. Belki adı yanlış yazılmıştır. Klasörde ne olduğuna bak: `curl http://depo.lab/belgeler`"], gorev: "belgeler klasörünün içeriğini iste.", ipucu: "`curl http://depo.lab/belgeler`", cozum: ["curl http://depo.lab/belgeler"], gec: { cikti: "kilavuz\\.txt" } },
         { k: ["Dosyanın adı `rehber.txt` değil, `kilavuz.txt`. Şikâyet eden kişi adresi yanlış yazmış. Doğru adresi iste, içindeki bayrağı gönder."], gorev: "Doğru dosyayı oku ve bayrağı gönder.", ipucu: "`curl http://depo.lab/belgeler/kilavuz.txt`", cozum: ["curl http://depo.lab/belgeler/kilavuz.txt", "bayrak QG{isim_makine_port_sayfa}"], gec: { bayrak: "QG{isim_makine_port_sayfa}" } }
       ],
-      kapanis: "Dört şikâyet, dört ayrı neden: isim yoktu, makine kapalıydı, hizmet çalışmıyordu, adres yanlıştı. Sıra hep aynı: `nslookup`, `ping`, `nc`, `curl`. İlk takılan adım sorunun yerini söyler."
+      kapanis: "Dört şikâyet, dört ayrı neden: isim yoktu, makine kapalıydı, hizmet çalışmıyordu, adres yanlıştı. Sıra hep aynı: `nslookup`, `ping`, `nc`, `curl`. İlk takılan adım sorunun yerini söyler.",
+      ek: [{ gorev: "depo.lab ana sayfasının durum satırını süz.", cozum: ["curl -I http://depo.lab/ | grep HTTP"], gec: { cikti: "^HTTP/1\\.1 200[^\\n]*\\n(?![\\s\\S])" } }]
     }
     ,{
       id: "lx5", alan: "linux", no: 5, baslik: "En büyüğü bulmak: sayıyla sıralamak", seviye: "Başlangıç", sure: 20,
@@ -405,7 +437,8 @@
         { k: ["Birinci açık ara önde: 20 MB'lık bir yedek. Yalnızca **adını** almak için önce tek satıra indir, sonra ikinci sütunu kes.", "`sort -n -r boyutlar.txt | head -n 1 | cut -d ' ' -f 2`"], gorev: "En büyük dosyanın yalnızca adını yazdır.", ipucu: "`sort -n -r boyutlar.txt | head -n 1 | cut -d ' ' -f 2`", cozum: ["sort -n -r boyutlar.txt | head -n 1 | cut -d ' ' -f 2"], gec: { cikti: "^yedek/eski-proje\\.tar\\n(?![\\s\\S])" } },
         { k: ["Dosya `yedek` klasöründe. Silmeden önce ne olduğunu anlamak gerekir. Klasöre bak: `ls yedek`. Yanında bir açıklama dosyası var; onu oku ve bayrağı gönder."], gorev: "Yedek klasöründeki açıklamayı oku ve bayrağı gönder.", ipucu: "`ls yedek`, sonra `cat yedek/BENIOKU.txt`", cozum: ["ls yedek", "cat yedek/BENIOKU.txt", "bayrak QG{sayiyla_sirala_buyugu_bul}"], gec: { bayrak: "QG{sayiyla_sirala_buyugu_bul}" } }
       ],
-      kapanis: "`sort` tek başına metin gibi sıralar; sayılar için `-n`, tersten için `-r` gerekir. `sort -n -r | head -n 3` kalıbı “en büyük üç” sorusunun cevabıdır: disk kullanımında, kayıt sayımında, puan tablosunda hep aynı kalıbı kullanırsın."
+      kapanis: "`sort` tek başına metin gibi sıralar; sayılar için `-n`, tersten için `-r` gerekir. `sort -n -r | head -n 3` kalıbı “en büyük üç” sorusunun cevabıdır: disk kullanımında, kayıt sayımında, puan tablosunda hep aynı kalıbı kullanırsın.",
+      ek: [{ gorev: "En az yer tutan üç dosyayı listele.", cozum: ["sort -n boyutlar.txt | head -n 3"], gec: { cikti: "^7 ayar\\.conf\\n8 liste\\.txt\\n96 notlar\\.txt\\n(?![\\s\\S])" } }]
     }
     ,{
       id: "ag6", alan: "ag", no: 6, baslik: "Taşınan sayfanın peşinde: yönlendirme", seviye: "Başlangıç", sure: 20, ag: AG_TASINDI,
@@ -420,7 +453,8 @@
         { k: ["Üçüncü yönlendirme. Bu kez adreste `:8080` var: aynı makine, **başka port**. Port yazılmazsa `http` için 80 varsayılır; farklıysa adreste belirtilir.", "Zincirin sonuna geldik mi? Yalnızca durum satırını süz: `curl -I http://belge.lab:8080/v2/kilavuz.txt | grep HTTP`."], gorev: "Son adresin durum kodunu gör.", ipucu: "`curl -I http://belge.lab:8080/v2/kilavuz.txt | grep HTTP`", cozum: ["curl -I http://belge.lab:8080/v2/kilavuz.txt | grep HTTP"], gec: { cikti: "HTTP/1\\.1 200" } },
         { k: ["`200`: artık yönlendirme yok, belge burada. `-I` olmadan iste, içindeki bayrağı gönder."], gorev: "Belgeyi oku ve bayrağı gönder.", ipucu: "`curl http://belge.lab:8080/v2/kilavuz.txt`", cozum: ["curl http://belge.lab:8080/v2/kilavuz.txt", "bayrak QG{location_basligini_izle}"], gec: { bayrak: "QG{location_basligini_izle}" } }
       ],
-      kapanis: "Boş gelen sayfa çoğu zaman taşınmış sayfadır. `301` görünce `Location` satırını izle: tam adres olabilir, göreli olabilir, portu değişmiş olabilir. Gerçek `curl`'de `-L` bu zinciri senin yerine izler; tarayıcılar bunu her gün fark ettirmeden yapar."
+      kapanis: "Boş gelen sayfa çoğu zaman taşınmış sayfadır. `301` görünce `Location` satırını izle: tam adres olabilir, göreli olabilir, portu değişmiş olabilir. Gerçek `curl`'de `-L` bu zinciri senin yerine izler; tarayıcılar bunu her gün fark ettirmeden yapar.",
+      ek: [{ gorev: "Kısa adresin yanıtından yalnızca Location satırını süz.", cozum: ["curl -I http://kisa.lab/r/kilavuz | grep Location"], gec: { cikti: "^Location: http://belge\\.lab/kilavuz\\n(?![\\s\\S])" } }]
     }
     ,{
       id: "sg7", alan: "siber", no: 7, baslik: "Parmak izi: dosya değişti mi?", seviye: "Başlangıç", sure: 25,
@@ -440,7 +474,73 @@
         { k: ["64 karakteri gözle karşılaştırmak hataya açıktır. İki listeyi alt alta koy, sırala, aynı satırları say: tutan satır **2** kez, tutmayan **1** kez görünür.", "`cat ozetler.txt benim.txt | sort | uniq -c`"], gorev: "İki listeyi birleştirip her satırın kaç kez geçtiğini say.", ipucu: "`cat ozetler.txt benim.txt | sort | uniq -c`", cozum: ["cat ozetler.txt benim.txt | sort | uniq -c"], gec: { cikti: "\\b1 [0-9a-f]{64}  indirilen/ayar\\.conf" } },
         { k: ["`rapor.txt` ve `kur.sh` ikişer kez: özetleri tutuyor. `ayar.conf` iki ayrı özetle birer kez görünüyor: senin elindeki dosya, yayıncının dosyası **değil**.", "Ne değiştiğini gör: `cat indirilen/ayar.conf`. Sonradan eklenen satırları bul, bayrağı gönder."], gorev: "Değiştirilmiş dosyayı oku ve bayrağı gönder.", ipucu: "`cat indirilen/ayar.conf`", cozum: ["cat indirilen/ayar.conf", "bayrak QG{ozet_tutmuyorsa_guvenme}"], gec: { bayrak: "QG{ozet_tutmuyorsa_guvenme}" } }
       ],
-      kapanis: "Biri dosyaya ikinci bir yönetici eklemiş; gözle fark etmesi zor, özetle kaçması imkânsız. İndirdiğin bir dosyanın özeti yayıncının verdiğiyle tutmuyorsa o dosyayı kullanma. Özet, dosyanın **değişmediğini** gösterir; içeriğini gizlemez, yani şifreleme değildir."
+      kapanis: "Biri dosyaya ikinci bir yönetici eklemiş; gözle fark etmesi zor, özetle kaçması imkânsız. İndirdiğin bir dosyanın özeti yayıncının verdiğiyle tutmuyorsa o dosyayı kullanma. Özet, dosyanın **değişmediğini** gösterir; içeriğini gizlemez, yani şifreleme değildir.",
+      ek: [{ gorev: "Yıldızla kısalt: indirilen klasöründeki bütün dosyaların özetini tek komutla hesapla.", cozum: ["sha256sum indirilen/*"], gec: { komut: "^sha256sum\\s+indirilen/\\*$" } }, { gorev: "İki özet listesini diff ile karşılaştır.", cozum: ["diff ozetler.txt benim.txt"], gec: { cikti: "^< [0-9a-f]{64}  indirilen/ayar\\.conf$" } }]
+    }
+    ,{
+      id: "lx6", alan: "linux", no: 6, baslik: "Aradığını süzmek: grep'in bayrakları", seviye: "Başlangıç", sure: 20,
+      ozet: "Bir uygulamanın günlüğünde hatalar farklı farklı yazılmış: HATA, Hata, hata. grep'in bayraklarıyla hepsini yakala, say, satır numarasını bul, gürültüyü ele ve bir klasörün tamamında ara.",
+      kazanim: ["grep -i (harf ayırmadan)", "grep -c (sayma)", "grep -n (satır numarası)", "grep -v (hariç tutma)", "grep -r (klasörde arama)"],
+      dosyalar: {
+        "/home/ogrenci/gunluk.txt": "09:00 BILGI sunucu basladi\n09:02 UYARI disk %81 dolu\n09:05 bilgi kullanici ayse girdi\n09:07 HATA veritabani baglantisi koptu\n09:07 BILGI yeniden deneniyor\n09:08 Hata veritabani yine yanit vermiyor\n09:10 BILGI baglanti kuruldu\n09:15 UYARI bellek %90\n09:20 hata odeme servisi zaman asimi\n09:21 BILGI kullanici can girdi\n",
+        "/home/ogrenci/kayitlar/web.log": "09:00 BILGI istek /\n09:01 BILGI istek /hakkinda\n",
+        "/home/ogrenci/kayitlar/posta.log": "09:03 BILGI 2 ileti gonderildi\n",
+        "/home/ogrenci/kayitlar/eski/odeme.log": "09:19 BILGI odeme istegi alindi\n09:20 HATA zaman asimi, islem kodu QG{grep_ile_suz_bul}\n"
+      },
+      adimlar: [
+        { k: ["`gunluk.txt` bir uygulamanın günlüğü. Hataları bulalım: `grep HATA gunluk.txt`."], gorev: "HATA geçen satırları bul.", ipucu: "`grep HATA gunluk.txt`", cozum: ["grep HATA gunluk.txt"], gec: { cikti: "^09:07 HATA [^\\n]+\\n(?![\\s\\S])" } },
+        { k: ["Yalnızca bir satır geldi. Oysa günlükte `Hata` ve `hata` diye yazılmış satırlar da var; `grep` büyük ve küçük harfi ayrı sayar.", "`-i` bu ayrımı kaldırır: `grep -i hata gunluk.txt`."], gorev: "Yazılışı ne olursa olsun bütün hata satırlarını bul.", ipucu: "`grep -i hata gunluk.txt`", cozum: ["grep -i hata gunluk.txt"], gec: { cikti: "^09:07 HATA [^\\n]+\\n09:08 Hata [^\\n]+\\n09:20 hata " } },
+        { k: ["Üç hata. Satırları değil yalnızca **sayısını** istiyorsan `-c` ekle. Bayraklar yan yana yazılabilir: `grep -i -c hata gunluk.txt`."], gorev: "Hata satırlarını say.", ipucu: "`grep -i -c hata gunluk.txt`", cozum: ["grep -i -c hata gunluk.txt"], gec: { cikti: "^3\\n(?![\\s\\S])" } },
+        { k: ["Bir arkadaşına “şu satıra bak” diyebilmek için satır numarası gerekir. `-n` her satırın başına numarasını koyar: `grep -i -n hata gunluk.txt`."], gorev: "Hata satırlarını satır numaralarıyla göster.", ipucu: "`grep -i -n hata gunluk.txt`", cozum: ["grep -i -n hata gunluk.txt"], gec: { cikti: "^4:09:07 HATA [^\\n]+\\n6:09:08 Hata [^\\n]+\\n9:09:20 hata " } },
+        { k: ["Bazen aradığını değil, **istemediğini** bilirsin. Günlüğün çoğu `BILGI` satırı; onları atınca geriye önemli olanlar kalır.", "`-v` eşleşmeyen satırları verir: `grep -i -v bilgi gunluk.txt`."], gorev: "Bilgi satırları dışındaki her şeyi göster.", ipucu: "`grep -i -v bilgi gunluk.txt`", cozum: ["grep -i -v bilgi gunluk.txt"], gec: { cikti: "^09:02 UYARI [^\\n]+\\n09:07 HATA [^\\n]+\\n09:08 Hata [^\\n]+\\n09:15 UYARI [^\\n]+\\n09:20 hata [^\\n]+\\n(?![\\s\\S])" } },
+        { k: ["Son hata bir ödeme zaman aşımıydı. Ayrıntısı başka bir günlükte, ama `kayitlar` klasöründe birkaç dosya ve bir alt klasör var.", "`-r` klasörün içindeki bütün dosyalarda arar ve satırın hangi dosyada olduğunu da yazar: `grep -r -i \"zaman asimi\" kayitlar`. Bulduğun satırdaki bayrağı gönder."], gorev: "kayitlar klasörünün tamamında “zaman asimi” ara ve bayrağı gönder.", ipucu: "`grep -r -i \"zaman asimi\" kayitlar`", cozum: ["grep -r -i \"zaman asimi\" kayitlar", "bayrak QG{grep_ile_suz_bul}"], gec: { bayrak: "QG{grep_ile_suz_bul}" } }
+      ],
+      kapanis: "Beş bayrak, beş soru: `-i` yazılış fark etmesin, `-c` kaç tane, `-n` hangi satırda, `-v` bunun dışındakiler, `-r` bütün klasörde. Hepsini unutursan `man grep` yaz; her komutun kısa kılavuzu orada.",
+      ek: [
+        { gorev: "UYARI satırlarını uyarilar.txt dosyasına yaz.", cozum: ["grep UYARI gunluk.txt > uyarilar.txt"], gec: { durum: (k) => { const l = metin(k, "/home/ogrenci/uyarilar.txt").split("\n").filter(Boolean); return l.length === 2 && l.every((x) => /UYARI/.test(x)); } } },
+        { gorev: "man grep yazıp kılavuzu oku.", cozum: ["man grep"], gec: { komut: "^man\\s+grep$" } }
+      ]
+    }
+    ,{
+      id: "ag7", alan: "ag", no: 7, baslik: "Ağ envanteri: kim ne hizmeti veriyor?", seviye: "Başlangıç", sure: 25, ag: AG_ENVANTER,
+      ozet: "Koruyamadığın şeyi bilemezsin. Dört makinelik küçük bir ağın envanterini çıkar: hangisi ayakta, hangisinde hangi kapı açık. Kapatılması gereken eski bir hizmeti bul.",
+      kazanim: ["envanter çıkarmak", "ping ile ayakta mı", "nc ile hizmet yoklama", "sonucu >> ile dosyada biriktirmek", "şifresiz eski hizmetler: telnet, ftp"],
+      dosyalar: { "/home/ogrenci/makineler.txt": "web.lab\ndosya.lab\neski.lab\nyazici.lab\n" },
+      adimlar: [
+        { k: ["Bir ağı korumanın ilk adımı içinde ne olduğunu bilmektir. Buna **envanter** denir. Elindeki liste: `cat makineler.txt`."], gorev: "Makine listesini oku.", ipucu: "`cat makineler.txt`", cozum: ["cat makineler.txt"], gec: { cikti: "eski\\.lab" } },
+        { k: ["İlk soru: makine ayakta mı? Tek paket yeter: `ping -c 1 web.lab`."], gorev: "web.lab makinesinin ayakta olup olmadığına bak.", ipucu: "`ping -c 1 web.lab`", cozum: ["ping -c 1 web.lab"], gec: { cikti: "1 paket gönderildi, 1 alındı" } },
+        { k: ["Ayakta. Şimdi `yazici.lab`: `ping -c 1 yazici.lab`."], gorev: "yazici.lab makinesini yokla.", ipucu: "`ping -c 1 yazici.lab`", cozum: ["ping -c 1 yazici.lab"], gec: { cikti: "yazici\\.lab[\\s\\S]*%100 kayıp" } },
+        { k: ["Yanıt yok. Envantere “kapalı ya da yanıt vermiyor” diye geçer; bu da bir bilgidir.", "Ayakta olanlarda hangi kapılar açık? Sonuçları ekranda bırakma, bir dosyada biriktir. `>>` sona ekler: `nc -zv web.lab 80 >> envanter.txt`."], gorev: "web.lab üzerinde 80 numaralı portu yokla ve sonucu envanter.txt dosyasına ekle.", ipucu: "`nc -zv web.lab 80 >> envanter.txt`", cozum: ["nc -zv web.lab 80 >> envanter.txt"], gec: { durum: (k) => /web\.lab.*80 portu açık \[http\]/.test(metin(k, "/home/ogrenci/envanter.txt")) } },
+        { k: ["Ekrana bir şey yazılmadı, çünkü çıktı dosyaya gitti. Sıradaki makine dosya sunucusu. Dosya aktarımının eski yolu **FTP**'dir ve 21 numaralı portu kullanır.", "`nc -zv dosya.lab 21 >> envanter.txt`"], gorev: "dosya.lab üzerinde 21 numaralı portu yokla ve sonucu envantere ekle.", ipucu: "`nc -zv dosya.lab 21 >> envanter.txt`", cozum: ["nc -zv dosya.lab 21 >> envanter.txt"], gec: { durum: (k) => /dosya\.lab.*21 portu açık \[ftp\]/.test(metin(k, "/home/ogrenci/envanter.txt")) } },
+        { k: ["FTP açık. FTP parolayı ağda **şifrelemeden** gönderir; bugün yerine SFTP kullanılır. Envanterde yanına not düşülecek bir bulgu.", "Son makine `eski.lab`. Uzaktan yönetimin eski yolu **telnet**'tir, port 23: `nc -zv eski.lab 23 >> envanter.txt`."], gorev: "eski.lab üzerinde 23 numaralı portu yokla ve sonucu envantere ekle.", ipucu: "`nc -zv eski.lab 23 >> envanter.txt`", cozum: ["nc -zv eski.lab 23 >> envanter.txt"], gec: { durum: (k) => /eski\.lab.*23 portu açık \[telnet\]/.test(metin(k, "/home/ogrenci/envanter.txt")) } },
+        { k: ["Telnet de açık. O da her şeyi, parola dahil, açık metin olarak taşır; yerini SSH (22) almıştır.", "Envanterin hazır: `cat envanter.txt`. Bu makinenin ne olduğunu anlamak için web sayfasına bak: `curl http://eski.lab/`. Sayfadaki bayrağı gönder."], gorev: "Envanteri oku, eski.lab sayfasını iste ve bayrağı gönder.", ipucu: "`cat envanter.txt`, sonra `curl http://eski.lab/`", cozum: ["cat envanter.txt", "curl http://eski.lab/", "bayrak QG{sifresiz_hizmeti_kapat}"], gec: { bayrak: "QG{sifresiz_hizmeti_kapat}" } }
+      ],
+      kapanis: "Dört makine: biri yanıt vermiyor, biri düzgün, ikisinde şifresiz eski hizmetler açık. Envanter bu yüzden çıkarılır: unutulmuş makine ve unutulmuş hizmet, bir ağın en zayıf yeridir. Kural basit: kullanılmayan hizmet kapatılır, şifresiz olan (telnet, ftp) şifrelisiyle (ssh, sftp) değiştirilir.",
+      ek: [
+        { gorev: "web.lab üzerinde SSH portunu (22) da yokla ve envantere ekle.", cozum: ["nc -zv web.lab 22 >> envanter.txt"], gec: { durum: (k) => /web\.lab.*22 portu açık \[ssh\]/.test(metin(k, "/home/ogrenci/envanter.txt")) } },
+        { gorev: "Envanterde kaç açık port kaydı olduğunu say.", cozum: ["grep -c açık envanter.txt"], gec: { komut: "^grep\\s+-c\\s+\\S+\\s+envanter\\.txt$" } }
+      ]
+    }
+    ,{
+      id: "sg8", alan: "siber", no: 8, baslik: "Aynı parola, aynı özet", seviye: "Başlangıç", sure: 25,
+      ozet: "Bir sistemin hesap listesini denetliyorsun. Parolalar özet olarak saklanmış, ama üç kişinin özeti birebir aynı. Bunun ne anlama geldiğini ve “tuz”un bunu nasıl önlediğini gör.",
+      kazanim: ["parolalar neden özet olarak saklanır", "aynı parola aynı özeti verir", "yaygın parolaların tehlikesi", "tuz (salt) ne işe yarar"],
+      dosyalar: {
+        "/home/ogrenci/hesaplar.txt": `ali:${PAROLA.zayif}\nece:${PAROLA.kedi}\ncan:${PAROLA.zayif}\ndeniz:${PAROLA.guclu}\nmert:${PAROLA.zayif}\nokan:${PAROLA.futbol}\n`,
+        "/home/ogrenci/tuzlu.txt": `ali:${PAROLA.tAli}\nece:${PAROLA.tEce}\ncan:${PAROLA.tCan}\ndeniz:${PAROLA.tDeniz}\nmert:${PAROLA.tMert}\nokan:${PAROLA.tOkan}\n# Tuzlu saklamada ayni parola farkli ozet verir.\n# QG{tuz_ayni_parolayi_farkli_gosterir}\n`
+      },
+      adimlar: [
+        { k: ["İyi bir sistem parolaları **olduğu gibi saklamaz**; özetini saklar. Girişte yazdığın parolanın özeti alınır ve kayıttakiyle karşılaştırılır. Dosya sızsa bile parolalar doğrudan okunmaz.", "Denetleyeceğin liste: `cat hesaplar.txt`. Her satır `kullanici:ozet`."], gorev: "Hesap listesini oku.", ipucu: "`cat hesaplar.txt`", cozum: ["cat hesaplar.txt"], gec: { cikti: "^deniz:" } },
+        { k: ["Altı uzun değer; gözle bir şey anlaşılmıyor. Yalnızca özet sütununu al, sırala ve say: `cut -d: -f2 hesaplar.txt | sort | uniq -c`."], gorev: "Her özetin kaç kez geçtiğini say.", ipucu: "`cut -d: -f2 hesaplar.txt | sort | uniq -c`", cozum: ["cut -d: -f2 hesaplar.txt | sort | uniq -c"], gec: { cikti: "\\b3 e150a1ec81e8e93e" } },
+        { k: ["Bir özet **üç kez** geçiyor. Özet yalnızca içeriğe bağlıdır; aynı özet, aynı parola demektir. Üç kişi aynı parolayı kullanıyor.", "Kimler? Özetin başı `e150a1ec`: `grep e150a1ec hesaplar.txt`."], gorev: "Aynı özete sahip hesapları bul.", ipucu: "`grep e150a1ec hesaplar.txt`", cozum: ["grep e150a1ec hesaplar.txt"], gec: { cikti: "^ali:[^\\n]+\\ncan:[^\\n]+\\nmert:" } },
+        { k: ["Üç kişinin aynı parolayı seçmesi tesadüf değildir; büyük olasılıkla çok yaygın bir paroladır. Dünyanın en yaygın parolası `123456`.", "Özetini hesapla ve karşılaştır: `echo 123456 | sha256sum`."], gorev: "123456 parolasının özetini hesapla.", ipucu: "`echo 123456 | sha256sum`", cozum: ["echo 123456 | sha256sum"], gec: { cikti: "^e150a1ec81e8e93e" } },
+        { k: ["Tuttu. Özeti geri çevirmedin; yalnızca **tahmin edip** özetini aldın. Yaygın parolalar bu yüzden özetlenmiş olsa da güvende değildir.", "Çözüm **tuz**dur: özet alınmadan önce parolanın başına her kullanıcı için farklı bir değer eklenir. İki komutu dene: `echo ali123456 | sha256sum`, sonra `echo can123456 | sha256sum`."], gorev: "Aynı parolanın iki farklı tuzla özetini hesapla.", ipucu: "`echo ali123456 | sha256sum`, sonra `echo can123456 | sha256sum`", cozum: ["echo ali123456 | sha256sum", "echo can123456 | sha256sum"], gec: { cikti: "^008abb8c5d75f816" } },
+        { k: ["Parola aynı, özetler bambaşka. Artık listeye bakan kimse hangi hesapların aynı parolayı kullandığını göremez ve tek bir tahminle üç hesabı birden bulamaz.", "Aynı hesapların tuzlu saklanmış hâli `tuzlu.txt` içinde. Oku, altındaki bayrağı gönder."], gorev: "Tuzlu listeyi oku ve bayrağı gönder.", ipucu: "`cat tuzlu.txt`", cozum: ["cat tuzlu.txt", "bayrak QG{tuz_ayni_parolayi_farkli_gosterir}"], gec: { bayrak: "QG{tuz_ayni_parolayi_farkli_gosterir}" } }
+      ],
+      kapanis: "Denetim raporun hazır: ali, can ve mert parolalarını hemen değiştirmeli, sistem de parolaları tuzlu saklamalı. Senin payına düşen ders: yaygın bir parola, ne kadar iyi saklanırsa saklansın tahmin edilir. Uzun ve her yerde farklı parola kullan.",
+      ek: [
+        { gorev: "Tuzlu listede aynı özetten iki tane olup olmadığını denetle (önce # ile başlayan satırları ele).", cozum: ["grep -v \"#\" tuzlu.txt | cut -d: -f2 | sort | uniq -c | sort -rn | head -n 1"], gec: { cikti: "^\\s*1 [0-9a-f]{64}\\n(?![\\s\\S])" } }
+      ]
     }
   ];
 
@@ -449,9 +549,9 @@
     { id: "py", ad: "Python", tur: "dil", durum: "hazir", ozet: "İlk dil için en rahatı. Değişkenlerden veri raporu aracına.", olcu: "20 ders · 60 görev" },
     { id: "c", ad: "C", tur: "dil", durum: "hazir", ozet: "Bilgisayarın içini anlamak isteyenlere. İşaretçiler, bellek, yapılar.", olcu: "20 ders · 60 görev" },
     { id: "js", ad: "JavaScript ve Web", tur: "dil", durum: "hazir", ozet: "Dilin temeli, ardından web sayfaları, React, algoritmalar ve sunucu tarafı.", olcu: "50 ders · 150 görev" },
-    { id: "siber", ad: "Siber Güvenlik", tur: "lab", durum: "hazir", ozet: "Sıfırdan: terminal, kayıt inceleme, kodlamalar, izinler, dosya arama, web günlükleri, dosya özetleri. Her konu tarayıcıdaki bir lab makinesinde.", olcu: "7 lab hazır · devamı geliyor" },
-    { id: "linux", ad: "Linux ve Komut Satırı", tur: "lab", durum: "hazir", ozet: "Dosya kurmak, büyük dosyaları özetlemek, metin dönüştürmek, betik yazmak, sayıyla sıralamak. Siber güvenlik lablarının dayandığı temel.", olcu: "5 lab hazır · devamı geliyor" },
-    { id: "ag", ad: "Ağ Temelleri", tur: "lab", durum: "hazir", ozet: "IP adresi, DNS, portlar, HTTP, yönlendirme. Bir isteğin tarayıcıdan sunucuya yolculuğunu komut satırından izle.", olcu: "6 lab hazır · devamı geliyor" },
+    { id: "siber", ad: "Siber Güvenlik", tur: "lab", durum: "hazir", ozet: "Sıfırdan: terminal, kayıt inceleme, kodlamalar, izinler, dosya arama, web günlükleri, dosya özetleri. Her konu tarayıcıdaki bir lab makinesinde.", olcu: "8 lab hazır · devamı geliyor" },
+    { id: "linux", ad: "Linux ve Komut Satırı", tur: "lab", durum: "hazir", ozet: "Dosya kurmak, büyük dosyaları özetlemek, metin dönüştürmek, betik yazmak, sayıyla sıralamak. Siber güvenlik lablarının dayandığı temel.", olcu: "6 lab hazır · devamı geliyor" },
+    { id: "ag", ad: "Ağ Temelleri", tur: "lab", durum: "hazir", ozet: "IP adresi, DNS, portlar, HTTP, yönlendirme. Bir isteğin tarayıcıdan sunucuya yolculuğunu komut satırından izle.", olcu: "7 lab hazır · devamı geliyor" },
     { id: "veri", ad: "Veri Analizi", tur: "dil", durum: "yakinda", ozet: "Python ile tabloları okumak, temizlemek, özetlemek ve grafiğe dökmek.", olcu: "hazırlanıyor" },
     { id: "vt", ad: "Veritabanları ve SQL", tur: "lab", durum: "yakinda", ozet: "Tablolar, sorgular, birleştirmeler. Şu an Backend parkurunun içinde; ayrı bir yol olacak.", olcu: "hazırlanıyor" }
   ];

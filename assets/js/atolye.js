@@ -101,8 +101,24 @@
       gorevEl.innerHTML = `<span>Görev</span><b>${esc(a.gorev)}</b>`; gorevEl.hidden = false;
       mesgul = false; girdi.focus({ preventScroll: true });
     }
+    /* Kendin dene: lab bitince açılan isteğe bağlı görevler. Anlatım yok, XP yok; yapılınca işaretlenir. */
+    const ekler = lab.ek || [], ekTamam = new Set();
+    const ekCiz = () => {
+      if (!ekler.length) { gorevEl.hidden = true; return; }
+      gorevEl.innerHTML = `<span>Kendin dene · ${ekTamam.size} / ${ekler.length}</span><ul class="lab-ek">${ekler.map((e, i) => `<li class="${ekTamam.has(i) ? "ok" : ""}">${esc(e.gorev)}</li>`).join("")}</ul>`;
+      gorevEl.hidden = false;
+    };
+    function ekDenetle(o) {
+      if (o.bayrak) return;
+      let yeni = false;
+      ekler.forEach((e, i) => { if (!ekTamam.has(i) && L().gecti(e, o, kabuk)) { ekTamam.add(i); yeni = true; } });
+      if (!yeni) return;
+      ekCiz();
+      yazdir(`<div class="t-basari">Kendin dene: ${ekTamam.size} / ${ekler.length} tamam.</div>`);
+    }
     async function olay(o) {
-      if (d.bitti || mesgul) return;
+      if (d.bitti) { if (!mesgul) ekDenetle(o); return; }
+      if (mesgul) return;
       const a = lab.adimlar[d.adim];
       if (!L().gecti(a, o, kabuk)) {
         if (o.bayrak) {
@@ -119,7 +135,10 @@
       if (ilkKez) { S.addXP(60); if (A().renderBar) A().renderBar(); }
       if (A().celebrate) A().celebrate($(".term", view));
       yazdir(`<div class="t-basari">Bayrak kabul edildi. Lab tamamlandı${ilkKez ? " · +60 XP" : ""}.</div>`);
+      mesgul = true;
       await sc.kam("✓ Bayrak doğru. " + lab.kapanis);
+      if (ekler.length && yasiyor()) { await sc.kam("İstersen devam et: terminal açık. Aşağıdaki görevlerde anlatım yok, yolu sen bulacaksın."); ekCiz(); }
+      mesgul = false;
       const sonraki = L().LABLAR.find((x) => x.alan === lab.alan && x.no === lab.no + 1);
       const sec = await sc.secenek(sonraki ? ["Sonraki lab: " + sonraki.baslik, "Lab listesine dön"] : ["Lab listesine dön"], { beklet: true });
       if (!yasiyor()) return;

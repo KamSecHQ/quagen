@@ -3,7 +3,7 @@
  *   const k = KD_KABUK.olustur({ dosyalar: { "/home/ogrenci/not.txt": "merhaba", "/etc/gizli": { icerik: "x", mod: "600", sahip: "root" } } });
  *   k.calistir("ls -la | grep not")  →  { cikti: "…", hata: false }
  * Desteklenen: pwd ls cd cat head tail echo grep find wc sort uniq cut tr base64 xxd rev whoami id hostname
- *              history clear mkdir touch rm cp mv chmod file sha256sum help; ağ verilmişse ip ping nslookup nc curl; boru (|), > ve >> yönlendirme, ./betik çalıştırma (.sh dosyaları satır satır çalışır). */
+ *              history clear mkdir touch rm cp mv chmod file sha256sum diff man help; tırnaksız * ve ? dosya adlarına açılır; ağ verilmişse ip ping nslookup nc curl; boru (|), > ve >> yönlendirme, ./betik çalıştırma (.sh dosyaları satır satır çalışır). */
 (function (kok) {
   const KOMUTLAR = {};
   const birlestir = (cwd, p) => {
@@ -20,13 +20,13 @@
 
   /* Satırı sözcüklere böler: tek ve çift tırnak, boru ve yönlendirme ayrı belirteçtir */
   function ayristir(satir) {
-    const bel = []; let s = "", tirnak = null, dolu = false;
-    const it = () => { if (dolu) bel.push({ t: "s", v: s }); s = ""; dolu = false; };
+    const bel = []; let s = "", tirnak = null, dolu = false, tirnakli = false;
+    const it = () => { if (dolu) bel.push({ t: "s", v: s, q: tirnakli }); s = ""; dolu = false; tirnakli = false; };
     for (let i = 0; i < satir.length; i++) {
       const c = satir[i];
       if (tirnak) { if (c === tirnak) tirnak = null; else s += c; continue; }
-      if (c === '"' || c === "'") { tirnak = c; dolu = true; continue; }
-      if (c === "\\" && i + 1 < satir.length) { s += satir[++i]; dolu = true; continue; }
+      if (c === '"' || c === "'") { tirnak = c; dolu = true; tirnakli = true; continue; }
+      if (c === "\\" && i + 1 < satir.length) { s += satir[++i]; dolu = true; tirnakli = true; continue; }
       if (c === " " || c === "\t") { it(); continue; }
       if (c === "|") { it(); bel.push({ t: "|" }); continue; }
       if (c === ">") { it(); if (satir[i + 1] === ">") { i++; bel.push({ t: ">>" }); } else bel.push({ t: ">" }); continue; }
@@ -62,6 +62,42 @@
       return h.map((x) => (x >>> 0).toString(16).padStart(8, "0")).join("");
     };
   })();
+
+  /* man sayfaları: [ne yapar, kullanım satırları, örnek] */
+  const KILAVUZ = {
+    pwd: ["bulunduğun dizini yazar", ["pwd"], "pwd"],
+    ls: ["dizinin içindekileri listeler", ["ls [dizin]", "-l  izin, sahip ve boyutla birlikte", "-a  noktayla başlayan gizli dosyalar dahil"], "ls -la belgeler"],
+    cd: ["başka bir dizine geçer", ["cd dizin", "cd ..  bir üst dizin", "cd     ev dizinin"], "cd belgeler"],
+    cat: ["dosyanın içeriğini yazar; birden çok dosyayı uç uca ekler", ["cat dosya [dosya2 ...]", "-n  satır numarasıyla"], "cat notlar.txt"],
+    head: ["dosyanın ilk satırlarını gösterir (varsayılan 10)", ["head [-n adet] dosya"], "head -n 3 siparis.csv"],
+    tail: ["dosyanın son satırlarını gösterir (varsayılan 10)", ["tail [-n adet] dosya"], "tail -n 2 siparis.csv"],
+    wc: ["satır, sözcük ve karakter sayar", ["wc [-l -w -c] dosya", "-l  yalnızca satır sayısı"], "wc -l siparis.csv"],
+    grep: ["içinde verilen ifade geçen satırları süzer", ["grep [bayraklar] ifade [dosya]", "-i  büyük küçük harf ayırmaz", "-v  geçmeyen satırlar", "-n  satır numarasıyla", "-c  yalnızca sayar", "-r  dizinin içindeki bütün dosyalarda arar"], "grep -i hata gunluk.txt"],
+    find: ["dosya ağacında ada ya da türe göre arar", ["find [dizin] -name \"kalıp\"", "find [dizin] -type f   (f dosya, d dizin)"], "find / -name \"*.bak\""],
+    sort: ["satırları sıralar", ["sort [bayraklar] [dosya]", "-n  sayı olarak", "-r  tersten", "-u  aynı satırlardan yalnızca biri"], "sort -n -r boyutlar.txt"],
+    uniq: ["art arda gelen aynı satırları teke indirir (önce sort gerekir)", ["uniq [-c] [dosya]", "-c  her satırın kaç kez geçtiğini yazar"], "sort isimler.txt | uniq -c"],
+    cut: ["her satırdan bir sütunu keser", ["cut -d ayırıcı -f sütun [dosya]"], "cut -d, -f3 siparis.csv"],
+    tr: ["karakterleri başka karakterlere çevirir ya da siler", ["tr 'küme1' 'küme2'", "tr -d 'silinecekler'"], "cat isimler.txt | tr 'A-Z' 'a-z'"],
+    rev: ["her satırı tersten yazar", ["rev [dosya]"], "rev sifre.txt"],
+    echo: ["verilen metni yazar; > ile dosyaya, >> ile dosyanın sonuna", ["echo metin", "echo metin > dosya", "echo metin >> dosya"], "echo ilk not > notlar.txt"],
+    base64: ["metni Base64'e çevirir ya da geri açar", ["base64 [dosya]", "-d  geri açar"], "base64 -d mesaj1.txt"],
+    xxd: ["metni onaltılık gösterime çevirir ya da geri açar", ["xxd [dosya]", "-r -p  onaltılık metni geri açar"], "cat mesaj2.txt | xxd -r -p"],
+    sha256sum: ["dosyanın özetini (parmak izini) hesaplar", ["sha256sum dosya [dosya2 ...]", "komut | sha256sum"], "sha256sum indirilen/rapor.txt"],
+    diff: ["iki dosyayı satır satır karşılaştırır; aynıysa hiçbir şey yazmaz", ["diff dosya1 dosya2", "<  yalnızca ilk dosyada", ">  yalnızca ikinci dosyada"], "diff eski.txt yeni.txt"],
+    mkdir: ["yeni dizin açar", ["mkdir dizin"], "mkdir proje"],
+    touch: ["boş bir dosya oluşturur", ["touch dosya"], "touch notlar.txt"],
+    cp: ["dosyayı kopyalar", ["cp kaynak hedef"], "cp notlar.txt yedek.txt"],
+    mv: ["dosyayı taşır ya da adını değiştirir", ["mv kaynak hedef"], "mv taslak.txt proje/eski.txt"],
+    rm: ["dosyayı siler (geri alınmaz)", ["rm dosya", "rm -r dizin"], "rm eski.txt"],
+    chmod: ["dosyanın izinlerini değiştirir", ["chmod 600 dosya   (sahibi okur ve yazar, başkası hiçbir şey)", "chmod +x dosya    (çalıştırma izni verir)"], "chmod +x selam.sh"],
+    file: ["dosyanın ne tür olduğunu tahmin eder", ["file dosya"], "file mesaj1.txt"],
+    history: ["bu oturumda yazdığın komutları listeler", ["history"], "history"],
+    ip: ["bu makinenin ağ adresini gösterir", ["ip addr"], "ip addr"],
+    ping: ["bir makinenin yanıt verip vermediğini yoklar", ["ping [-c adet] adres"], "ping -c 2 okul.lab"],
+    nslookup: ["bir ismin hangi adrese çıktığını sorar", ["nslookup alanadı"], "nslookup okul.lab"],
+    nc: ["bir portun açık olup olmadığını yoklar", ["nc -zv adres port"], "nc -zv okul.lab 80"],
+    curl: ["bir web adresini ister", ["curl adres", "-I  yalnızca yanıt başlıkları"], "curl -I http://okul.lab/"]
+  };
 
   function olustur(ayar = {}) {
     const kullanici = ayar.kullanici || "ogrenci", makine = ayar.makine || "lab", ev = ayar.ev || "/home/" + kullanici;
@@ -107,7 +143,10 @@
       cd: (a) => { const yol = coz(a[0] || ev), d = fs.get(yol); if (!d) throw new Error(`cd: ${a[0]}: Böyle bir dosya ya da dizin yok`); if (d.tur !== "d") throw new Error(`cd: ${a[0]}: Dizin değil`); if (!izin(d, 1)) throw new Error(`cd: ${a[0]}: Erişim engellendi`); K.cwd = yol; return ""; },
       ls: (a) => {
         const { b, kalan } = bayraklar(a);
-        const hedefler = kalan.length ? kalan : ["."];
+        let hedefler = kalan.length ? kalan : ["."];
+        /* Birden çok dosya verilirse (örneğin ls *.txt) dosyalar tek listede gösterilir */
+        const yalin = hedefler.filter((h) => { const x = fs.get(coz(h)); return x && x.tur === "f"; });
+        if (hedefler.length > 1 && yalin.length === hedefler.length) return b.has("l") ? yalin.map((h) => { const x = fs.get(coz(h)); return `${modYazi(x)} ${x.sahip.padEnd(8)} ${String(x.icerik.length).padStart(6)} ${h}`; }).join("\n") + "\n" : yalin.join("  ") + "\n";
         return hedefler.map((h) => {
           const yol = coz(h), d = fs.get(yol);
           if (!d) throw new Error(`ls: ${h}: Böyle bir dosya ya da dizin yok`);
@@ -156,6 +195,16 @@
       rev: (a, stdin) => satirlar(girdi(a, stdin, "rev")).map((l) => [...l].reverse().join("")).join("\n") + "\n",
       base64: (a, stdin) => { const { b, kalan } = bayraklar(a); const m = girdi(kalan, stdin, "base64"); const B = (s) => (typeof btoa === "function" ? btoa(unescape(encodeURIComponent(s))) : Buffer.from(s, "utf8").toString("base64")); const D = (s) => (typeof atob === "function" ? decodeURIComponent(escape(atob(s))) : Buffer.from(s, "base64").toString("utf8")); if (b.has("d") || b.has("D")) { try { return D(m.replace(/\s+/g, "")); } catch (_) { throw new Error("base64: geçersiz girdi"); } } return B(m.replace(/\n$/, "")) + "\n"; },
       xxd: (a, stdin) => { const { b, kalan } = bayraklar(a); const m = girdi(kalan, stdin, "xxd"); if (b.has("r")) { const h = m.replace(/[^0-9a-fA-F]/g, ""); let s = ""; for (let i = 0; i + 1 < h.length; i += 2) s += String.fromCharCode(parseInt(h.slice(i, i + 2), 16)); return s; } const hex = [...m.replace(/\n$/, "")].map((c) => c.charCodeAt(0).toString(16).padStart(2, "0")).join(""); return hex + "\n"; },
+      /* İki dosyayı satır satır karşılaştırır: "<" yalnızca ilkinde, ">" yalnızca ikincisinde olan satır. Aynıysa çıktı yoktur. */
+      diff: (a) => {
+        const kalan = a.filter((x) => !x.startsWith("-")); if (kalan.length !== 2) throw new Error("diff: kullanım: diff dosya1 dosya2");
+        const A = satirlar(oku(kalan[0], "diff")), B = satirlar(oku(kalan[1], "diff")), n = A.length, m = B.length;
+        const t = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+        for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--) t[i][j] = A[i] === B[j] ? t[i + 1][j + 1] + 1 : Math.max(t[i + 1][j], t[i][j + 1]);
+        let i = 0, j = 0, c = "";
+        while (i < n || j < m) { if (i < n && j < m && A[i] === B[j]) { i++; j++; } else if (j < m && (i === n || t[i][j + 1] > t[i + 1][j])) c += `> ${B[j++]}\n`; else c += `< ${A[i++]}\n`; }
+        return c;
+      },
       /* Özet (hash): dosyanın parmak izi. Birden çok dosya verilebilir; dosya yoksa standart girdiyi özetler. */
       sha256sum: (a, stdin) => { const kalan = a.filter((x) => !x.startsWith("-")); return kalan.length ? kalan.map((p) => sha256(oku(p, "sha256sum")) + "  " + p + "\n").join("") : sha256(stdin || "") + "  -\n"; },
       file: (a) => a.map((p) => { const d = fs.get(coz(p)); if (!d) return `${p}: bulunamadı`; if (d.tur === "d") return `${p}: dizin`; if (d.betik) return `${p}: çalıştırılabilir betik`; return `${p}: ${/^[A-Za-z0-9+/=\s]+$/.test(d.icerik) && d.icerik.trim().length % 4 === 0 && d.icerik.trim().length > 8 ? "ASCII metin (base64 olabilir)" : "ASCII metin"}`; }).join("\n") + "\n",
@@ -209,9 +258,10 @@
         if (!baslikIste) return govde;
         return `HTTP/1.1 ${kod} ${ad}\nServer: ${m.sunucu || "nginx"}\nContent-Type: ${s.tur || "text/html; charset=utf-8"}\nContent-Length: ${govde.length}\n${Object.entries(s.basliklar || {}).map(([k, v]) => `${k}: ${v}\n`).join("")}`;
       },
-      help: () => (ag ? "Ağ      : ip addr  ping [-c]  nslookup  nc -zv  curl [-I]\n" : "") + "Kullanabileceğin komutlar:\n  Gezinme : pwd  ls [-l -a]  cd  find\n  Okuma   : cat  head  tail  wc  file\n  Arama   : grep [-i -n -c -v -r]  sort  uniq [-c]  cut -d -f\n  Dönüşüm : base64 [-d]  xxd [-r -p]  tr  rev  echo\n  Özet    : sha256sum\n  Dosya   : mkdir  touch  cp  mv  rm  chmod\n  Diğer   : whoami  id  hostname  history  clear\nBoru (|) ve > yönlendirme çalışır. Örnek: cat kayit.log | grep Hata | wc -l\n"
+      help: () => (ag ? "Ağ      : ip addr  ping [-c]  nslookup  nc -zv  curl [-I]\n" : "") + "Kullanabileceğin komutlar:\n  Gezinme : pwd  ls [-l -a]  cd  find\n  Okuma   : cat  head  tail  wc  file\n  Arama   : grep [-i -n -c -v -r]  sort  uniq [-c]  cut -d -f\n  Dönüşüm : base64 [-d]  xxd [-r -p]  tr  rev  echo\n  Özet    : sha256sum  diff\n  Yardım  : man komut  (örnek: man grep)\n  Dosya   : mkdir  touch  cp  mv  rm  chmod\n  Diğer   : whoami  id  hostname  history  clear\nBoru (|) ve > yönlendirme çalışır. Örnek: cat kayit.log | grep Hata | wc -l\n"
     };
-    C.yardim = C.help; C.man = (a) => (a[0] && C[a[0]] ? `${a[0]}: kısa yardım için 'help' yaz.\n` : C.help());
+    C.yardim = C.help;
+    C.man = (a) => { if (!a[0]) return "man: hangi komut? Örnek: man grep\n"; const k = KILAVUZ[a[0]]; if (!k) { if (!C[a[0]]) throw new Error(`man: ${a[0]}: böyle bir komut yok`); return `${a[0]}: ayrıntı için 'help' yaz.\n`; } return `${a[0]} — ${k[0]}\n\nKullanım:\n${k[1].map((x) => "  " + x).join("\n")}\n\nÖrnek:\n  ${k[2]}\n`; };
     Object.assign(C, KOMUTLAR);
 
     const ag = ayar.ag || null;
@@ -223,6 +273,15 @@
       const h = fs.get("/etc/hosts");
       if (h) for (const satir of h.icerik.split("\n")) { const p = satir.split("#")[0].trim().split(/\s+/); if (p.length > 1 && p.slice(1).includes(ad)) return p[0]; }
       return (ag.dns || {})[ad] || null;
+    };
+    /* Tırnaksız * ve ? dosya adlarına açılır (yalnızca son parçada). Eşleşme yoksa sözcük olduğu gibi kalır. */
+    const yildizAc = (soz) => {
+      const i = soz.lastIndexOf("/"), on = i < 0 ? "" : soz.slice(0, i + 1), taban = soz.slice(i + 1);
+      if (/[*?]/.test(on)) return [soz];
+      const dizin = coz(on || "."), d = fs.get(dizin);
+      if (!d || d.tur !== "d" || !izin(d, 4)) return [soz];
+      const re = kalip(taban), l = cocuklar(dizin).map(ad).filter((x) => re.test(x) && (taban.startsWith(".") || !x.startsWith(".")));
+      return l.length ? l.map((x) => on + x) : [soz];
     };
     let derinlik = 0;
     function tekKomut(sozcukler, stdin) {
@@ -264,7 +323,7 @@
         const b = a.bel[i];
         if (b.t === "|") borular.push([]);
         else if (b.t === ">" || b.t === ">>") { const n = a.bel[++i]; if (!n || n.t !== "s") return { cikti: "kabuk: yönlendirme için dosya adı gerekli\n", hata: true }; hedef = n.v; ekle = b.t === ">>"; }
-        else borular[borular.length - 1].push(b.v);
+        else borular[borular.length - 1].push(...(b.q || !/[*?]/.test(b.v) || !borular[borular.length - 1].length ? [b.v] : yildizAc(b.v)));
       }
       if (borular.some((b) => !b.length)) return { cikti: "kabuk: boş komut\n", hata: true };
       let veri = "";
