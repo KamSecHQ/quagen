@@ -253,8 +253,16 @@
   /* ---------- Dil seçimi ---------- */
   const LANGS = (window.KD && KD.LANGS) || [{ id: "js", ad: "JavaScript", kisa: "JS", aciklama: "" }];
   const chooser = $("#chooser"), list = $("#chooser-list");
+  /* Ana sayfa ders verisini yüklemez (yüzlerce KB); pencerede gösterilen sayılar burada sabittir.
+     tests/mufredat.test.js bu tablonun gerçek müfredatla aynı olduğunu denetler. [ders, görev] */
+  const DERS_SAYI = {"js":[50,150],"c":[20,60],"py":[20,60]};
   function langProgress(id) {
     const st = KD.readLangState ? KD.readLangState(id) : null;
+    if (!C.length) {
+      const [ders, gorev] = DERS_SAYI[id] || [0, 0];
+      const gecen = st && st.phases ? Object.values(st.phases).reduce((n, f) => n + Object.values((f && f.passed) || {}).filter(Boolean).length, 0) : 0;
+      return { total: gorev, passed: Math.min(gecen, gorev), phases: ders };
+    }
     const phases = C.filter((p) => (p.language || "js") === id);
     const total = phases.reduce((n, p) => n + p.challenges.length, 0);
     const passed = st ? phases.reduce((n, p) => n + p.challenges.filter((c) => st.phases && st.phases[p.id] && st.phases[p.id].passed && st.phases[p.id].passed[c.id]).length, 0) : 0;

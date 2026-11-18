@@ -51,19 +51,18 @@
 .ngp .avatar, .ngp .lc-mark, .ngp .pf-lang, .ngp .nav-av { background: #0b1530; color: #e3c888; }
 .ngp .pf-cta .btn.primary { background: #e3c888; border-color: #e3c888; color: #0b1530; }
 
-/* KAM: neon çekirdek (QUAGEN ile aynı) */
+/* KAM: gece mavisi küre, altın çerçeve ve altın ışık (QUAGEN ile aynı) */
 .ngp .kam-av {
-  background:
-    radial-gradient(circle at 42% 36%, #86abff 0%, #5a8cff 24%, #2f5bff 52%, #1a2bd0 78%, #0a1470 100%);
+  background: radial-gradient(circle at 40% 32%, #3a5196 0%, #22366f 26%, #14224a 54%, #0b1530 80%, #060c1d 100%);
   box-shadow:
-    inset -0.08em -0.1em 0.2em rgba(6, 12, 80, 0.55),
-    inset 0.04em 0.05em 0.1em rgba(255, 255, 255, 0.5),
-    0 0 0 0.012em rgba(170, 205, 255, 0.9),
-    0 0 0.16em rgba(90, 150, 255, 0.95),
-    0 0 0.5em rgba(70, 120, 255, 0.7),
-    0 0 1.1em rgba(110, 80, 255, 0.4);
+    inset -0.08em -0.1em 0.2em rgba(2, 6, 20, 0.7),
+    inset 0.05em 0.06em 0.12em rgba(227, 200, 136, 0.22),
+    0 0 0 0.014em rgba(227, 200, 136, 0.95),
+    0 0 0.2em rgba(227, 200, 136, 0.55),
+    0 0 0.7em rgba(201, 165, 90, 0.38),
+    0 0 1.5em rgba(201, 165, 90, 0.2);
 }
-.ngp .kam-av > b { background: #fff3b0; box-shadow: 0 0 0.08em #ffe27a, 0 0 0.22em #ffd84d, 0 0 0.5em rgba(255, 200, 60, 0.8); }
+.ngp .kam-av > b { background: #f6e3ae; box-shadow: 0 0 0.07em #e3c888, 0 0 0.2em rgba(227, 200, 136, 0.95), 0 0 0.45em rgba(201, 165, 90, 0.7); }
 /* Sabit parlak: yanıp sönme yok, yalnızca göz kırpar */
 .ngp .kam-kart .kam-av, .ngp .kam-cekmece.genis .kam-bas .kam-av { animation: kam-sal 5s ease-in-out infinite; }
 @keyframes ngp-neon {

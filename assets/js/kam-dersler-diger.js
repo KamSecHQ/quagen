@@ -1,4 +1,4 @@
-/* QUAGEN — KAM'in elle yazılmış ders anlatımları: Python (ilk dört ders) ve JavaScript (ilk ders).
+/* QUAGEN — KAM'in elle yazılmış ders anlatımları: Python (ilk dört ders) ve JavaScript (ilk beş ders).
  * Biçim kam-dersler-c.js ile aynıdır: ["k", metin] · ["kod", kod] · ["v", [satırlar], metin] · ["calis"] ·
  * ["sen", cevap…] · ["sor", soru, [seçenekler], doğruIdx, doğruysa, yanlışsa]. Ağır ağır gider: her adımda tek yeni şey. */
 (function () {
@@ -163,5 +163,144 @@
     ["calis"],
     ["sor", "Üçüncü satırda ters tırnak yerine normal tırnak kullansaydım?", ["Aynı çıktı", "${isim} ${yas} yaşında yazardı", "Hata verirdi"], 1, "Evet. Normal tırnakta `${...}` sıradan karakterdir; olduğu gibi yazılır ve hata da vermez.", "`${isim} ${yas} yaşında` yazardı. Yerine koyma yalnızca ters tırnakta çalışır; normal tırnakta hata vermeden olduğu gibi çıkar."],
     ["k", "Bugünlük dört şey: `console.log` yazar, `const` değişmeyen ada, `let` değişecek ada, ters tırnak ve `${}` kutudakini cümleye yerleştirmeye. Şimdi bu satırları birkaç kez yazacağız."]
+  ];
+
+  /* ==================== JavaScript · Ders 2: operatörler ve koşullar ==================== */
+  D.p2 = [
+    ["k", "Geçen derste değerleri adlara koyduk. Bugün program **karar verecek**: bir şey doğruysa şunu yap, değilse bunu."],
+    ["kod", 'const yas = 15;\nif (yas < 18) {\n  console.log("Öğrenci bileti");\n}'],
+    ["v", [2], "`if` “eğer” demek. Koşul **parantez** içinde yazılır: `yas < 18`."],
+    ["v", [3], "Koşul doğruysa çalışacak satırlar **süslü parantezlerin** arasına girer."],
+    ["calis"],
+    ["sor", "`yas` 30 olsaydı ekranda ne görürdün?", ["Öğrenci bileti", "Hiçbir şey", "Hata"], 1, "Evet. Koşul yanlış olunca süslü parantezin içi atlanır; program sessizce biter.", "Hiçbir şey. 30 < 18 yanlıştır, bu yüzden içerideki satır atlanır. Hata da olmaz."],
+    ["k", "Koşul yanlışken de bir şey yapmak istersen `else` eklersin: “değilse”."],
+    ["kod", 'const yas = 15;\nif (yas < 18) {\n  console.log("Öğrenci bileti");\n} else {\n  console.log("Tam bilet");\n}'],
+    ["v", [4], "`else` koşul almaz; `if` tutmadıysa onun süslü parantezi çalışır."],
+    ["calis"],
+    ["sen", "İkiden fazla seçenek olursa?", "Devam"],
+    ["k", "Araya `else if` girer: “değilse, eğer”. JavaScript koşulları yukarıdan aşağı dener ve **ilk tutanı** çalıştırır; gerisine bakmaz."],
+    ["kod", 'const yas = 15;\nlet fiyat;\nif (yas < 12) {\n  fiyat = 50;\n} else if (yas >= 65) {\n  fiyat = 60;\n} else {\n  fiyat = 100;\n}\nconsole.log(`Bilet: ${fiyat} TL`);'],
+    ["v", [2], "`let fiyat;` adı oluşturur ama henüz değer koymaz. Değeri aşağıdaki dallardan biri verecek; değişeceği için `let`."],
+    ["v", [3, 4], "On iki yaşından küçükse 50."],
+    ["v", [5, 6], "Buraya ancak ilk koşul tutmadıysa gelinir. `>=` “büyük ya da eşit” demek."],
+    ["v", [10], "Bu satır dalların dışında. Hangi dal çalışırsa çalışsın, en sonda bu çalışır."],
+    ["calis"],
+    ["sor", "`yas` 70 olsaydı fiyat kaç çıkardı?", ["50", "60", "100"], 1, "Doğru. İlk koşul tutmaz, ikincisi tutar; zincir orada biter.", "60 çıkardı. 70 < 12 yanlış, 70 >= 65 doğru: ikinci dal çalışır ve `else`'e hiç gelinmez."],
+    ["k", "Eşitlik sorarken dikkat: JavaScript'te iki işaret var. `===` hem değere hem **türe** bakar. `==` türleri kendince çevirir ve şaşırtır. Her zaman `===` kullan."],
+    ["kod", 'console.log(5 === 5);\nconsole.log(5 === "5");\nconsole.log(5 == "5");\nconsole.log(7 % 2);\nconsole.log(8 % 2 === 0);'],
+    ["v", [2], "Sayı olan 5 ile metin olan `\"5\"` aynı türde değil: `false`."],
+    ["v", [3], "`==` metni sayıya çevirip karşılaştırır: `true`. Bu tür sürprizler yüzünden kullanmıyoruz."],
+    ["v", [4], "`%` bölümden **kalanı** verir. 7'yi 2'ye bölünce 1 kalır."],
+    ["v", [5], "Kalan 0 ise sayı tam bölünüyor demektir. Bir sayının çift olup olmadığı böyle sorulur."],
+    ["calis"],
+    ["sor", "`10 % 5 === 0` ne verir?", ["true", "false", "2"], 0, "Evet. 10, 5'e tam bölünür; kalan 0'dır ve `0 === 0` doğrudur.", "`true` verir. Önce `10 % 5` hesaplanır: kalan 0. Sonra `0 === 0` sorulur ve bu doğrudur."],
+    ["k", "İki koşulu birleştirmek için üç işaret var. `&&` “ve”: ikisi de doğru olmalı. `||` “veya”: biri yeter. `!` tersine çevirir."],
+    ["kod", 'const yas = 25;\nconst ogrenci = true;\nif (yas < 18 || ogrenci) {\n  console.log("İndirimli");\n}\nif (yas >= 18 && !ogrenci) {\n  console.log("Tam");\n}'],
+    ["v", [2], "`true` ve `false` doğruluk değerleridir. Küçük harfle ve tırnaksız yazılırlar."],
+    ["v", [3], "Yaş 18'den küçük değil, ama öğrenci. `||` için biri yeter: koşul doğru."],
+    ["v", [6], "`!ogrenci` “öğrenci değilse” demek. `&&` ikisini de ister; öğrenci olduğu için bu koşul yanlış."],
+    ["calis"],
+    ["sor", "`ogrenci` `false` olsaydı ekranda ne yazardı?", ["İndirimli", "Tam", "İkisi de"], 1, "Evet. İlk koşulun iki yanı da yanlış olur; ikinci koşulun iki yanı da doğru.", "Tam yazardı. 25 yaşında ve öğrenci değil: `||`'nin iki yanı da yanlış, `&&`'nin iki yanı da doğru olur."],
+    ["k", "Görevlerde bu kararları bir **fonksiyonun** içine koyacaksın. Fonksiyon, ad verilmiş bir kod parçasıdır: bir değer alır, bir sonuç **döndürür**."],
+    ["kod", 'function biletFiyati(yas) {\n  if (yas < 12) {\n    return 50;\n  } else if (yas >= 65) {\n    return 60;\n  }\n  return 100;\n}\nconsole.log(biletFiyati(8));\nconsole.log(biletFiyati(30));'],
+    ["v", [1], "`function` bir fonksiyon tanımlar. `biletFiyati` onun adı, `yas` ise çağıranın vereceği değer: **parametre**."],
+    ["v", [3], "`return` sonucu geri verir ve fonksiyon **orada biter**."],
+    ["v", [7], "Buraya ancak yukarıdaki iki `return` çalışmadıysa gelinir. Bu yüzden son `else`'i yazmaya gerek kalmadı."],
+    ["v", [9], "Çağırmak için adını yazar, parantez içinde değeri verirsin. `biletFiyati(8)` yazan yere 50 gelir."],
+    ["calis"],
+    ["sor", "`biletFiyati(70)` ne döndürür?", ["50", "60", "100"], 1, "Evet. İkinci koşul tutar, `return 60` çalışır ve fonksiyon orada biter.", "60 döndürür. 70 < 12 yanlış, 70 >= 65 doğru; `return 60` çalışınca fonksiyon biter, son satıra gelinmez."],
+    ["k", "Bugünlük: `if`, `else if`, `else` karar verir; `===` eşitliği, `%` kalanı sorar; `&&`, `||`, `!` koşulları birleştirir. Görevlerde sıra önemli olacak: en özel koşulu en üste yaz."]
+  ];
+
+  /* ==================== JavaScript · Ders 3: döngüler ==================== */
+  D.p3 = [
+    ["k", "Aynı satırı on kez yazmak yerine bilgisayara “on kez yap” deriz. Buna **döngü** denir. İlki `for`."],
+    ["kod", 'for (let i = 1; i <= 3; i++) {\n  console.log("Tur", i);\n}'],
+    ["v", [1], "Parantezin içinde noktalı virgülle ayrılmış üç parça var. İlki `let i = 1`: sayaç 1'den başlar."],
+    ["v", [1], "İkincisi `i <= 3`: bu doğru oldukça döngü döner. Üçüncüsü `i++`: her turun sonunda sayacı bir artırır."],
+    ["v", [2], "Süslü parantezin içi döngünün gövdesidir; her turda bir kez çalışır."],
+    ["calis"],
+    ["sor", "`i <= 3` yerine `i < 3` yazsaydım kaç tur dönerdi?", ["2", "3", "4"], 0, "Evet. 3 artık dahil değil. Bu “bir eksik, bir fazla” hatası döngülerde en sık yapılan hatadır.", "2 tur dönerdi: 1 ve 2. `<` sınırı dışarıda bırakır. Döngü yazarken sınırın dahil olup olmadığına hep iki kez bak."],
+    ["k", "Döngüler çoğu zaman bir sonucu **biriktirir**: önce bir kutu hazırlarsın, her turda içine eklersin."],
+    ["kod", 'let toplam = 0;\nfor (let i = 1; i <= 5; i++) {\n  toplam = toplam + i;\n}\nconsole.log(toplam);'],
+    ["v", [1], "Kutu döngüden **önce** hazırlanır. Değişeceği için `let`."],
+    ["v", [3], "Önce sağ taraf hesaplanır: eski toplam artı `i`. Sonuç yeniden `toplam` adına konur."],
+    ["v", [5], "Bu satır döngünün dışında; bütün turlar bitince bir kez çalışır."],
+    ["calis"],
+    ["sor", "İlk satır `let toplam = 10;` olsaydı ekranda ne yazardı?", ["15", "25", "10"], 1, "Doğru. Döngü yine 15 ekler; kutu 10'dan başladığı için sonuç 25 olur.", "25 yazardı. Döngü 1'den 5'e kadar toplam 15 ekler; kutu 0 yerine 10'dan başlarsa sonuç 10 + 15 olur."],
+    ["k", "Çarparak biriktirirken kutu 1'den başlar. 0'dan başlasaydı ne ile çarparsan çarp sonuç hep 0 kalırdı."],
+    ["kod", 'let sonuc = 1;\nfor (let i = 1; i <= 5; i++) {\n  sonuc = sonuc * i;\n}\nconsole.log(sonuc);'],
+    ["v", [3], "Her turda eski sonuç sıradaki sayıyla çarpılır: 1, 2, 6, 24, 120."],
+    ["calis"],
+    ["sen", "Kaç tur döneceğini bilmiyorsam?", "Devam"],
+    ["k", "O zaman `while`: koşul doğru **oldukça** döner. Bir sayının kaç basamaklı olduğunu saymak buna iyi bir örnek."],
+    ["kod", 'let n = 4096;\nlet basamak = 0;\nwhile (n > 0) {\n  n = Math.floor(n / 10);\n  basamak = basamak + 1;\n}\nconsole.log(basamak);'],
+    ["v", [3], "`while` yalnızca koşul alır. Sayaç ve artırma yok; onları sen yönetirsin."],
+    ["v", [4], "`n / 10` 409.6 verir; `Math.floor` kesri atar: 409. Yani son basamak silinir. Bu satır olmasaydı `n` hiç değişmez, döngü **sonsuza** giderdi."],
+    ["calis"],
+    ["sor", "Bu döngü ne zaman durur?", ["n 10'dan küçük olunca", "n 0 olunca", "Her zaman 4 tur sonra"], 1, "Evet. Her turda bir basamak silinir; sonunda `n` 0 olur ve `n > 0` yanlışa döner.", "`n` 0 olunca. Koşul `n > 0`; her turda bir basamak silinir ve son basamak da gidince `n` 0 kalır."],
+    ["k", "Bugünlük: tur sayısını biliyorsan `for`, bilmiyorsan `while`. Biriktirici döngüden önce hazırlanır. Sınırı yazarken `<` mi `<=` mi diye iki kez bak."]
+  ];
+
+  /* ==================== JavaScript · Ders 4: fonksiyonlar ve kapsam ==================== */
+  D.p4 = [
+    ["k", "Fonksiyon yazmayı gördün. Bugün iki yeni şey var: daha kısa bir yazım ve bir adın **nerede geçerli** olduğu."],
+    ["kod", 'function topla(a, b) {\n  return a + b;\n}\nconst toplaOk = (a, b) => a + b;\nconsole.log(topla(2, 3));\nconsole.log(toplaOk(2, 3));'],
+    ["v", [1], "Bildiğin yazım: `function`, ad, parametreler, süslü parantez, `return`."],
+    ["v", [4], "Aynı fonksiyonun **ok** yazımı. `=>` işaretinin solunda parametreler, sağında sonuç var. Tek ifade olunca `return` ve süslü parantez yazılmaz."],
+    ["calis"],
+    ["sor", "`const iki = (x) => x * 2;` tanımından sonra `iki(5)` ne verir?", ["5", "10", "Hata"], 1, "Evet. Okun sağındaki ifade hesaplanır ve kendiliğinden geri döner.", "10 verir. Ok yazımında sağdaki ifadenin sonucu, `return` yazmasan da geri döner."],
+    ["k", "Gövde birden fazla satırsa süslü parantez geri gelir ve `return`'ü kendin yazarsın."],
+    ["kod", 'const mutlak = (x) => {\n  if (x < 0) {\n    return -x;\n  }\n  return x;\n};\nconsole.log(mutlak(-7));\nconsole.log(mutlak(4));'],
+    ["v", [1], "Okun sağında süslü parantez açıldı: artık bu bir gövde, tek ifade değil."],
+    ["v", [3], "Gövdede sonucu geri vermek için `return` şart."],
+    ["calis"],
+    ["sor", "`const f = (x) => { x * 2; };` yazıp `return`'ü unutursam `f(5)` ne verir?", ["10", "undefined", "Hata"], 1, "Evet. Süslü parantez varken `return` yoksa fonksiyon hiçbir şey döndürmez; bunun adı `undefined`.", "`undefined` verir. Süslü parantez açtığın an kendiliğinden geri dönme biter; `return` yazmazsan sonuç kaybolur."],
+    ["k", "Şimdi **kapsam**. Bir fonksiyonun içinde tanımlanan ad yalnızca o fonksiyonun içinde yaşar; dışarıdan görünmez."],
+    ["kod", 'const selam = "İyi günler";\nfunction karsila(ad) {\n  const mesaj = `${selam}, ${ad}`;\n  return mesaj;\n}\nconsole.log(karsila("Deniz"));\nconsole.log(typeof mesaj);'],
+    ["v", [1], "`selam` en dışarıda tanımlı; her yerden görünür."],
+    ["v", [3], "İçeriden dışarıdaki `selam` kullanılabiliyor. `mesaj` ise burada, fonksiyonun içinde doğdu."],
+    ["v", [7], "Dışarıda `mesaj` diye bir ad yok. `typeof`, olmayan bir ad için `undefined` der; doğrudan `console.log(mesaj)` yazsaydım program hata verip dururdu."],
+    ["calis"],
+    ["sen", "İçerideki ad dışarı hiç çıkamaz mı?", "Devam"],
+    ["k", "Çıkamaz, ama içeride tanımlanan bir **fonksiyon** onu hatırlar. Fonksiyon, doğduğu yerdeki adları yanında taşır. Buna **closure** denir."],
+    ["kod", 'const carpanYap = (k) => {\n  return (x) => x * k;\n};\nconst ikiKat = carpanYap(2);\nconst ucKat = carpanYap(3);\nconsole.log(ikiKat(5));\nconsole.log(ucKat(5));'],
+    ["v", [2], "Dönen şey bir sayı değil, bir **fonksiyon**. O fonksiyon da içinde `k`'yi kullanıyor."],
+    ["v", [4], "`carpanYap(2)` çalışıp bitti. Yine de döndürdüğü fonksiyon `k`'nin 2 olduğunu hatırlıyor."],
+    ["v", [5], "Her çağrı kendi `k`'sini taşır. `ucKat`'ın `k`'si 3; `ikiKat`'ınkine karışmaz."],
+    ["calis"],
+    ["sor", "`const onKat = carpanYap(10);` yazsam `onKat(4)` ne verir?", ["14", "40", "Hata"], 1, "Evet. `onKat`, `k`'nin 10 olduğu bir fonksiyon; 4'ü 10 ile çarpar.", "40 verir. `carpanYap(10)`, `k`'si 10 olan yeni bir fonksiyon döndürür; o da aldığı 4'ü 10 ile çarpar."],
+    ["k", "Bugünlük: ok yazımı kısadır, süslü parantez açarsan `return` yazarsın; içerideki ad dışarıdan görünmez; içeride doğan fonksiyon o adı hatırlar."]
+  ];
+
+  /* ==================== JavaScript · Ders 5: diziler ==================== */
+  D.p5 = [
+    ["k", "Şimdiye kadar her ad tek bir değer tuttu. **Dizi**, birçok değeri sırayla tutan tek bir addır."],
+    ["kod", 'const meyveler = ["elma", "armut", "kiraz"];\nconsole.log(meyveler[0]);\nconsole.log(meyveler[2]);\nconsole.log(meyveler.length);'],
+    ["v", [1], "Dizi köşeli parantezle yazılır; elemanlar virgülle ayrılır."],
+    ["v", [2], "Elemanlara sıra numarasıyla ulaşılır ve numaralar **0'dan başlar**. İlk eleman `[0]`."],
+    ["v", [4], "`length` kaç eleman olduğunu söyler: 3. Son elemanın numarası her zaman `length - 1`'dir."],
+    ["calis"],
+    ["sor", "`meyveler[3]` ne verir?", ["kiraz", "undefined", "Hata"], 1, "Evet. Numaralar 0, 1, 2; 3 numaralı eleman yok. JavaScript hata vermez, `undefined` der.", "`undefined` verir. Üç elemanın numaraları 0, 1 ve 2'dir; 3 dizinin dışında kalır. Hata vermediği için fark etmesi zordur."],
+    ["k", "Dizinin sonuna `push` ile eklenir, sondan `pop` ile alınır."],
+    ["kod", 'const liste = [10, 20];\nliste.push(30);\nconsole.log(liste);\nconst son = liste.pop();\nconsole.log(son);\nconsole.log(liste.length);'],
+    ["v", [1], "`const` olduğu hâlde içeriği değişecek. `const`'un sabitlediği şey adın **hangi diziyi** gösterdiğidir, dizinin içi değil."],
+    ["v", [2], "`push` sona ekler: dizi `[10, 20, 30]` olur."],
+    ["v", [4], "`pop` son elemanı diziden çıkarır ve **geri verir**. Onu `son` adına koyduk."],
+    ["calis"],
+    ["sor", "Bir kez daha `liste.pop()` çağırsam dizide ne kalır?", ["[10]", "[10, 20]", "[]"], 0, "Evet. `pop` her çağrıda sondaki elemanı götürür; bu kez 20 gider.", "`[10]` kalır. İlk `pop` 30'u almıştı; ikincisi sondaki 20'yi alır."],
+    ["k", "Dizinin her elemanını sırayla gezmek için `for...of` kullanılır."],
+    ["kod", 'const sayilar = [3, -1, 7, -4, 0];\nlet adet = 0;\nfor (const s of sayilar) {\n  if (s > 0) {\n    adet = adet + 1;\n  }\n}\nconsole.log(adet);'],
+    ["v", [3], "`s` her turda sıradaki elemanı tutar: önce 3, sonra -1, sonra 7... Numarayla uğraşmazsın."],
+    ["v", [4, 5], "Eleman sıfırdan büyükse sayacı bir artır."],
+    ["calis"],
+    ["sen", "Saymak yerine yeni bir dizi üretmek istersem?", "Devam"],
+    ["k", "Boş bir diziyle başlar, uygun elemanları `push` ile eklersin. Biriktirici bu kez bir sayı değil, bir dizi."],
+    ["kod", 'const sayilar = [3, -1, 7, -4, 0];\nconst pozitifler = [];\nfor (const s of sayilar) {\n  if (s > 0) {\n    pozitifler.push(s);\n  }\n}\nconsole.log(pozitifler);'],
+    ["v", [2], "`[]` boş dizidir. Döngüden **önce** hazırlanır."],
+    ["v", [5], "Koşulu geçen eleman yeni dizinin sonuna eklenir. Asıl dizi `sayilar` hiç değişmez."],
+    ["calis"],
+    ["sor", "Sonuçta 0 neden yok?", ["0 pozitif değil; `s > 0` yanlış", "`push` sıfırı eklemez", "Döngü son elemana gelmeden biter"], 0, "Evet. 0, 0'dan büyük değildir. Sıfırı da isteseydin koşulu `s >= 0` yazardın.", "Çünkü `0 > 0` yanlıştır. `push` her değeri ekler ve döngü son elemana kadar gider; elenmesinin tek sebebi koşul."],
+    ["k", "Bugünlük: dizi sıralı bir değer listesidir, numaralar 0'dan başlar, `length` uzunluğu verir, `push` ve `pop` sondan ekler ve alır, `for...of` hepsini gezer."]
   ];
 })();
